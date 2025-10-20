@@ -1,6 +1,6 @@
-package auth;
+package team5;
 
-public class Welcome {
+public class App {
 	public static void main(String[] args) {
 		System.out.println("Hello");
 	}
