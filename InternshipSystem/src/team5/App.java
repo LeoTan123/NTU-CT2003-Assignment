@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import team5.controllers.StudentController;
 import team5.enums.UserType;
 
 public class App {
@@ -40,65 +41,80 @@ public class App {
             System.out.println(staff);
         }*/
         
-        System.out.println("===== Login =====");
-        try 
-        {
-			// Choose login type
-			System.out.println("Please choose your user type:");
-			System.out.println("1: Student");	
-			System.out.println("2: Career Center Staff");	
-			System.out.println("3: Company Representatives");	
-			int choice = Integer.parseInt(App.sc.nextLine()); // consume the newline
-			if(choice <= 0 || choice > 3)
-			{
-				System.out.println("Invalid user type.");	
-				return;
-			}
-			
-			System.out.println("Please enter your user ID:");	
-			String userID = App.sc.nextLine();
-			
-			System.out.println("Please enter your password:");	
-			String password = App.sc.nextLine();
-			
-			boolean foundUser = false;
-			UserType userType = UserType.NONE;
-			if(choice == 1)
-			{
-				userType = UserType.STUDENT;
-			}
-			else if(choice == 2)
-			{
-				userType = UserType.CCSTAFF;
-			}
-			else 
-			{
-				userType = UserType.COMREP;
-			}
-			foundUser = verifyUserFromList(userType, userID, password);
-			if(!foundUser)
-			{
-				System.out.println("User ID not found.");	
-				return;
-			}
-			if(currentUser == null)
-			{
-				//System.out.println("Login Failed.");	
-				return;
-			}
-			System.out.println("Login Successfully. Welcome " + currentUser.getName());
-			
-			// Display menu based on UserType
-			
-			
-			//currentUser.changePassword();
-        } 
-        catch (NumberFormatException e) {
-            System.out.println("Invalid input! Please enter a number for user type.");
-        } 
-        catch (Exception e) {
-            System.out.println("An error occurred during login: " + e.getMessage());
-            e.printStackTrace();
+        boolean exitProgram = false;
+        while (!exitProgram) {
+	        System.out.println("===== Login =====");
+	        try 
+	        {
+				// Choose login type
+				System.out.println("Please choose your user type:");
+				System.out.println("1: Student");	
+				System.out.println("2: Career Center Staff");	
+				System.out.println("3: Company Representatives");	
+				System.out.println("0: Exit");
+				int choice = Integer.parseInt(App.sc.nextLine()); // consume the newline
+				if(choice == 0)
+				{
+					System.out.println("EXIT");
+					exitProgram = true;
+					continue;
+				}
+				if(choice < 0 || choice > 3)
+				{
+					System.out.println("Invalid user type.");	
+					continue;
+				}
+				
+				System.out.println("Please enter your user ID:");	
+				String userID = App.sc.nextLine();
+				
+				System.out.println("Please enter your password:");	
+				String password = App.sc.nextLine();
+				
+				boolean foundUser = false;
+				UserType userType = UserType.NONE;
+				if(choice == 1)
+				{
+					userType = UserType.STUDENT;
+				}
+				else if(choice == 2)
+				{
+					userType = UserType.CCSTAFF;
+				}
+				else 
+				{
+					userType = UserType.COMREP;
+				}
+				foundUser = verifyUserFromList(userType, userID, password);
+				if(!foundUser)
+				{
+					System.out.println("User ID not found.");	
+					continue;
+				}
+				if(currentUser == null)
+				{
+					//System.out.println("Login Failed.");	
+					continue;
+				}
+				System.out.println("Login Successfully. Welcome " + currentUser.getName());
+				
+				// Display menu based on UserType
+				if (userType == UserType.STUDENT && currentUser instanceof Student) {
+					StudentController studentController = new StudentController();
+					studentController.showMenu((Student) currentUser);
+					currentUser = null;
+				}
+				
+				
+				//currentUser.changePassword();
+	        } 
+	        catch (NumberFormatException e) {
+	            System.out.println("Invalid input! Please enter a number for user type.");
+	        } 
+	        catch (Exception e) {
+	            System.out.println("An error occurred during login: " + e.getMessage());
+	            e.printStackTrace();
+	        }
         }
         
         //WriteToCSV("InternshipSystem/src/sample_student_list.csv", UserType.STUDENT);
