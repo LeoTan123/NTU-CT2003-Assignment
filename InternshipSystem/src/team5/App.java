@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import team5.controllers.CareerCenterStaffController;
 import team5.controllers.StudentController;
 import team5.enums.UserType;
 
@@ -33,6 +34,7 @@ public class App {
 		studentList.clear();
 		staffList.clear();
 		ReadFromCSV("InternshipSystem/src/sample_student_list.csv", UserType.STUDENT);
+		ReadFromCSV("InternshipSystem/src/sample_staff_list.csv", UserType.CCSTAFF);
         /*for (Student student : studentList) {
             System.out.println(student);
         }
@@ -103,8 +105,11 @@ public class App {
 					StudentController studentController = new StudentController();
 					studentController.showMenu((Student) currentUser);
 					currentUser = null;
+				} else if (userType == UserType.CCSTAFF && currentUser instanceof CareerCenterStaff) {
+					CareerCenterStaffController staffController = new CareerCenterStaffController();
+					staffController.showMenu((CareerCenterStaff) currentUser);
+					currentUser = null;
 				}
-				
 				
 				//currentUser.changePassword();
 	        } 
