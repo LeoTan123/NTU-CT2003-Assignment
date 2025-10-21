@@ -18,6 +18,10 @@ public class App {
 	public static ArrayList<Student> studentList = new ArrayList<>();
 	// Staff List
 	public static ArrayList<CareerCenterStaff> staffList = new ArrayList<>();
+	// CompanyRepresentatives List
+	public static ArrayList<CompanyRep> compRepList = new ArrayList<>();
+	// CompanyRepresentatives List
+	public static ArrayList<Internship> internshipList = new ArrayList<>();
 	
 	public static User currentUser = null;
 	
@@ -67,6 +71,10 @@ public class App {
 			{
 				userType = UserType.CCSTAFF;
 			}
+			else 
+			{
+				userType = UserType.COMREP;
+			}
 			foundUser = verifyUserFromList(userType, userID, password);
 			if(!foundUser)
 			{
@@ -80,7 +88,10 @@ public class App {
 			}
 			System.out.println("Login Successfully. Welcome " + currentUser.getName());
 			
-			currentUser.changePassword();
+			// Display menu based on UserType
+			
+			
+			//currentUser.changePassword();
         } 
         catch (NumberFormatException e) {
             System.out.println("Invalid input! Please enter a number for user type.");
@@ -158,6 +169,10 @@ public class App {
 	            	return true;
 	            }
 			}
+		}
+		else if(userType == UserType.COMREP)
+		{
+			
 		}
 		return false;
 	}

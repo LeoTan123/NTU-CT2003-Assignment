@@ -9,7 +9,7 @@ public class InternshipApplication {
 	private int internshipId;
 	private String studentUsername;
 	private Date appliedDate;
-	private Enum<InternshipApplicationStatus> status;
+	private InternshipApplicationStatus status;
 	private boolean hasStudentAccepted;
 	
 	public InternshipApplication() {
@@ -48,12 +48,19 @@ public class InternshipApplication {
 		this.appliedDate = appliedDate;
 	}
 	
-	public Enum<InternshipApplicationStatus> getStatus() {
-		return status;
+	public InternshipApplicationStatus getStatus() {
+		return this.status;
 	}
 	
-	public void setStatus(Enum<InternshipApplicationStatus> status) {
+	public void setStatus(InternshipApplicationStatus status) {
 		this.status = status;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return this.applicationId + " " + this.internshipId + " " + this.studentUsername + " " + this.appliedDate 
+				+ " " + this.status + " " + this.hasStudentAccepted;
 	}
 	
 	public boolean hasStudentAccepted() {
@@ -65,6 +72,5 @@ public class InternshipApplication {
 	}
 	
 	public void apply(int internshipId, String studentUserName) {
-		
 	}
 }

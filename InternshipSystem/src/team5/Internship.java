@@ -7,11 +7,11 @@ public class Internship {
 	private int internshipId;
 	private String title;
 	private String description;
-	private Enum<InternshipLevel> internshipLevel;
+	private InternshipLevel internshipLevel;
 	private String preferredMajors;
 	private String applicationOpenDate;
 	private String applicationCloseDate;
-	private Enum<InternshipApplicationStatus> internshipStatus;
+	private InternshipApplicationStatus internshipStatus;
 	private int numOfSlots;
 	
 	public Internship() {
@@ -19,31 +19,34 @@ public class Internship {
 	}
 
 	public int getInternshipId() {
-		return internshipId;
+		return this.internshipId;
 	}
-// uncomment if needed
+	
+	// uncomment if needed
 //	public void setInternshipId(int internshipId) {
 //		this.internshipId = internshipId;
 //	}
 
 	public String getTitle() {
-		return title;
+		return this.title;
 	}
+	
 	// uncomment if needed
 //	public void setTitle(String title) {
 //		this.title = title;
 //	}
 
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
+	
 	// uncomment if needed
 //	public void setDescription(String description) {
 //		this.description = description;
 //	}
 
-	public Enum<InternshipLevel> getInternshipLevel() {
-		return internshipLevel;
+	public InternshipLevel getInternshipLevel() {
+		return this.internshipLevel;
 	}
 // uncomment if needed
 //	public void setInternshipLevel(Enum<InternshipLevel> internshipLevel) {
@@ -51,7 +54,7 @@ public class Internship {
 //	}
 
 	public String getPreferredMajors() {
-		return preferredMajors;
+		return this.preferredMajors;
 	}
 // uncomment if needed
 //	public void setPreferredMajors(String preferredMajors) {
@@ -59,7 +62,7 @@ public class Internship {
 //	}
 
 	public String getApplicationOpenDate() {
-		return applicationOpenDate;
+		return this.applicationOpenDate;
 	}
 // uncomment if needed
 //	public void setApplicationOpenDate(String applicationOpenDate) {
@@ -67,15 +70,15 @@ public class Internship {
 //	}
 
 	public String getApplicationCloseDate() {
-		return applicationCloseDate;
+		return this.applicationCloseDate;
 	}
 // uncomment if needed
 //	public void setApplicationCloseDate(String applicationCloseDate) {
 //		this.applicationCloseDate = applicationCloseDate;
 //	}
 
-	public Enum<InternshipApplicationStatus> getInternshipStatus() {
-		return internshipStatus;
+	public InternshipApplicationStatus getInternshipStatus() {
+		return this.internshipStatus;
 	}
 // uncomment if needed
 //	public void setInternshipStatus(Enum<InternshipApplicationStatus> internshipStatus) {
@@ -83,12 +86,18 @@ public class Internship {
 //	}
 
 	public int getNumOfSlots() {
-		return numOfSlots;
+		return this.numOfSlots;
 	}
 // uncomment if needed
 //	public void setNumOfSlots(int numOfSlots) {
 //		this.numOfSlots = numOfSlots;
 //	}
 	
-	
+	@Override
+	public String toString()
+	{
+		return this.internshipId + " " + this.title + " " + this.description + " " + this.internshipLevel 
+				+ " " + this.preferredMajors + " " + this.applicationOpenDate + " " + this.applicationCloseDate 
+				+ " " + this.internshipStatus + " " + this.numOfSlots;
+	}
 }

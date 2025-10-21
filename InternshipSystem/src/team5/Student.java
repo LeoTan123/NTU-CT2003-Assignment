@@ -1,7 +1,10 @@
 package team5;
 
 import java.util.ArrayList;
+import java.util.Date;
 
+import team5.enums.InternshipApplicationStatus;
+import team5.enums.InternshipLevel;
 import team5.enums.UserType;
 
 public class Student extends User {
@@ -75,16 +78,44 @@ public class Student extends User {
 	
 	
 	public void viewInternshipOpportunities() {
-		
+		System.out.println("===== Internship Opportunities =====");
+	    for (Internship internship : App.internshipList) {
+	    	if((this.yearOfStudy == 1 || this.yearOfStudy == 2))
+	    	{
+	    		if(internship.getInternshipLevel() != InternshipLevel.BASIC){
+	    			continue;
+	    		}
+	    		System.out.println(internship);
+	    	}
+	    	else
+	    	{
+	    		System.out.println(internship);
+	    	}
+	    }
 	}
 	
 	public void applyInternship(int internshipId) {
-		
+		if(appliedInternships.size() == 3)
+		{
+			System.out.println("You have applied for 3 internships. Current application is unsuccessful.");
+			return;
+		}
+		for (Internship internship : App.internshipList) {
+			if(internship.getInternshipId() == internshipId) {
+				InternshipApplication internshipApplication = new InternshipApplication();
+				internshipApplication.setApplicationId(internshipId);
+				internshipApplication.setAppliedDate(new Date());
+				internshipApplication.setStudentUsername(this.getName());
+				internshipApplication.setStatus(InternshipApplicationStatus.PENDING);
+				addInternshipApplications(internshipApplication);
+			}
+		}
 	}
 	
-	public InternshipApplication[] viewInternshipApplications() {
+	
+	/*public InternshipApplication[] viewInternshipApplications() {
 		return new InternshipApplication[0];
-	}
+	}*/
 	
 	public boolean acceptOffer(int applicationId) {
 		/*for (InternshipApplication app : appliedInternships) {
