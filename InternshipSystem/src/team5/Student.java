@@ -1,7 +1,9 @@
 package team5;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipLevel;
@@ -78,6 +80,10 @@ public class Student extends User {
 	
 	
 	public void viewInternshipOpportunities() {
+		if(App.internshipList.isEmpty()) {
+			System.out.println("No internship opportunities created.");
+			return;
+		}
 		System.out.println("===== Internship Opportunities =====");
 	    for (Internship internship : App.internshipList) {
 	    	if((this.yearOfStudy == 1 || this.yearOfStudy == 2))
@@ -95,35 +101,74 @@ public class Student extends User {
 	}
 	
 	public void applyInternship(int internshipId) {
-		if(appliedInternships.size() == 3)
-		{
+		if(appliedInternships.size() == 3){
 			System.out.println("You have applied for 3 internships. Current application is unsuccessful.");
 			return;
 		}
-		for (Internship internship : App.internshipList) {
-			if(internship.getInternshipId() == internshipId) {
-				InternshipApplication internshipApplication = new InternshipApplication();
-				internshipApplication.setApplicationId(internshipId);
-				internshipApplication.setAppliedDate(new Date());
-				internshipApplication.setStudentUsername(this.getName());
-				internshipApplication.setStatus(InternshipApplicationStatus.PENDING);
-				addInternshipApplications(internshipApplication);
-			}
-		}
+		
+		// Find the internship by ID
+	    Internship selected = null;
+	    for (Internship internship : App.internshipList) {
+	        if (internship.getInternshipId() == internshipId) {
+	        	selected = internship;
+	            break;
+	        }
+	    }
+
+	    // If internship not found
+	    if (selected == null) {
+	        System.out.println("Internship " + internshipId + " is not found.");
+	        return;
+	    }
+
+	    // Check if already applied to the same internship
+	    for (InternshipApplication app : appliedInternships) {
+	        if (app.getInternshipInfo().getInternshipId() == internshipId) {
+	            System.out.println("You have already applied for this internship.");
+	            return;
+	        }
+	    }
+
+	    // Create new application
+	    InternshipApplication internshipApplication = new InternshipApplication();
+	    int applicationID = 10000 + new Random().nextInt(90000); // Random 5-digit ID
+	    internshipApplication.setApplicationId(applicationID);
+	    internshipApplication.setAppliedDate(LocalDate.now());
+	    internshipApplication.setInternshipInfo(selected);
+	    internshipApplication.setStudentInfo(this);
+	    internshipApplication.setStatus(InternshipApplicationStatus.PENDING);
+
+	    // Add to student's applied internships
+	    addInternshipApplications(internshipApplication);
+
+	    System.out.println("You have successfully applied for internship " + selected.getInternshipId() + " Title: " + selected.getTitle());
 	}
 	
 	
-	/*public InternshipApplication[] viewInternshipApplications() {
-		return new InternshipApplication[0];
-	}*/
+	public void viewInternshipApplications() {
+		if(this.appliedInternships.isEmpty()) {
+			System.out.println("No internship application has been made.");
+			return;
+		}
+		System.out.println("Internship ID \t Internship Name \t Status");
+		for(InternshipApplication internshipApplication: this.appliedInternships) {
+			System.out.println(internshipApplication.getInternshipInfo().getInternshipId() + "\t" + internshipApplication.getInternshipInfo().getTitle() + "\t" + internshipApplication.getStatus());
+		}
+	}
 	
 	public boolean acceptOffer(int applicationId) {
-		/*for (InternshipApplication app : appliedInternships) {
-	        if (app.getApplicationId() == applicationId) {
-	            app.setOfferAccepted(true);
-	            return true;
-	        }
-	    }*/
+		if(this.appliedInternships.isEmpty()) {
+			System.out.println("No internship application has been made.");
+			return false;
+		}
+		for (InternshipApplication internshipApplication : this.appliedInternships) {
+			if(internshipApplication.getApplicationId() == applicationId) {
+				internshipApplication.setHasStudentAccepted(true);
+				System.out.println("Offer has been accepted.");
+				return true;
+			}
+	    }
+		System.out.println("Offer "+ applicationId +" is not found.");
 		return false;
 	}
 	

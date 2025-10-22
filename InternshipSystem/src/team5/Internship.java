@@ -1,5 +1,7 @@
 package team5;
 
+import java.time.LocalDate;
+
 import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipLevel;
 
@@ -9,89 +11,100 @@ public class Internship {
 	private String description;
 	private InternshipLevel internshipLevel;
 	private String preferredMajors;
-	private String applicationOpenDate;
-	private String applicationCloseDate;
+	private LocalDate applicationOpenDate;
+	private LocalDate applicationCloseDate;
 	private InternshipApplicationStatus internshipStatus;
 	private int numOfSlots;
 	
 	public Internship() {
 		
 	}
+	
+	public Internship(int internshipId, String title, String description, InternshipLevel internshipLevel, String preferredMajors, LocalDate applicationOpenDate, LocalDate applicationCloseDate) {
+		this.internshipId = internshipId;
+		this.title = title;
+		this.description = description;
+		this.internshipLevel = internshipLevel;
+		this.preferredMajors = preferredMajors;
+		this.applicationOpenDate = applicationOpenDate;
+		this.applicationCloseDate = applicationCloseDate;
+		this.internshipStatus = InternshipApplicationStatus.PENDING;
+		this.numOfSlots = 10;
+	}
 
 	public int getInternshipId() {
 		return this.internshipId;
 	}
 	
-	// uncomment if needed
-//	public void setInternshipId(int internshipId) {
-//		this.internshipId = internshipId;
-//	}
+	/*public void setInternshipId(int internshipId) {
+		this.internshipId = internshipId;
+	}*/
 
 	public String getTitle() {
 		return this.title;
 	}
 	
-	// uncomment if needed
-//	public void setTitle(String title) {
-//		this.title = title;
-//	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
 	public String getDescription() {
 		return this.description;
 	}
 	
-	// uncomment if needed
-//	public void setDescription(String description) {
-//		this.description = description;
-//	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 	public InternshipLevel getInternshipLevel() {
 		return this.internshipLevel;
 	}
-// uncomment if needed
-//	public void setInternshipLevel(Enum<InternshipLevel> internshipLevel) {
-//		this.internshipLevel = internshipLevel;
-//	}
+
+	public void setInternshipLevel(InternshipLevel internshipLevel) {
+		this.internshipLevel = internshipLevel;
+	}
 
 	public String getPreferredMajors() {
 		return this.preferredMajors;
 	}
-// uncomment if needed
-//	public void setPreferredMajors(String preferredMajors) {
-//		this.preferredMajors = preferredMajors;
-//	}
+	
+	public void setPreferredMajors(String preferredMajors) {
+		this.preferredMajors = preferredMajors;
+	}
 
-	public String getApplicationOpenDate() {
+	public LocalDate getApplicationOpenDate() {
 		return this.applicationOpenDate;
 	}
-// uncomment if needed
-//	public void setApplicationOpenDate(String applicationOpenDate) {
-//		this.applicationOpenDate = applicationOpenDate;
-//	}
 
-	public String getApplicationCloseDate() {
+	public void setApplicationOpenDate(LocalDate applicationOpenDate) {
+		this.applicationOpenDate = applicationOpenDate;
+	}
+
+	public LocalDate getApplicationCloseDate() {
 		return this.applicationCloseDate;
 	}
-// uncomment if needed
-//	public void setApplicationCloseDate(String applicationCloseDate) {
-//		this.applicationCloseDate = applicationCloseDate;
-//	}
+
+	public void setApplicationCloseDate(LocalDate applicationCloseDate) {
+		this.applicationCloseDate = applicationCloseDate;
+	}
 
 	public InternshipApplicationStatus getInternshipStatus() {
 		return this.internshipStatus;
 	}
-// uncomment if needed
-//	public void setInternshipStatus(Enum<InternshipApplicationStatus> internshipStatus) {
-//		this.internshipStatus = internshipStatus;
-//	}
+	
+
+	public void setInternshipStatus(InternshipApplicationStatus internshipStatus) {
+		this.internshipStatus = internshipStatus;
+	}
 
 	public int getNumOfSlots() {
 		return this.numOfSlots;
 	}
-// uncomment if needed
-//	public void setNumOfSlots(int numOfSlots) {
-//		this.numOfSlots = numOfSlots;
-//	}
+	
+
+	public void setNumOfSlots(int numOfSlots) {
+		this.numOfSlots = numOfSlots;
+	}
 	
 	@Override
 	public String toString()

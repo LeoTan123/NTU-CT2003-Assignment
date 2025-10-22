@@ -1,50 +1,81 @@
 package team5;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import team5.enums.InternshipApplicationStatus;
 
 public class InternshipApplication {
-	private int applicationId;
-	private int internshipId;
-	private String studentUsername;
-	private Date appliedDate;
+	private int applicationID;
+	//private int internshipID;
+	private Internship internship;
+	//private String studentUsername;
+	private Student student;
+	private LocalDate appliedDate;
 	private InternshipApplicationStatus status;
 	private boolean hasStudentAccepted;
 	
 	public InternshipApplication() {
-		
 	}
 	
+	public InternshipApplication(int applicationID, Internship internship, Student student, LocalDate appliedDate) {
+		this.applicationID = applicationID;
+		//this.internshipID = internshipID;
+		//this.studentUsername = studentUsername;
+		this.internship = internship;
+		this.student = student;
+		this.appliedDate = appliedDate;
+		this.status = InternshipApplicationStatus.PENDING;
+		this.hasStudentAccepted = false;
+	}
+	
+	// Setter and getter
 	public int getApplicationId() {
-		return this.applicationId;
+		return this.applicationID;
 	}
 	
-	public void setApplicationId(int applicationId) {
-		this.applicationId = applicationId;
+	public void setApplicationId(int applicationID) {
+		this.applicationID = applicationID;
 	}
 	
-	public int getInternshipId() {
-		return this.internshipId;
+	/*public int getInternshipId() {
+		return this.internshipID;
 	}
 	
 	public void setInternshipId(int internshipId) {
-		this.internshipId = internshipId;
+		this.internshipID = internshipId;
+	}*/
+	
+	public Internship getInternshipInfo() {
+		return this.internship;
 	}
 	
-	public String getStudentUsername() {
+	public void setInternshipInfo(Internship internship) {
+		this.internship = internship;
+	}
+	
+	/*public String getStudentUsername() {
 		return this.studentUsername;
 	}
 	
 	public void setStudentUsername(String studentUsername) {
 		this.studentUsername = studentUsername;
+	}*/
+	
+	public Student getStudentInfo()
+	{
+		return this.student;
 	}
 	
-	public Date getAppliedDate() {
+	public void setStudentInfo(Student student)
+	{
+		this.student = student;
+	}
+	
+	public LocalDate getAppliedDate() {
 		return this.appliedDate;
 	}
 	
-	public void setAppliedDate(Date appliedDate) {
+	public void setAppliedDate(LocalDate appliedDate) {
 		this.appliedDate = appliedDate;
 	}
 	
@@ -56,13 +87,6 @@ public class InternshipApplication {
 		this.status = status;
 	}
 	
-	@Override
-	public String toString()
-	{
-		return this.applicationId + " " + this.internshipId + " " + this.studentUsername + " " + this.appliedDate 
-				+ " " + this.status + " " + this.hasStudentAccepted;
-	}
-	
 	public boolean hasStudentAccepted() {
 		return this.hasStudentAccepted;
 	}
@@ -71,6 +95,12 @@ public class InternshipApplication {
 		this.hasStudentAccepted = hasStudentAccepted;
 	}
 	
+	@Override
+	public String toString()
+	{
+		return this.applicationID + " " + this.internship + " " + this.student + " " + this.appliedDate + " " + this.status + " " + this.hasStudentAccepted;
+	}
+
 	public void apply(int internshipId, String studentUserName) {
 	}
 }
