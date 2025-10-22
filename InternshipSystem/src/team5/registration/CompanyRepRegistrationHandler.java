@@ -1,0 +1,155 @@
+package team5.registration;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Random;
+
+import team5.App;
+import team5.CompanyRepRegistration;
+import team5.enums.UserAccountStatus;
+
+public class CompanyRepRegistrationHandler {
+
+	private static final String COMPANY_REP_CSV = "InternshipSystem/src/sample_company_representative_list.csv";
+	private final Random random = new Random();
+
+	public void startRegistration() {
+		boolean continueRegistration = true;
+		while (continueRegistration) {
+			System.out.println("===== Company Representative Registration =====");
+			System.out.println("Enter the details below (press 0 at any time to cancel):");
+
+			String name = promptInput("Full Name");
+			if (name == null) {
+				return;
+			}
+
+			String companyName = promptInput("Company Name");
+			if (companyName == null) {
+				return;
+			}
+
+			String department = promptInput("Department");
+			if (department == null) {
+				return;
+			}
+
+			String position = promptInput("Position");
+			if (position == null) {
+				return;
+			}
+
+			String email = promptInput("Company Email");
+			if (email == null) {
+				return;
+			}
+
+			String generatedId = generateUniqueId(name);
+
+			System.out.println("===== Registration Summary =====");
+			System.out.println("Generated Representative ID: " + generatedId);
+			System.out.println("Name: " + name);
+			System.out.println("Company: " + companyName);
+			System.out.println("Department: " + department);
+			System.out.println("Position: " + position);
+			System.out.println("Email: " + email);
+			System.out.println("Status: Pending Approval");
+
+			boolean awaitingDecision = true;
+			while (awaitingDecision) {
+				System.out.println("Confirm registration?");
+				System.out.println("1. Confirm and submit");
+				System.out.println("2. Start over");
+				System.out.println("0. Cancel");
+
+				String choice = App.sc.nextLine();
+				switch (choice) {
+					case "1":
+						submitRegistration(generatedId, name, companyName, department, position, email);
+						System.out.println("Registration submitted. A career center staff member will review your account.");
+						awaitingDecision = false;
+						continueRegistration = false;
+						break;
+					case "2":
+						awaitingDecision = false;
+						break;
+					case "0":
+						System.out.println("Registration cancelled.");
+						return;
+					default:
+						System.out.println("Invalid option. Please choose 1, 2, or 0.");
+				}
+			}
+		}
+	}
+
+	private String promptInput(String label) {
+		while (true) {
+			System.out.println(label + ":");
+			String input = App.sc.nextLine().trim();
+			if ("0".equals(input)) {
+				System.out.println("Registration cancelled.");
+				return null;
+			}
+			if (!input.isEmpty()) {
+				return input;
+			}
+			System.out.println("Input cannot be empty. Please try again.");
+		}
+	}
+
+	private String generateUniqueId(String name) {
+		String base = name.toLowerCase().replaceAll("[^a-z]", "");
+		if (base.isEmpty()) {
+			base = "rep";
+		}
+		base = base.length() > 8 ? base.substring(0, 8) : base;
+
+		for (int attempt = 0; attempt < 200; attempt++) {
+			int number = random.nextInt(9000) + 1000;
+			String candidate = base + number;
+			if (!idExists(candidate)) {
+				return candidate;
+			}
+		}
+
+		// Fallback incremental approach
+		int suffix = 1;
+		String candidate = base + suffix;
+		while (idExists(candidate)) {
+			suffix++;
+			candidate = base + suffix;
+		}
+		return candidate;
+	}
+
+	private boolean idExists(String candidate) {
+		return App.compRepList.stream()
+				.anyMatch(reg -> reg.getCompanyRepId().equalsIgnoreCase(candidate));
+	}
+
+	private void submitRegistration(String id, String name, String companyName, String department,
+			String position, String email) {
+		CompanyRepRegistration registration = new CompanyRepRegistration(
+				id, name, companyName, department, position, email, UserAccountStatus.PENDING);
+		App.compRepList.add(registration);
+		appendRegistrationToCsv(registration);
+	}
+
+	private void appendRegistrationToCsv(CompanyRepRegistration registration) {
+		try (FileWriter writer = new FileWriter(COMPANY_REP_CSV, true)) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(registration.getCompanyRepId()).append(",")
+			  .append(registration.getName()).append(",")
+			  .append(registration.getCompanyName()).append(",")
+			  .append(registration.getDepartment()).append(",")
+			  .append(registration.getPosition()).append(",")
+			  .append(registration.getEmail()).append(",")
+			  .append(registration.getStatus().name()).append("\n");
+			writer.append(sb.toString());
+			writer.flush();
+		} catch (IOException e) {
+			System.out.println("Failed to save registration: " + e.getMessage());
+		}
+	}
+}
