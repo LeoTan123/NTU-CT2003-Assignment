@@ -62,8 +62,15 @@ public class ViewInternshipsAction implements StaffAction {
 		App.sc.nextLine();
 	}
 
-	private String safeValue(String value) {
-		return value != null && !value.isEmpty() ? value : "N/A";
+	private String safeValue(Object value) {
+		if (value == null) {
+			return "N/A";
+		}
+		if (value instanceof String) {
+			String str = (String) value;
+			return str.isEmpty() ? "N/A" : str;
+		}
+		return value.toString();
 	}
 
 	private String valueOrNA(Enum<?> value) {
