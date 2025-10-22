@@ -117,6 +117,13 @@ public class User {
 			System.out.println("New password and old password is the same.");
 			return false;
 		}
+		System.out.println("Please confirm your new password:");
+		String confirmPassword = App.sc.nextLine();
+		if(!newPassword.equals(confirmPassword))
+		{
+			System.out.println("New password and confirmation do not match.");
+			return false;
+		}
 		this.password = newPassword;
 		System.out.println("Password has been changed.");
 		return true;
