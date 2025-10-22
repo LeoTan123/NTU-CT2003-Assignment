@@ -7,15 +7,10 @@ public class User {
 	private String name;
 	private String email;
 	private String password;
-	private Enum<UserType> userType;
+	private UserType userType;
 	private boolean loginState;
 	
 	public User() {
-		this.userID = "";
-		this.name = "";
-		this.email = "";
-		this.password = "password";
-		this.userType = UserType.NONE;
 	}
 	
 	public User(String userID, String name, String email, String password) {
@@ -24,12 +19,13 @@ public class User {
 		this.email = email;
 		this.password = password;
 		this.userType = UserType.NONE;
+		this.loginState = false;
 	}
 	
 	// Setter and getter
-	public void setUserID(String name)
+	public void setUserID(String userID)
 	{
-		this.userID = name;
+		this.userID = userID;
 	}
 	
 	public String getUserID()
@@ -62,12 +58,12 @@ public class User {
 		return this.password;
 	}
 
-	public void setUserType(Enum<UserType> userType)
+	public void setUserType(UserType userType)
 	{
 		this.userType = userType;
 	}
 	
-	public Enum<UserType> getUserType()
+	public UserType getUserType()
 	{
 		return this.userType;
 	}
@@ -83,6 +79,11 @@ public class User {
 	}
 	
 	// Behaviors
+	@Override
+	public String toString() {
+	    return userID + " " + name + " " + email + " " + userType + " " + loginState;
+	}
+	
 	public void login() {
 		if(this.loginState)
 		{

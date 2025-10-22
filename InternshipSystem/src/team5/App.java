@@ -32,6 +32,7 @@ public class App {
 		studentList.clear();
 		staffList.clear();
 		ReadFromCSV("InternshipSystem/src/sample_student_list.csv", UserType.STUDENT);
+		ReadFromCSV("InternshipSystem/src/sample_staff_list.csv", UserType.CCSTAFF);
         /*for (Student student : studentList) {
             System.out.println(student);
         }
