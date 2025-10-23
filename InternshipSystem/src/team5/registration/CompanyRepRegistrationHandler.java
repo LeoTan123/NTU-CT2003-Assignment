@@ -65,8 +65,14 @@ public class CompanyRepRegistrationHandler {
 				String choice = App.sc.nextLine();
 				switch (choice) {
 					case "1":
-						submitRegistration(generatedId, name, companyName, department, position, email);
-						System.out.println("Registration submitted. A career center staff member will review your account.");
+						boolean isSuccessful = submitRegistration(generatedId, name, companyName, department, position, email);
+						if (isSuccessful) {
+							System.out.println("Registration submitted. A career center staff member will review your account.");
+						}
+						else {
+							System.out.println(App.ERROR_MESSAGE);
+						}
+						
 						awaitingDecision = false;
 						continueRegistration = false;
 						break;
@@ -128,15 +134,21 @@ public class CompanyRepRegistrationHandler {
 				.anyMatch(reg -> reg.getCompanyRepId().equalsIgnoreCase(candidate));
 	}
 
-	private void submitRegistration(String id, String name, String companyName, String department,
+	private boolean submitRegistration(String id, String name, String companyName, String department,
 			String position, String email) {
 		CompanyRepRegistration registration = new CompanyRepRegistration(
 				id, name, companyName, department, position, email, UserAccountStatus.PENDING);
-		App.compRepList.add(registration);
-		appendRegistrationToCsv(registration);
+
+		boolean isSuccessful = appendRegistrationToCsv(registration);
+		if (isSuccessful) {
+			// only add to list after saving successfully to CSV
+			App.compRepList.add(registration);
+		}
+		
+		return isSuccessful;
 	}
 
-	private void appendRegistrationToCsv(CompanyRepRegistration registration) {
+	private boolean appendRegistrationToCsv(CompanyRepRegistration registration) {
 		try (FileWriter writer = new FileWriter(COMPANY_REP_CSV, true)) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(registration.getCompanyRepId()).append(",")
@@ -148,8 +160,10 @@ public class CompanyRepRegistrationHandler {
 			  .append(registration.getStatus().name()).append("\n");
 			writer.append(sb.toString());
 			writer.flush();
+			return true;
 		} catch (IOException e) {
-			System.out.println("Failed to save registration: " + e.getMessage());
+			System.out.println("Failed to save registration to file: " + e.getMessage());
+			return false;
 		}
 	}
 }

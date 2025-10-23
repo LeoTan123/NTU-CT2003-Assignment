@@ -32,6 +32,8 @@ public class App {
 	public static User currentUser = null;
 	public static CompanyRepRegistration currentCompanyRep = null;
 	
+	public static final String ERROR_MESSAGE = "Something went wrong. Please try again later.";
+	
 	public static void main(String[] args) {
 		System.out.println("===== Internship System =====");
 		
@@ -39,9 +41,9 @@ public class App {
 		studentList.clear();
 		staffList.clear();
 		compRepList.clear();
-		ReadFromCSV("InternshipSystem/src/sample_student_list.csv", UserType.STUDENT);
-		ReadFromCSV("InternshipSystem/src/sample_staff_list.csv", UserType.CCSTAFF);
-		ReadFromCSV("InternshipSystem/src/sample_company_representative_list.csv", UserType.COMREP);
+		ReadFromCSV("src/sample_student_list.csv", UserType.STUDENT);
+		ReadFromCSV("src/sample_staff_list.csv", UserType.CCSTAFF);
+		ReadFromCSV("src/sample_company_representative_list.csv", UserType.COMREP);
         /*for (Student student : studentList) {
             System.out.println(student);
         }
