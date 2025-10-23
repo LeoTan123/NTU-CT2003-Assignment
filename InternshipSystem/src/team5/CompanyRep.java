@@ -5,8 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Random;
-
-import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipLevel;
 import team5.enums.UserAccountStatus;
 import team5.enums.UserType;
@@ -167,14 +165,14 @@ public class CompanyRep extends User{
 			case "3":
 				internshipLevel = InternshipLevel.ADVANCED;
 		}
-		System.out.println("Please enter the internship preffered major (or Q to quit):");
-		String prefferedMajor = App.sc.nextLine();
-		if (prefferedMajor.equalsIgnoreCase("Q")) 
+		System.out.println("Please enter the internship preferred major (or Q to quit):");
+		String preferredMajor = App.sc.nextLine();
+		if (preferredMajor.equalsIgnoreCase("Q")) 
 			return null;
 		LocalDate startDate = readDate("Please enter the internship start date");
 		LocalDate endDate = readDate("Please enter the internship end date");
 		
-		Internship internship = new Internship(internshipID, title, description, internshipLevel, prefferedMajor, startDate, endDate);
+		Internship internship = new Internship(internshipID, title, description, internshipLevel, preferredMajor, startDate, endDate);
 		System.out.println("Internship opportunities created successfully. Please wait for approval.");
 		return internship;
 	}
@@ -221,7 +219,7 @@ public class CompanyRep extends User{
 	        System.out.println("1. Edit Title");
 	        System.out.println("2. Edit Description");
 	        System.out.println("3. Edit Internship Level");
-	        System.out.println("4. Edit Preffered Major");
+	        System.out.println("4. Edit Preferred Major");
 	        System.out.println("5. Edit Application Open Date");
 	        System.out.println("6. Edit Application Close Date");
 	        System.out.println("7. Back to previous menu");
@@ -268,10 +266,10 @@ public class CompanyRep extends User{
 	            	break;
 	            	
 	            case "4":
-	            	System.out.print("Enter new preffered major: ");
-	            	String newPrefferedMajor = App.sc.nextLine();
-	            	selected.setPreferredMajors(newPrefferedMajor);
-		            System.out.println("Preffered major updated successfully!");
+	            	System.out.print("Enter new preferred major: ");
+	            	String newPreferredMajor = App.sc.nextLine();
+	            	selected.setPreferredMajors(newPreferredMajor);
+		            System.out.println("Preferred major updated successfully!");
 	            	break;
 	            	
 	            case "5":
