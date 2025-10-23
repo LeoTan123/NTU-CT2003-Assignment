@@ -5,16 +5,16 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.Scanner;
-
 import team5.controllers.CareerCenterStaffController;
 import team5.controllers.CompanyRepController;
 import team5.controllers.StudentController;
 import team5.enums.UserAccountStatus;
 import team5.enums.UserType;
 import team5.registration.CompanyRepRegistrationHandler;
-import team5.CompanyRepRegistration;
 
 public class App {
 	
@@ -33,17 +33,22 @@ public class App {
 	public static CompanyRepRegistration currentCompanyRep = null;
 	
 	public static final String ERROR_MESSAGE = "Something went wrong. Please try again later.";
+	private static String envFilePathStudent;
+	private static String envFilePathStaff;
+	private static String envFilePathRep;
 	
 	public static void main(String[] args) {
+		LoadEnvironmentVariables();
+		
 		System.out.println("===== Internship System =====");
 		
 		// Read from CSV files
 		studentList.clear();
 		staffList.clear();
 		compRepList.clear();
-		ReadFromCSV("src/sample_student_list.csv", UserType.STUDENT);
-		ReadFromCSV("src/sample_staff_list.csv", UserType.CCSTAFF);
-		ReadFromCSV("src/sample_company_representative_list.csv", UserType.COMREP);
+		ReadFromCSV(envFilePathStudent, UserType.STUDENT);
+		ReadFromCSV(envFilePathStaff, UserType.CCSTAFF);
+		ReadFromCSV(envFilePathRep, UserType.COMREP);
         /*for (Student student : studentList) {
             System.out.println(student);
         }
@@ -365,5 +370,22 @@ public class App {
         catch (IOException e) {
             e.printStackTrace();
         }
+	}
+	
+	public static void LoadEnvironmentVariables() {
+		 Properties prop = new Properties();
+         try (InputStream input = App.class.getClassLoader().getResourceAsStream("application.properties")) {
+             if (input == null) {
+                 System.out.println("Unable to find src/application.properties");
+                 return;
+             }
+             prop.load(input);
+             
+             envFilePathStudent = prop.getProperty("filepath.student");
+             envFilePathStaff = prop.getProperty("filepath.staff");
+             envFilePathRep = prop.getProperty("filepath.rep");
+         } catch (IOException ex) {
+             ex.printStackTrace();
+         }
 	}
 }
