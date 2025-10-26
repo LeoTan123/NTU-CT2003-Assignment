@@ -1,13 +1,13 @@
 package team5.companyrep;
 
 import team5.App;
-import team5.CompanyRepRegistration;
+import team5.CompanyRep;
 import team5.Internship;
 
 public class ViewInternshipsAction implements CompanyRepAction {
 
 	@Override
-	public void run(CompanyRepRegistration rep) {
+	public void run(CompanyRep rep) {
 		boolean browsing = true;
 		while (browsing) {
 			System.out.println("===== Available Internship Opportunities =====");

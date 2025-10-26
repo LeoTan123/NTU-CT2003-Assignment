@@ -23,13 +23,14 @@ public class CompanyRep extends User{
 		
 	}
 	
-	public CompanyRep(String userID, String name, String email, String password, String companyName, String department, String position) {
+	public CompanyRep(String userID, String name, String email, String password, 
+			String companyName, String department, String position, UserAccountStatus status) {
 		super(userID, name, email, password);
 		super.setUserType(UserType.COMREP);
 		this.companyName = companyName;
 		this.department = department;
 		this.position = position;
-		this.accountStatus = UserAccountStatus.PENDING;
+		this.accountStatus = status;
 		this.createdInternships.clear();
 	}
 
@@ -126,7 +127,7 @@ public class CompanyRep extends User{
 			return null;
 		
 		// Use email as UserID
-		CompanyRep rep = new CompanyRep(email, name, email, "password", compName, department, position);
+		CompanyRep rep = new CompanyRep(email, name, email, "password", compName, department, position, UserAccountStatus.PENDING);
 		System.out.println("Registration successfully. Account is pending approval. Your User ID will be your email and password will be 'password'.");
 		return rep;
 	}

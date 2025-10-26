@@ -3,14 +3,12 @@ package team5.registration;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
-
 import team5.App;
-import team5.CompanyRepRegistration;
+import team5.CompanyRep;
 import team5.enums.UserAccountStatus;
 
 public class CompanyRepRegistrationHandler {
 
-	private static final String COMPANY_REP_CSV = "InternshipSystem/src/sample_company_representative_list.csv";
 	private final Random random = new Random();
 
 	public void startRegistration() {
@@ -44,16 +42,16 @@ public class CompanyRepRegistrationHandler {
 				return;
 			}
 
-			String generatedId = generateUniqueId(name);
+			//String generatedId = generateUniqueId(name);
 
 			System.out.println("===== Registration Summary =====");
-			System.out.println("Generated Representative ID: " + generatedId);
+			System.out.println("Representative ID: " + email);
 			System.out.println("Name: " + name);
 			System.out.println("Company: " + companyName);
 			System.out.println("Department: " + department);
 			System.out.println("Position: " + position);
 			System.out.println("Email: " + email);
-			System.out.println("Status: Pending Approval");
+			//System.out.println("Status: Pending Approval");
 
 			boolean awaitingDecision = true;
 			while (awaitingDecision) {
@@ -65,7 +63,7 @@ public class CompanyRepRegistrationHandler {
 				String choice = App.sc.nextLine();
 				switch (choice) {
 					case "1":
-						boolean isSuccessful = submitRegistration(generatedId, name, companyName, department, position, email);
+						boolean isSuccessful = submitRegistration(email, name, companyName, department, position, email);
 						if (isSuccessful) {
 							System.out.println("Registration submitted. A career center staff member will review your account.");
 						}
@@ -104,6 +102,7 @@ public class CompanyRepRegistrationHandler {
 		}
 	}
 
+	/*
 	private String generateUniqueId(String name) {
 		String base = name.toLowerCase().replaceAll("[^a-z]", "");
 		if (base.isEmpty()) {
@@ -127,18 +126,20 @@ public class CompanyRepRegistrationHandler {
 			candidate = base + suffix;
 		}
 		return candidate;
-	}
+	}*/
 
+	/*
 	private boolean idExists(String candidate) {
 		return App.compRepList.stream()
 				.anyMatch(reg -> reg.getCompanyRepId().equalsIgnoreCase(candidate));
-	}
+	}*/
 
 	private boolean submitRegistration(String id, String name, String companyName, String department,
 			String position, String email) {
-		CompanyRepRegistration registration = new CompanyRepRegistration(
-				id, name, companyName, department, position, email, UserAccountStatus.PENDING);
-
+		CompanyRep registration = new CompanyRep(
+				id, name, email, "password", companyName, department, position, UserAccountStatus.PENDING);
+		
+		
 		boolean isSuccessful = appendRegistrationToCsv(registration);
 		if (isSuccessful) {
 			// only add to list after saving successfully to CSV
@@ -148,16 +149,16 @@ public class CompanyRepRegistrationHandler {
 		return isSuccessful;
 	}
 
-	private boolean appendRegistrationToCsv(CompanyRepRegistration registration) {
-		try (FileWriter writer = new FileWriter(COMPANY_REP_CSV, true)) {
+	private boolean appendRegistrationToCsv(CompanyRep registration) {
+		try (FileWriter writer = new FileWriter(App.envFilePathRep, true)) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(registration.getCompanyRepId()).append(",")
+			sb.append(registration.getUserID()).append(",")
 			  .append(registration.getName()).append(",")
 			  .append(registration.getCompanyName()).append(",")
 			  .append(registration.getDepartment()).append(",")
 			  .append(registration.getPosition()).append(",")
 			  .append(registration.getEmail()).append(",")
-			  .append(registration.getStatus().name()).append("\n");
+			  .append(registration.getAccountStatus().name()).append("\n");
 			writer.append(sb.toString());
 			writer.flush();
 			return true;

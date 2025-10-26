@@ -2,7 +2,7 @@ package team5.staffactions;
 
 import team5.App;
 import team5.CareerCenterStaff;
-import team5.CompanyRepRegistration;
+import team5.CompanyRep;
 
 public class ReviewCompanyRegistrationsAction implements StaffAction {
 
@@ -13,13 +13,13 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 			System.out.println("No company representative registrations found.");
 		} else {
 			for (int i = 0; i < App.compRepList.size(); i++) {
-				CompanyRepRegistration reg = App.compRepList.get(i);
+				CompanyRep reg = App.compRepList.get(i);
 				System.out.printf("%d. Rep ID: %s | Name: %s | Company: %s | Status: %s%n",
 						i + 1,
-						reg.getCompanyRepId(),
+						reg.getUserID(),
 						reg.getName(),
 						reg.getCompanyName(),
-						reg.getStatus());
+						reg.getAccountStatus());
 			}
 		}
 		boolean awaiting = true;

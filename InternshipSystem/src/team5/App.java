@@ -25,17 +25,18 @@ public class App {
 	// Staff List
 	public static ArrayList<CareerCenterStaff> staffList = new ArrayList<>();
 	// CompanyRepresentative registrations
-	public static ArrayList<CompanyRepRegistration> compRepList = new ArrayList<>();
+	//public static ArrayList<CompanyRepRegistration> compRepList = new ArrayList<>();
+	public static ArrayList<CompanyRep> compRepList = new ArrayList<>();
 	// Internship List
 	public static ArrayList<Internship> internshipList = new ArrayList<>();
 	
 	public static User currentUser = null;
-	public static CompanyRepRegistration currentCompanyRep = null;
+	//public static CompanyRepRegistration currentCompanyRep = null;
 	
 	public static final String ERROR_MESSAGE = "Something went wrong. Please try again later.";
-	private static String envFilePathStudent;
-	private static String envFilePathStaff;
-	private static String envFilePathRep;
+	public static String envFilePathStudent;
+	public static String envFilePathStaff;
+	public static String envFilePathRep;
 	
 	public static void main(String[] args) {
 		LoadEnvironmentVariables();
@@ -88,7 +89,7 @@ public class App {
 					registrationHandler.startRegistration();
 					continue;
 				}
-				currentCompanyRep = null;
+				//currentCompanyRep = null;
 				
 				System.out.println("Please enter your user ID:");	
 				String userID = App.sc.nextLine();
@@ -121,7 +122,7 @@ public class App {
 					//System.out.println("Login Failed.");	
 					continue;
 				}
-				System.out.println("Login Successfully. Welcome " + currentUser.getName());
+				System.out.println("Login successful. Welcome " + currentUser.getName());
 				
 				// Display menu based on UserType
 				if (userType == UserType.STUDENT && currentUser instanceof Student) {
@@ -132,11 +133,11 @@ public class App {
 					CareerCenterStaffController staffController = new CareerCenterStaffController();
 					staffController.showMenu((CareerCenterStaff) currentUser);
 					currentUser = null;
-				} else if (userType == UserType.COMREP && currentCompanyRep != null) {
+				} else if (userType == UserType.COMREP && currentUser instanceof CompanyRep) {
 					CompanyRepController companyRepController = new CompanyRepController();
-					companyRepController.showMenu(currentUser, currentCompanyRep);
+					companyRepController.showMenu((CompanyRep) currentUser);
 					currentUser = null;
-					currentCompanyRep = null;
+					//currentCompanyRep = null;
 				}
 				
 				//currentUser.changePassword();
@@ -221,11 +222,11 @@ public class App {
 		}
 		else if(userType == UserType.COMREP)
 		{
-			for (CompanyRepRegistration registration : compRepList) {
-				String repId = registration.getCompanyRepId();
+			for (CompanyRep registration : compRepList) {
+				String repId = registration.getUserID();
 				if(repId.equalsIgnoreCase(userID))
 				{
-					if(registration.getStatus() != UserAccountStatus.APPROVED)
+					if(registration.getAccountStatus() != UserAccountStatus.APPROVED)
 					{
 						System.out.println("Your account is not approved yet. Please contact the career center staff.");
 						return true;
@@ -237,7 +238,7 @@ public class App {
 						currentUser = new User(userID, registration.getName(), registration.getEmail(), expectedPassword);
 						currentUser.setUserType(UserType.COMREP);
 						currentUser.login();
-						currentCompanyRep = registration;
+						//currentCompanyRep = registration;
 					}
 					else
 					{
@@ -248,7 +249,7 @@ public class App {
 	            			currentUser = new User(userID, registration.getName(), registration.getEmail(), expectedPassword);
 	            			currentUser.setUserType(UserType.COMREP);
 	            			currentUser.login();
-	            			currentCompanyRep = registration;
+	            			//currentCompanyRep = registration;
 	            		}
 	            		else
 	            		{
@@ -311,8 +312,8 @@ public class App {
                    } catch (IllegalArgumentException ex) {
                 	   status = UserAccountStatus.PENDING;
                    }
-                   
-                   CompanyRepRegistration registration = new CompanyRepRegistration(repId, name, companyName, department, position, email, status);
+                  
+                   CompanyRep registration = new CompanyRep(repId, name, email, "password", companyName, department, position, status);
                    compRepList.add(registration);
                 }
             }
@@ -387,5 +388,24 @@ public class App {
          } catch (IOException ex) {
              ex.printStackTrace();
          }
+	}
+	
+	public static void PrintSectionTitle(String title) {
+		System.out.println("=== " + title + " ===");
+	}
+	
+	public static String PromptFormInput(String label) {
+		while (true) {
+			System.out.println(label + ":");
+			String input = App.sc.nextLine().trim();
+			if ("0".equals(input)) {
+				System.out.println("Cancelled.");
+				return null;
+			}
+			if (!input.isEmpty()) {
+				return input;
+			}
+			System.out.println("Input cannot be empty. Please try again.");
+		}
 	}
 }

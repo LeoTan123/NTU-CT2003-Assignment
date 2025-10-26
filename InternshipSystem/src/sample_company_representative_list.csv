@@ -1,3 +1,5 @@
 CompanyRepID,Name,CompanyName,Department,Position,Email,Status
 noxI@nox.com,NoxTest,NoxInc,Game,Dev,noxI@nox.com,PENDING
 test@nox.com,Test,Test,Test,Test,test@nox.com,APPROVED
+hr@ncs.com.sg,NCS HR,NCS Pte Ltd,HR,Recruiter,hr@ncs.com.sg,APPROVED
+hr@accenture.com,Accenture HR,Accenture,HR,Recruiter,hr@accenture.com,PENDING

@@ -1,7 +1,7 @@
 package team5.companyrep;
 
-import team5.CompanyRepRegistration;
+import team5.CompanyRep;
 
 public interface CompanyRepAction {
-	void run(CompanyRepRegistration rep);
+	void run(CompanyRep rep);
 }

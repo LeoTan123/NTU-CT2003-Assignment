@@ -1,12 +1,12 @@
 package team5.companyrep;
 
 import team5.App;
-import team5.CompanyRepRegistration;
+import team5.CompanyRep;
 
 public class ListOwnInternshipsAction implements CompanyRepAction {
 
 	@Override
-	public void run(CompanyRepRegistration rep) {
+	public void run(CompanyRep rep) {
 		boolean awaiting = true;
 		while (awaiting) {
 			System.out.println("Enter 0 to return to the company representative menu:");
