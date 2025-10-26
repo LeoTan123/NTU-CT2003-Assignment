@@ -5,16 +5,21 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Random;
 import java.util.Scanner;
-
 import team5.controllers.CareerCenterStaffController;
 import team5.controllers.CompanyRepController;
 import team5.controllers.StudentController;
+import team5.enums.StudentMajor;
 import team5.enums.UserAccountStatus;
 import team5.enums.UserType;
 import team5.registration.CompanyRepRegistrationHandler;
-import team5.CompanyRepRegistration;
 
 public class App {
 	
@@ -24,35 +29,39 @@ public class App {
 	public static ArrayList<Student> studentList = new ArrayList<>();
 	// Staff List
 	public static ArrayList<CareerCenterStaff> staffList = new ArrayList<>();
-	// CompanyRepresentative registrations
-	public static ArrayList<CompanyRepRegistration> compRepList = new ArrayList<>();
+	// CompanyRepresentative List
+	public static ArrayList<CompanyRep> compRepList = new ArrayList<>();
 	// Internship List
 	public static ArrayList<Internship> internshipList = new ArrayList<>();
-	
+	// Current user
 	public static User currentUser = null;
-	public static CompanyRepRegistration currentCompanyRep = null;
+	
+	// System variables
+	public static final String ERROR_MESSAGE = "Something went wrong. Please try again later.";
+	public static String envFilePathStudent;
+	public static String envFilePathStaff;
+	public static String envFilePathRep;
+	public static String envFilePathInternship;
+	public static Map<StudentMajor, String> studentMajors = new HashMap<>();
 	
 	public static void main(String[] args) {
-		System.out.println("===== Internship System =====");
+		// Initialise stuff
+		LoadEnvironmentVariables();
+		InitialiseStudentMajors();
 		
 		// Read from CSV files
 		studentList.clear();
 		staffList.clear();
 		compRepList.clear();
-		ReadFromCSV("InternshipSystem/src/sample_student_list.csv", UserType.STUDENT);
-		ReadFromCSV("InternshipSystem/src/sample_staff_list.csv", UserType.CCSTAFF);
-		ReadFromCSV("InternshipSystem/src/sample_company_representative_list.csv", UserType.COMREP);
-        /*for (Student student : studentList) {
-            System.out.println(student);
-        }
-		ReadFromCSV("InternshipSystem/src/sample_staff_list.csv", UserType.CCSTAFF);
-        for (CareerCenterStaff staff : staffList) {
-            System.out.println(staff);
-        }*/
+		ReadFromCSV(envFilePathStudent, UserType.STUDENT);
+		ReadFromCSV(envFilePathStaff, UserType.CCSTAFF);
+		ReadFromCSV(envFilePathRep, UserType.COMREP);
+		
+		printSectionTitle("Welcome to Internship System");
         
         boolean exitProgram = false;
         while (!exitProgram) {
-	        System.out.println("===== Login =====");
+        	printSectionTitle("Login");
 	        try 
 	        {
 				// Choose login type
@@ -81,7 +90,7 @@ public class App {
 					registrationHandler.startRegistration();
 					continue;
 				}
-				currentCompanyRep = null;
+				//currentCompanyRep = null;
 				
 				System.out.println("Please enter your user ID:");	
 				String userID = App.sc.nextLine();
@@ -114,22 +123,22 @@ public class App {
 					//System.out.println("Login Failed.");	
 					continue;
 				}
-				System.out.println("Login Successfully. Welcome " + currentUser.getName());
+				System.out.println("Login successful. Welcome " + currentUser.getName());
 				
 				// Display menu based on UserType
 				if (userType == UserType.STUDENT && currentUser instanceof Student) {
 					StudentController studentController = new StudentController();
 					studentController.showMenu((Student) currentUser);
-					currentUser = null;
+					//currentUser = null;
 				} else if (userType == UserType.CCSTAFF && currentUser instanceof CareerCenterStaff) {
 					CareerCenterStaffController staffController = new CareerCenterStaffController();
 					staffController.showMenu((CareerCenterStaff) currentUser);
-					currentUser = null;
-				} else if (userType == UserType.COMREP && currentCompanyRep != null) {
+					//currentUser = null;
+				} else if (userType == UserType.COMREP && currentUser instanceof CompanyRep) {
 					CompanyRepController companyRepController = new CompanyRepController();
-					companyRepController.showMenu(currentUser, currentCompanyRep);
-					currentUser = null;
-					currentCompanyRep = null;
+					companyRepController.showMenu((CompanyRep) currentUser);
+					//currentUser = null;
+					//currentCompanyRep = null;
 				}
 				
 				//currentUser.changePassword();
@@ -214,11 +223,11 @@ public class App {
 		}
 		else if(userType == UserType.COMREP)
 		{
-			for (CompanyRepRegistration registration : compRepList) {
-				String repId = registration.getCompanyRepId();
+			for (CompanyRep rep : compRepList) {
+				String repId = rep.getUserID();
 				if(repId.equalsIgnoreCase(userID))
 				{
-					if(registration.getStatus() != UserAccountStatus.APPROVED)
+					if(rep.getAccountStatus() != UserAccountStatus.APPROVED)
 					{
 						System.out.println("Your account is not approved yet. Please contact the career center staff.");
 						return true;
@@ -227,10 +236,10 @@ public class App {
 					String expectedPassword = "password";
 					if(expectedPassword.equals(password))
 					{
-						currentUser = new User(userID, registration.getName(), registration.getEmail(), expectedPassword);
+						currentUser = rep;
 						currentUser.setUserType(UserType.COMREP);
 						currentUser.login();
-						currentCompanyRep = registration;
+						//currentCompanyRep = registration;
 					}
 					else
 					{
@@ -238,10 +247,8 @@ public class App {
 	            		String newPw = App.sc.nextLine();
 	            		if(expectedPassword.equals(newPw))
 	            		{
-	            			currentUser = new User(userID, registration.getName(), registration.getEmail(), expectedPassword);
-	            			currentUser.setUserType(UserType.COMREP);
+	            			currentUser = rep;
 	            			currentUser.login();
-	            			currentCompanyRep = registration;
 	            		}
 	            		else
 	            		{
@@ -304,8 +311,8 @@ public class App {
                    } catch (IllegalArgumentException ex) {
                 	   status = UserAccountStatus.PENDING;
                    }
-                   
-                   CompanyRepRegistration registration = new CompanyRepRegistration(repId, name, companyName, department, position, email, status);
+                  
+                   CompanyRep registration = new CompanyRep(repId, name, email, "password", companyName, department, position, status);
                    compRepList.add(registration);
                 }
             }
@@ -363,5 +370,82 @@ public class App {
         catch (IOException e) {
             e.printStackTrace();
         }
+	}
+	
+	public static void LoadEnvironmentVariables() {
+		 Properties prop = new Properties();
+         try (InputStream input = App.class.getClassLoader().getResourceAsStream("application.properties")) {
+             if (input == null) {
+                 System.out.println("Unable to find src/application.properties");
+                 return;
+             }
+             prop.load(input);
+             
+             envFilePathStudent = prop.getProperty("filepath.student");
+             envFilePathStaff = prop.getProperty("filepath.staff");
+             envFilePathRep = prop.getProperty("filepath.rep");
+             envFilePathInternship = prop.getProperty("filepath.internship");
+         } catch (IOException ex) {
+             ex.printStackTrace();
+         }
+	}
+	
+	public static void InitialiseStudentMajors() {
+		studentMajors.put(StudentMajor.CS, "Computer Science");
+		studentMajors.put(StudentMajor.DSAI, "Data Science & AI");
+		studentMajors.put(StudentMajor.CE, "Computer Engineering");
+		studentMajors.put(StudentMajor.IEM, "Information Engineering & Media");
+		studentMajors.put(StudentMajor.COMP, "Computing");
+        
+	}
+	
+	public static void printSectionTitle(String title) {
+		System.out.println("===== " + title + " =====");
+	}
+	
+	public static String promptFormInput(String label) {
+		while (true) {
+			System.out.println(label + ":");
+			String input = App.sc.nextLine().trim();
+			if ("0".equals(input)) {
+				System.out.println("Cancelled.");
+				return null;
+			}
+			if (!input.isEmpty()) {
+				return input;
+			}
+			System.out.println("Input cannot be empty. Please try again.");
+		}
+	}
+	
+	public static String generateUniqueId(String prefix, String[] ids) {
+		Random random = new Random();
+		
+		String base = prefix.toUpperCase().replaceAll("[^A-Z]", "");
+		if (base.isEmpty()) {
+			return null;
+		}
+
+		for (int attempt = 0; attempt < 200; attempt++) {
+			int number = random.nextInt(9000) + 1000;
+			String candidate = base + number;
+			if (!idExists(candidate, ids)) {
+				return candidate;
+			}
+		}
+
+		// Fallback incremental approach
+		int suffix = 1;
+		String candidate = base + suffix;
+		while (idExists(candidate, ids)) {
+			suffix++;
+			candidate = base + suffix;
+		}
+		return candidate;
+	}
+
+	private static boolean idExists(String candidate, String[] ids) {
+		return Arrays.stream(ids)
+				.anyMatch(id -> id.equalsIgnoreCase(candidate));
 	}
 }

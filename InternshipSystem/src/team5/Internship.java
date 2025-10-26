@@ -4,35 +4,39 @@ import java.time.LocalDate;
 
 import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipLevel;
+import team5.enums.StudentMajor;
 
 public class Internship {
-	private int internshipId;
+	private String internshipId;
 	private String title;
 	private String description;
 	private InternshipLevel internshipLevel;
-	private String preferredMajors;
+	private StudentMajor preferredMajor;
 	private LocalDate applicationOpenDate;
 	private LocalDate applicationCloseDate;
 	private InternshipApplicationStatus internshipStatus;
+	private String companyRep;
 	private int numOfSlots;
 	
 	public Internship() {
 		
 	}
 	
-	public Internship(int internshipId, String title, String description, InternshipLevel internshipLevel, String preferredMajors, LocalDate applicationOpenDate, LocalDate applicationCloseDate) {
+	public Internship(String internshipId, String title, String description, InternshipLevel internshipLevel, 
+			StudentMajor preferredMajor, LocalDate applicationOpenDate, LocalDate applicationCloseDate, String companyRep) {
 		this.internshipId = internshipId;
 		this.title = title;
 		this.description = description;
 		this.internshipLevel = internshipLevel;
-		this.preferredMajors = preferredMajors;
+		this.preferredMajor = preferredMajor;
 		this.applicationOpenDate = applicationOpenDate;
 		this.applicationCloseDate = applicationCloseDate;
 		this.internshipStatus = InternshipApplicationStatus.PENDING;
+		this.companyRep = companyRep;
 		this.numOfSlots = 10;
 	}
 
-	public int getInternshipId() {
+	public String getInternshipId() {
 		return this.internshipId;
 	}
 	
@@ -64,12 +68,12 @@ public class Internship {
 		this.internshipLevel = internshipLevel;
 	}
 
-	public String getPreferredMajors() {
-		return this.preferredMajors;
+	public String getPreferredMajor() {
+		return App.studentMajors.get(this.preferredMajor);
 	}
 	
-	public void setPreferredMajors(String preferredMajors) {
-		this.preferredMajors = preferredMajors;
+	public void setPreferredMajor(StudentMajor preferredMajor) {
+		this.preferredMajor = preferredMajor;
 	}
 
 	public LocalDate getApplicationOpenDate() {
@@ -96,6 +100,11 @@ public class Internship {
 	public void setInternshipStatus(InternshipApplicationStatus internshipStatus) {
 		this.internshipStatus = internshipStatus;
 	}
+	
+	public String getCompanyRep() {
+		return this.companyRep;
+	}
+	
 
 	public int getNumOfSlots() {
 		return this.numOfSlots;
@@ -110,7 +119,7 @@ public class Internship {
 	public String toString()
 	{
 		return this.internshipId + " " + this.title + " " + this.description + " " + this.internshipLevel 
-				+ " " + this.preferredMajors + " " + this.applicationOpenDate + " " + this.applicationCloseDate 
+				+ " " + this.preferredMajor + " " + this.applicationOpenDate + " " + this.applicationCloseDate 
 				+ " " + this.internshipStatus + " " + this.numOfSlots;
 	}
 }

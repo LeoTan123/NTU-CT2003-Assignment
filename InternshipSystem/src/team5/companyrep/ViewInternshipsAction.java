@@ -1,13 +1,13 @@
 package team5.companyrep;
 
 import team5.App;
-import team5.CompanyRepRegistration;
+import team5.CompanyRep;
 import team5.Internship;
 
 public class ViewInternshipsAction implements CompanyRepAction {
 
 	@Override
-	public void run(CompanyRepRegistration rep) {
+	public void run(CompanyRep rep) {
 		boolean browsing = true;
 		while (browsing) {
 			System.out.println("===== Available Internship Opportunities =====");
@@ -52,7 +52,7 @@ public class ViewInternshipsAction implements CompanyRepAction {
 		System.out.println("Title: " + safeValue(internship.getTitle()));
 		System.out.println("Description: " + safeValue(internship.getDescription()));
 		System.out.println("Level: " + valueOrNA(internship.getInternshipLevel()));
-		System.out.println("Preferred Majors: " + safeValue(internship.getPreferredMajors()));
+		System.out.println("Preferred Majors: " + safeValue(internship.getPreferredMajor()));
 		System.out.println("Application Open Date: " + safeValue(internship.getApplicationOpenDate()));
 		System.out.println("Application Close Date: " + safeValue(internship.getApplicationCloseDate()));
 		System.out.println("Status: " + valueOrNA(internship.getInternshipStatus()));

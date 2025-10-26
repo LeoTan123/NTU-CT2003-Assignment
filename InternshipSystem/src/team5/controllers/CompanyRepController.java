@@ -1,8 +1,7 @@
 package team5.controllers;
 
 import team5.App;
-import team5.CompanyRepRegistration;
-import team5.User;
+import team5.CompanyRep;
 import team5.companyrep.CompanyRepAction;
 import team5.companyrep.CreateInternshipAction;
 import team5.companyrep.ListOwnInternshipsAction;
@@ -20,7 +19,7 @@ public class CompanyRepController {
 		this.listOwnInternshipsAction = new ListOwnInternshipsAction();
 	}
 
-	public void showMenu(User currentUser, CompanyRepRegistration companyRep) {
+	public void showMenu(CompanyRep companyRep) {
 		boolean exit = false;
 		while (!exit) {
 			System.out.println("===== Company Representative Menu =====");
@@ -43,15 +42,15 @@ public class CompanyRepController {
 					listOwnInternshipsAction.run(companyRep);
 					break;
 				case "4":
-					boolean updated = currentUser.changePassword();
+					boolean updated = companyRep.changePassword();
 					if (updated) {
-						currentUser.logout();
+						companyRep.logout();
 						System.out.println("You have been logged out. Please log in again with your new password.");
 						exit = true;
 					}
 					break;
 				case "5":
-					currentUser.logout();
+					companyRep.logout();
 					exit = true;
 					break;
 				default:
