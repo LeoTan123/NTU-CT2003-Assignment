@@ -222,11 +222,11 @@ public class App {
 		}
 		else if(userType == UserType.COMREP)
 		{
-			for (CompanyRep registration : compRepList) {
-				String repId = registration.getUserID();
+			for (CompanyRep rep : compRepList) {
+				String repId = rep.getUserID();
 				if(repId.equalsIgnoreCase(userID))
 				{
-					if(registration.getAccountStatus() != UserAccountStatus.APPROVED)
+					if(rep.getAccountStatus() != UserAccountStatus.APPROVED)
 					{
 						System.out.println("Your account is not approved yet. Please contact the career center staff.");
 						return true;
@@ -235,7 +235,7 @@ public class App {
 					String expectedPassword = "password";
 					if(expectedPassword.equals(password))
 					{
-						currentUser = new User(userID, registration.getName(), registration.getEmail(), expectedPassword);
+						currentUser = rep;
 						currentUser.setUserType(UserType.COMREP);
 						currentUser.login();
 						//currentCompanyRep = registration;
@@ -246,10 +246,8 @@ public class App {
 	            		String newPw = App.sc.nextLine();
 	            		if(expectedPassword.equals(newPw))
 	            		{
-	            			currentUser = new User(userID, registration.getName(), registration.getEmail(), expectedPassword);
-	            			currentUser.setUserType(UserType.COMREP);
+	            			currentUser = rep;
 	            			currentUser.login();
-	            			//currentCompanyRep = registration;
 	            		}
 	            		else
 	            		{
