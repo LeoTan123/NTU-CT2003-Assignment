@@ -100,7 +100,7 @@ public class Student extends User {
 	    }
 	}
 	
-	public void applyInternship(int internshipId) {
+	public void applyInternship(String internshipId) {
 		if(appliedInternships.size() == 3){
 			System.out.println("You have applied for 3 internships. Current application is unsuccessful.");
 			return;

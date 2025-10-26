@@ -1,47 +1,117 @@
 package team5.companyrep;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+import java.util.Map.Entry;
+
 import team5.App;
 import team5.CompanyRep;
+import team5.Internship;
 import team5.enums.InternshipLevel;
+import team5.enums.StudentMajor;
+import team5.enums.UserAccountStatus;
 
 public class CreateInternshipAction implements CompanyRepAction {
+	
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    List<Entry<StudentMajor, String>> majorList = App.studentMajors.entrySet().stream().toList();
 
 	@Override
 	public void run(CompanyRep rep) {
-		boolean done = false;
-		while (!done) {
-			App.PrintSectionTitle("Create internship");
+		boolean continueCreate = true;
+		while (continueCreate) {
+			App.printSectionTitle("Create internship");
 			System.out.println("Enter the details below (press 0 at any time to cancel):");
 
-			String title = App.PromptFormInput("Title");
+			String title = App.promptFormInput("Title");
 			if (title == null) {
 				return;
 			}
 			
-			String description = App.PromptFormInput("Description");
+			String description = App.promptFormInput("Description");
 			if (description == null) {
 				return;
 			}
 			
-			
-			InternshipLevel internshipLevel = PromptInternshipLevel();
+			InternshipLevel internshipLevel = promptInternshipLevel();
 			if (internshipLevel == null) {
 				return;
 			}
 			
+			StudentMajor preferredMajor = promptPreferredMajor();
+			if (preferredMajor == null) {
+				return;
+			}
 			
-			System.out.println("Enter 0 to return to the company representative menu:");
-			String input = App.sc.nextLine();
-			if ("0".equals(input)) {
-				done = true;
-				continue;
-			} else {
-				System.out.println("Invalid selection. Please enter 0 to go back.");
+			LocalDate startDate = promptDate("Enter the internship start date:");
+			if (startDate == null) {
+				return;
+			}
+			
+			LocalDate endDate = promptDate("Enter the internship end date:");
+			if (endDate == null) {
+				return;
+			}
+			
+			App.printSectionTitle("Internship Summary");
+			System.out.println("Title: " + title);
+			System.out.println("Description: " + description);
+			System.out.println("Internship Level: " + internshipLevel);
+			System.out.println("Preferred Major: " + App.studentMajors.get(preferredMajor));
+			System.out.println("Start Date: " + startDate.format(formatter));
+			System.out.println("End Date: " + endDate.format(formatter));
+			
+			boolean awaitingDecision = true;
+			while (awaitingDecision) {
+				System.out.println("Confirm create internship?");
+				System.out.println("1. Confirm and submit");
+				System.out.println("2. Start over");
+				System.out.println("0. Cancel");
+
+				String choice = App.sc.nextLine();
+				switch (choice) {
+					case "1":
+						String[] idsArray = App.internshipList.stream().map(i -> i.getInternshipId()).toArray(String[]::new);
+						String generatedId = App.generateUniqueId("I", idsArray);
+						
+						Internship internship = new Internship(
+								generatedId, title, description, internshipLevel, 
+								preferredMajor, startDate, endDate, App.currentUser.getEmail());
+						
+						// Save to file
+						boolean isSuccessful = appendInternshipToCsv(internship, rep.getCompanyName());
+						if (isSuccessful) {
+							// only add to list after saving successfully to CSV
+							rep.addInternship(internship);
+							System.out.println("Internship opportunity created successfully. Please wait for approval.");
+						}
+						else {
+							System.out.println(App.ERROR_MESSAGE);
+						}
+						
+						awaitingDecision = false;
+						continueCreate = false;
+						break;
+					case "2":
+						awaitingDecision = false;
+						break;
+					case "0":
+						System.out.println("Cancelled.");
+						return;
+					default:
+						System.out.println("Invalid option. Please choose 1, 2, or 0.");
+				}
 			}
 		}
+		
+
 	}
 	
-	private InternshipLevel PromptInternshipLevel() {
+	private InternshipLevel promptInternshipLevel() {
 		while (true) {
 			System.out.println("Choose internship level:");
 			System.out.println("1: Basic");
@@ -49,10 +119,86 @@ public class CreateInternshipAction implements CompanyRepAction {
 			System.out.println("3: Advanced");
 			String input = App.sc.nextLine().trim();
 			switch (input) {
-				
+				case "1":
+					return InternshipLevel.BASIC;
+				case "2":
+					return InternshipLevel.INTERMEDIATE;
+				case "3":
+					return InternshipLevel.ADVANCED;
+				default:
+					continue;
 			}
-			return InternshipLevel.BASIC;
 		}
 		
+	}
+	
+	private StudentMajor promptPreferredMajor() {
+		while (true) {
+			System.out.println("Choose preferred major:");
+			
+	        for (var i = 0; i < majorList.size(); i++) {
+	        	System.out.println((i+1) + ": "  + majorList.get(i).getValue());
+	        }
+
+			String input = App.sc.nextLine().trim();
+			if ("0".equals(input)) {
+				return null;
+			}
+			
+			StudentMajor preferredMajor;
+			
+			try {
+				preferredMajor = majorList.get(Integer.parseInt(input)-1).getKey();
+			} 
+			catch (IndexOutOfBoundsException e) {
+				continue;
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				continue;
+			}
+			
+			return preferredMajor;
+		}
+	}
+	
+	private LocalDate promptDate(String prompt) {
+		while (true) {
+			System.out.println(prompt + " (format DD/MM/YYYY):");
+		    String input = App.sc.nextLine().trim();
+		    if ("0".equals(input)) {
+				return null;
+			}
+
+		    try {
+		        return LocalDate.parse(input, formatter);
+		    } catch (DateTimeParseException e) {
+		        System.out.println("Invalid date format! Please use DD/MM/YYYY.");
+		        continue;
+		    }
+		}
+	}
+
+	private boolean appendInternshipToCsv(Internship internship, String companyName) {
+		try (FileWriter writer = new FileWriter(App.envFilePathInternship, true)) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(internship.getInternshipId()).append(",")
+			  .append(internship.getTitle()).append(",")
+			  .append(internship.getDescription()).append(",")
+			  .append(internship.getInternshipLevel()).append(",")
+			  .append(internship.getPreferredMajor()).append(",")
+			  .append(internship.getApplicationOpenDate()).append(",")
+			  .append(internship.getApplicationCloseDate()).append(",")
+			  .append(internship.getInternshipStatus()).append(",")
+			  .append(companyName).append(",")
+			  .append(internship.getCompanyRep()).append(",")
+			  .append(internship.getNumOfSlots()).append("\n");
+			writer.append(sb.toString());
+			writer.flush();
+			return true;
+		} catch (IOException e) {
+			System.out.println("Failed to save to file: " + e.getMessage());
+			return false;
+		}
 	}
 }

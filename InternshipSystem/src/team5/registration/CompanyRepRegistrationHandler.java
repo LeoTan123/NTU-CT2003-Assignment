@@ -2,14 +2,12 @@ package team5.registration;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Random;
+
 import team5.App;
 import team5.CompanyRep;
 import team5.enums.UserAccountStatus;
 
 public class CompanyRepRegistrationHandler {
-
-	private final Random random = new Random();
 
 	public void startRegistration() {
 		boolean continueRegistration = true;
@@ -102,37 +100,7 @@ public class CompanyRepRegistrationHandler {
 		}
 	}
 
-	/*
-	private String generateUniqueId(String name) {
-		String base = name.toLowerCase().replaceAll("[^a-z]", "");
-		if (base.isEmpty()) {
-			base = "rep";
-		}
-		base = base.length() > 8 ? base.substring(0, 8) : base;
-
-		for (int attempt = 0; attempt < 200; attempt++) {
-			int number = random.nextInt(9000) + 1000;
-			String candidate = base + number;
-			if (!idExists(candidate)) {
-				return candidate;
-			}
-		}
-
-		// Fallback incremental approach
-		int suffix = 1;
-		String candidate = base + suffix;
-		while (idExists(candidate)) {
-			suffix++;
-			candidate = base + suffix;
-		}
-		return candidate;
-	}*/
-
-	/*
-	private boolean idExists(String candidate) {
-		return App.compRepList.stream()
-				.anyMatch(reg -> reg.getCompanyRepId().equalsIgnoreCase(candidate));
-	}*/
+	
 
 	private boolean submitRegistration(String id, String name, String companyName, String department,
 			String position, String email) {

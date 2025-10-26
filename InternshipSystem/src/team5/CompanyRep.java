@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Random;
 import team5.enums.InternshipLevel;
 import team5.enums.UserAccountStatus;
 import team5.enums.UserType;
@@ -85,10 +84,10 @@ public class CompanyRep extends User{
 		return this.numInternshipCreated;
 	}*/
 	
-	public void addInternships(Internship internship)
+	public void addInternship(Internship internship)
 	{
 		if(this.createdInternships.size() == 5) {
-			System.out.println("You have created 5 internship opportunities. Current creation will not proceed.");
+			System.out.println("You have reached the maximum of 5 internship opportunities.");
 			return;
 		}
 		this.createdInternships.add(internship);
@@ -131,7 +130,7 @@ public class CompanyRep extends User{
 		System.out.println("Registration successfully. Account is pending approval. Your User ID will be your email and password will be 'password'.");
 		return rep;
 	}
-	
+	/*
 	public Internship createInternship() {
 		System.out.println("====== Create Internship Opportunities ======");
 		
@@ -173,10 +172,11 @@ public class CompanyRep extends User{
 		LocalDate startDate = readDate("Please enter the internship start date");
 		LocalDate endDate = readDate("Please enter the internship end date");
 		
-		Internship internship = new Internship(internshipID, title, description, internshipLevel, preferredMajor, startDate, endDate);
+		Internship internship = new Internship(internshipID, title, description, internshipLevel, preferredMajor, startDate, endDate, "CompanyRep");
 		System.out.println("Internship opportunities created successfully. Please wait for approval.");
 		return internship;
 	}
+	*/
 	
 	public void editInternship() {
 		if(this.createdInternships.isEmpty()) {
@@ -192,24 +192,26 @@ public class CompanyRep extends User{
 		if (enterID.equalsIgnoreCase("Q")) 
 			return;
 		
-		int enterID_int;
+		/*
+		String enterID_string;
+		
 	    try {
-	        enterID_int = Integer.parseInt(enterID);
+	    	enterID_string = Integer.parseInt(enterID);
 	    } catch (NumberFormatException e) {
 	        System.out.println("Invalid input. Please enter a valid internship ID.");
 	        return;
-	    }
+	    }*/
 	    
 	    Internship selected = null;
 	    for (Internship internship : this.createdInternships) {
-	        if (internship.getInternshipId() == enterID_int) {
+	        if (internship.getInternshipId() == enterID) {
 	            selected = internship;
 	            break;
 	        }
 	    }
 	    
 	    if (selected == null) {
-	        System.out.println("Internship " + enterID_int + " is not found.");
+	        System.out.println("Internship " + enterID + " is not found.");
 	        return;
 	    }
 	    
@@ -267,10 +269,14 @@ public class CompanyRep extends User{
 	            	break;
 	            	
 	            case "4":
+	            	System.out.print("WIP");
+	            	/*
 	            	System.out.print("Enter new preferred major: ");
 	            	String newPreferredMajor = App.sc.nextLine();
-	            	selected.setPreferredMajors(newPreferredMajor);
+	            	
+	            	selected.setPreferredMajor(newPreferredMajor);
 		            System.out.println("Preferred major updated successfully!");
+		            */
 	            	break;
 	            	
 	            case "5":
@@ -324,25 +330,26 @@ public class CompanyRep extends User{
 		if (enterID.equalsIgnoreCase("Q")) 
 			return;
 		
+		/*
 		int enterID_int;
 	    try {
 	        enterID_int = Integer.parseInt(enterID);
 	    } catch (NumberFormatException e) {
 	        System.out.println("Invalid input. Please enter a valid internship ID.");
 	        return;
-	    }
+	    }*/
 	    
 	    boolean removed = false;
 		for (int i = 0; i < this.createdInternships.size(); i++) {
-		    if (this.createdInternships.get(i).getInternshipId() == enterID_int) {
+		    if (this.createdInternships.get(i).getInternshipId() == enterID) {
 		    	this.createdInternships.remove(i);
-		    	System.out.println("Internship " + enterID_int + " has been removed.");
+		    	System.out.println("Internship " + enterID + " has been removed.");
 		    	removed = true;
 		        break;
 		    }
 		}
 		if(!removed){
-			System.out.println("Internship " + enterID_int + " is not found.");
+			System.out.println("Internship " + enterID + " is not found.");
 		}
 	}
 	
