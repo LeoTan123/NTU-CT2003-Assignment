@@ -16,7 +16,7 @@ public class CompanyRep extends User{
 	// Can just use createdInternships.size()
 	//private int numInternshipCreated; 
 	//private Internship[] createdInternships;
-	private ArrayList<Internship> createdInternships = new ArrayList<>();
+	private ArrayList<Internship> createdInternships = new ArrayList<Internship>();
 	
 	public CompanyRep() {
 		
@@ -84,21 +84,18 @@ public class CompanyRep extends User{
 		return this.numInternshipCreated;
 	}*/
 	
-	public void addInternship(Internship internship)
+	public boolean addInternship(Internship internship)
 	{
 		if(this.createdInternships.size() == 5) {
 			System.out.println("You have reached the maximum of 5 internship opportunities.");
-			return;
+			return false;
 		}
 		this.createdInternships.add(internship);
+		return true;
 	}
 	
 	public ArrayList<Internship> getInternships()
 	{
-		if(this.createdInternships.isEmpty()) {
-			System.out.println("No internship opportunities has been created.");
-			return null;
-		}
 		return this.createdInternships;
 	}
 	

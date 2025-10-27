@@ -22,7 +22,8 @@ public class CareerCenterStaffController {
 	public void showMenu(CareerCenterStaff staff) {
 		boolean exit = false;
 		while (!exit) {
-			System.out.println("===== Career Center Staff Menu =====");
+			System.out.println();
+			App.printSectionTitle("Career Center Staff Menu");
 			System.out.println("1. Review Company Representative Registrations");
 			System.out.println("2. Review Internship Submissions");
 			System.out.println("3. View Internship Opportunities");

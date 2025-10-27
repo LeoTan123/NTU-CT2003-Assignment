@@ -61,6 +61,7 @@ public class App {
         
         boolean exitProgram = false;
         while (!exitProgram) {
+        	System.out.println();
         	printSectionTitle("Login");
 	        try 
 	        {
@@ -71,26 +72,23 @@ public class App {
 				System.out.println("3: Company Representatives");	
 				System.out.println("4: Register Company Representative");
 				System.out.println("0: Exit");
+				
 				int choice = Integer.parseInt(App.sc.nextLine()); // consume the newline
-				if(choice == 0)
-				{
-					System.out.println("EXIT");
+				if(choice == 0){
+					System.out.println("Exitting system...");
 					exitProgram = true;
 					continue;
 				}
-				if(choice < 0 || choice > 4)
-				{
-					System.out.println("Invalid user type.");	
+				if(choice < 0 || choice > 4){
+					System.out.println("Invalid user type. Please enter again.");	
 					continue;
 				}
 
-				if(choice == 4)
-				{
+				if(choice == 4){
 					CompanyRepRegistrationHandler registrationHandler = new CompanyRepRegistrationHandler();
 					registrationHandler.startRegistration();
 					continue;
 				}
-				//currentCompanyRep = null;
 				
 				System.out.println("Please enter your user ID:");	
 				String userID = App.sc.nextLine();
@@ -100,27 +98,22 @@ public class App {
 				
 				boolean foundUser = false;
 				UserType userType = UserType.NONE;
-				if(choice == 1)
-				{
+				if(choice == 1){
 					userType = UserType.STUDENT;
 				}
-				else if(choice == 2)
-				{
+				else if(choice == 2){
 					userType = UserType.CCSTAFF;
 				}
-				else 
-				{
+				else {
 					userType = UserType.COMREP;
 				}
 				foundUser = verifyUserFromList(userType, userID, password);
-				if(!foundUser)
-				{
+				if(!foundUser){
 					System.out.println("User ID not found.");	
 					continue;
 				}
-				if(currentUser == null)
-				{
-					//System.out.println("Login Failed.");	
+				// Not logged in
+				if(currentUser == null){
 					continue;
 				}
 				System.out.println("Login successful. Welcome " + currentUser.getName());
@@ -129,19 +122,13 @@ public class App {
 				if (userType == UserType.STUDENT && currentUser instanceof Student) {
 					StudentController studentController = new StudentController();
 					studentController.showMenu((Student) currentUser);
-					//currentUser = null;
 				} else if (userType == UserType.CCSTAFF && currentUser instanceof CareerCenterStaff) {
 					CareerCenterStaffController staffController = new CareerCenterStaffController();
 					staffController.showMenu((CareerCenterStaff) currentUser);
-					//currentUser = null;
 				} else if (userType == UserType.COMREP && currentUser instanceof CompanyRep) {
 					CompanyRepController companyRepController = new CompanyRepController();
 					companyRepController.showMenu((CompanyRep) currentUser);
-					//currentUser = null;
-					//currentCompanyRep = null;
 				}
-				
-				//currentUser.changePassword();
 	        } 
 	        catch (NumberFormatException e) {
 	            System.out.println("Invalid input! Please enter a number for user type.");
@@ -151,9 +138,6 @@ public class App {
 	            e.printStackTrace();
 	        }
         }
-        
-        //WriteToCSV("InternshipSystem/src/sample_student_list.csv", UserType.STUDENT);
-        //WriteToCSV("InternshipSystem/src/sample_staff_list.csv", UserType.CCSTAFF);
 	}
 	
 	// Helper
@@ -229,11 +213,11 @@ public class App {
 				{
 					if(rep.getAccountStatus() != UserAccountStatus.APPROVED)
 					{
-						System.out.println("Your account is not approved yet. Please contact the career center staff.");
+						System.out.println("Your account is not approved yet. Please contact the career center staff for approval.");
 						return true;
 					}
-					
-					String expectedPassword = "password";
+					String expectedPassword = rep.getPassword();
+					//String expectedPassword = "password";
 					if(expectedPassword.equals(password))
 					{
 						currentUser = rep;
@@ -343,8 +327,6 @@ public class App {
                 	String email = student.getEmail();
                 	writer.append(userID + "," + name + "," + major + "," + year + "," + email + "\n");
                 }
-                // Testing
-                //writer.append("U2310006F,Pang Wei Jie,Computing,1,pang0270@e.ntu.edu.sg\n");
         	}
         	else if(userType == UserType.CCSTAFF)
         	{
@@ -358,8 +340,6 @@ public class App {
                 	String email = staff.getEmail();
                 	writer.append(userID + "," + name + "," + role + "," + department + "," + email + "\n");
                 }
-                // Testing
-                //writer.append("chan004,Mr. Chan Fa Long,Career Center Staff,CCDS,chan004@ntu.edu.sg\n");
         	}
             writer.flush();
             System.out.println("CSV file written successfully!");
@@ -445,7 +425,6 @@ public class App {
 	}
 
 	private static boolean idExists(String candidate, String[] ids) {
-		return Arrays.stream(ids)
-				.anyMatch(id -> id.equalsIgnoreCase(candidate));
+		return Arrays.stream(ids).anyMatch(id -> id.equalsIgnoreCase(candidate));
 	}
 }

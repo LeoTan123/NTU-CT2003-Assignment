@@ -103,8 +103,12 @@ public class User {
 	}
 	
 	public boolean changePassword() {
-		System.out.println("Please enter your old password:");
+		System.out.println("Please enter your old password (or 0 to exit):");
 		String oldPassword = App.sc.nextLine();
+		if(oldPassword.equals("0"))
+		{
+			return false;
+		}
 		if(!oldPassword.equals(this.password))
 		{
 			System.out.println("Old password does not match.");

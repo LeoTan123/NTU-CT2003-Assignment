@@ -14,11 +14,21 @@ public class CheckApplicationStatusAction implements StudentAction {
         List<InternshipApplication> applications = student.getInternshipApplications();
         boolean reviewing = true;
         while (reviewing) {
-            System.out.println("===== Internship Applications =====");
+        	App.printSectionTitle("Internship Applications");
             if (applications.isEmpty()) {
-                System.out.println("No applications found.");
-            } else {
+                System.out.println("No internship applications found.");
+                return;
+            } 
+            else {
                 // Display application with status
+            	System.out.println("Internship applications details:");
+            	for(InternshipApplication app: applications)
+            	{
+            		System.out.println("Internship Application ID: " + app.getApplicationId());
+            		System.out.println("Internship Info: " + app.getInternshipInfo());
+            		System.out.println("Internship Applied Date: " + app.getAppliedDate());
+            		System.out.println("Internship Status: " + app.getStatus());
+            	}
             }
             System.out.println("Enter application number to view details (or 0 to return):");
 

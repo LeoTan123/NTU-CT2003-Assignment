@@ -10,10 +10,12 @@ public class ViewInternshipsAction implements StaffAction {
 	public void run(CareerCenterStaff staff) {
 		boolean browsing = true;
 		while (browsing) {
-			System.out.println("===== All Internship Opportunities =====");
+			App.printSectionTitle("All Internship Details");
 			if (App.internshipList.isEmpty()) {
 				System.out.println("No internships available at the moment.");
-			} else {
+				return;
+			} 
+			else {
 				for (int i = 0; i < App.internshipList.size(); i++) {
 					Internship internship = App.internshipList.get(i);
 					System.out.printf("%d. Internship ID: %d | Title: %s | Level: %s | Status: %s%n",
@@ -48,7 +50,7 @@ public class ViewInternshipsAction implements StaffAction {
 	}
 
 	private void displayInternshipDetails(Internship internship) {
-		System.out.println("===== Internship Details =====");
+		App.printSectionTitle("Internship Details");
 		System.out.println("Internship ID: " + internship.getInternshipId());
 		System.out.println("Title: " + safeValue(internship.getTitle()));
 		System.out.println("Description: " + safeValue(internship.getDescription()));

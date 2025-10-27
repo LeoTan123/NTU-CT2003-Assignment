@@ -12,7 +12,7 @@ public class CompanyRepRegistrationHandler {
 	public void startRegistration() {
 		boolean continueRegistration = true;
 		while (continueRegistration) {
-			System.out.println("===== Company Representative Registration =====");
+			App.printSectionTitle("Company Representative Registration");
 			System.out.println("Enter the details below (press 0 at any time to cancel):");
 
 			String name = promptInput("Full Name");
@@ -42,7 +42,7 @@ public class CompanyRepRegistrationHandler {
 
 			//String generatedId = generateUniqueId(name);
 
-			System.out.println("===== Registration Summary =====");
+			App.printSectionTitle("Registration Summary");
 			System.out.println("Representative ID: " + email);
 			System.out.println("Name: " + name);
 			System.out.println("Company: " + companyName);
@@ -100,20 +100,17 @@ public class CompanyRepRegistrationHandler {
 		}
 	}
 
-	
-
 	private boolean submitRegistration(String id, String name, String companyName, String department,
-			String position, String email) {
-		CompanyRep registration = new CompanyRep(
-				id, name, email, "password", companyName, department, position, UserAccountStatus.PENDING);
-		
+			String position, String email) 
+	{
+		CompanyRep registration = new CompanyRep(id, name, email, "password", companyName, 
+				department, position, UserAccountStatus.PENDING);
 		
 		boolean isSuccessful = appendRegistrationToCsv(registration);
 		if (isSuccessful) {
 			// only add to list after saving successfully to CSV
 			App.compRepList.add(registration);
 		}
-		
 		return isSuccessful;
 	}
 

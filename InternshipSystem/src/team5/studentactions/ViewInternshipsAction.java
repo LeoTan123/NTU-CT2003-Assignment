@@ -3,6 +3,7 @@ package team5.studentactions;
 import team5.App;
 import team5.Internship;
 import team5.Student;
+import team5.enums.InternshipApplicationStatus;
 
 public class ViewInternshipsAction implements StudentAction {
 
@@ -10,19 +11,30 @@ public class ViewInternshipsAction implements StudentAction {
 	public void run(Student student) {
 		boolean browsing = true;
 		while (browsing) {
-			System.out.println("===== Internship Opportunities =====");
+			App.printSectionTitle("Internship Opportunities");
 			if (App.internshipList.isEmpty()) {
 				System.out.println("No internships available at the moment.");
-			} else {
+				return;
+			} 
+			else {
+				boolean hasInternship = false;
 				for (int i = 0; i < App.internshipList.size(); i++) {
 					Internship internship = App.internshipList.get(i);
-					System.out.printf("%d. Internship ID: %d | Title: %s | Level: %s | Status: %s%n",
+					if(internship.getInternshipStatus() == InternshipApplicationStatus.PENDING)
+						continue;
+					
+					hasInternship = true;
+					System.out.printf("%d. Internship ID: %s | Title: %s | Level: %s | Status: %s%n",
 							i + 1,
 							internship.getInternshipId(),
 							safeValue(internship.getTitle()),
 							valueOrNA(internship.getInternshipLevel()),
 							valueOrNA(internship.getInternshipStatus()));
 				}
+				if (!hasInternship) {
+					System.out.println("No internships available at the moment.");
+					return;
+			    }
 			}
 
 			System.out.println("Enter internship number to view details (or 0 to return):");
@@ -48,7 +60,7 @@ public class ViewInternshipsAction implements StudentAction {
 	}
 
 	private void displayInternshipDetails(Internship internship) {
-		System.out.println("===== Internship Details =====");
+		App.printSectionTitle("Internship Details");		
 		System.out.println("Internship ID: " + internship.getInternshipId());
 		System.out.println("Title: " + safeValue(internship.getTitle()));
 		System.out.println("Description: " + safeValue(internship.getDescription()));

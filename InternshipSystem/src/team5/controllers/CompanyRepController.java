@@ -22,7 +22,8 @@ public class CompanyRepController {
 	public void showMenu(CompanyRep companyRep) {
 		boolean exit = false;
 		while (!exit) {
-			System.out.println("===== Company Representative Menu =====");
+			System.out.println();
+			App.printSectionTitle("Company Representative Menu");
 			System.out.println("1. View Internship Opportunities");
 			System.out.println("2. Create Internship");
 			System.out.println("3. Display My Created Internships");

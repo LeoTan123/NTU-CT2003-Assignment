@@ -8,19 +8,23 @@ public class ReviewInternshipSubmissionsAction implements StaffAction {
 
 	@Override
 	public void run(CareerCenterStaff staff) {
-		System.out.println("===== Pending Internship Submissions =====");
+		App.printSectionTitle("Pending Internship Submissions");
 		if (App.internshipList.isEmpty()) {
 			System.out.println("No internship submissions found.");
-		} else {
+			return;
+		} 
+		else {
 			for (int i = 0; i < App.internshipList.size(); i++) {
 				Internship internship = App.internshipList.get(i);
-				System.out.printf("%d. Internship ID: %d | Title: %s | Level: %s | Status: %s%n",
+				System.out.printf("%d. Internship ID: %s | Title: %s | Level: %s | Status: %s%n",
 						i + 1,
 						internship.getInternshipId(),
 						safeValue(internship.getTitle()),
 						valueOrNA(internship.getInternshipLevel()),
 						valueOrNA(internship.getInternshipStatus()));
 			}
+			// Handle accept or reject
+			
 		}
 		System.out.println("Press Enter to return to the staff menu.");
 		App.sc.nextLine();

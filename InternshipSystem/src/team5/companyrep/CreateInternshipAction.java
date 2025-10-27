@@ -86,7 +86,16 @@ public class CreateInternshipAction implements CompanyRepAction {
 						boolean isSuccessful = appendInternshipToCsv(internship, rep.getCompanyName());
 						if (isSuccessful) {
 							// only add to list after saving successfully to CSV
-							rep.addInternship(internship);
+							boolean isSuccess = rep.addInternship(internship);
+							// If full do not add again
+							if(!isSuccess)
+							{
+								awaitingDecision = false;
+								continueCreate = false;
+								break;
+							}
+							// Add to internship list for staff to review
+							App.internshipList.add(internship);
 							System.out.println("Internship opportunity created successfully. Please wait for approval.");
 						}
 						else {

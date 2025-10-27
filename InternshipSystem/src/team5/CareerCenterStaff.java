@@ -50,6 +50,4 @@ public class CareerCenterStaff extends User {
 	public Internship[] viewPendingApprovalInternships() {
 		return new Internship[0];
 	}
-	
-	
 }
