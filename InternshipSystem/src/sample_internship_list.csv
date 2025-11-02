@@ -1,9 +1,10 @@
 InternshipID,Title,Description,Level,PreferredMajor,OpenDate,CloseDate,Status,CompanyName,CompanyRep,Slots
-I1001,Software Engineering Intern,Work with the product engineering squad on feature delivery,Basic,Computer Science,2025-10-01,2025-11-15,Approved,TechNova Labs,alice@technova.com,5
-I1002,Embedded Systems Trainee,Assist with firmware validation for IoT devices,Intermediate,Electrical Engineering,2025-09-15,2025-10-31,Pending,SmartEdge Solutions,bob@smartedge.com,3
-I1003,Data Analytics Associate,Build dashboards and run exploratory analysis for marketing,Advanced,Data Science,2025-08-20,2025-09-30,Approved,Insight Dynamics,carol@insightdynamics.com,4
-I5816,internship,internship,BASIC,Data Science & AI,2025-10-27,2025-10-31,PENDING,Test,test@nox.com,10
-I6661,1,1,BASIC,Data Science & AI,2025-10-27,2025-12-31,PENDING,Test,test@nox.com,10
-I5150,1,1,BASIC,Data Science & AI,2025-10-27,2025-12-31,PENDING,Test,test@nox.com,10
-I9606,1,1,BASIC,Data Science & AI,2025-10-27,2025-12-31,PENDING,Test,test@nox.com,10
-I6842,1,1,BASIC,Data Science & AI,2025-10-27,2025-12-31,PENDING,Test,test@nox.com,10
+I1001,Software Engineering Intern,Work with the product engineering squad on feature delivery,Basic,Computer Science,01 10 2025,15 11 2025,APPROVED,TechNova Labs,alice@technova.com,5
+I1002,Embedded Systems Trainee,Assist with firmware validation for IoT devices,Intermediate,Computer Engineering,15 9 2025,31 10 2025,Pending,SmartEdge Solutions,bob@smartedge.com,3
+I1003,Data Analytics Associate,Build dashboards and run exploratory analysis for marketing,Advanced,Data Science & AI,20 8 2025,30 9 2025,APPROVED,Insight Dynamics,carol@insightdynamics.com,4
+I5816,internship,internship,BASIC,Data Science & AI,27 10 2025,31 10 2025,PENDING,Test,test@nox.com,10
+I6661,1,1,BASIC,Data Science & AI,27 10 2025,31 12 2025,PENDING,Test,test@nox.com,10
+I5150,1,1,BASIC,Data Science & AI,27 10 2025,31 12 2025,PENDING,Test,test@nox.com,10
+I9606,1,1,BASIC,Data Science & AI,27 10 2025,31 12 2025,PENDING,Test,test@nox.com,10
+I6842,1,1,BASIC,Data Science & AI,27 10 2025,31 12 2025,PENDING,Test,test@nox.com,10
+I6870,1,1,BASIC,Computer Engineering,01 11 2025,31 12 2025,PENDING,Test,test@nox.com,10

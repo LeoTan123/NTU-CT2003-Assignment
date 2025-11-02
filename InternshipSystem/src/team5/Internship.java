@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipLevel;
+import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
 
 public class Internship {
@@ -14,16 +15,14 @@ public class Internship {
 	private StudentMajor preferredMajor;
 	private LocalDate applicationOpenDate;
 	private LocalDate applicationCloseDate;
-	private InternshipApplicationStatus internshipStatus;
+	private InternshipStatus internshipStatus;
 	private String companyRep;
 	private int numOfSlots;
 	
-	public Internship() {
-		
-	}
-	
 	public Internship(String internshipId, String title, String description, InternshipLevel internshipLevel, 
-			StudentMajor preferredMajor, LocalDate applicationOpenDate, LocalDate applicationCloseDate, String companyRep) {
+			StudentMajor preferredMajor, LocalDate applicationOpenDate, LocalDate applicationCloseDate, InternshipStatus status,
+			String companyRep, int numOfSlots) {
+		
 		this.internshipId = internshipId;
 		this.title = title;
 		this.description = description;
@@ -31,19 +30,15 @@ public class Internship {
 		this.preferredMajor = preferredMajor;
 		this.applicationOpenDate = applicationOpenDate;
 		this.applicationCloseDate = applicationCloseDate;
-		this.internshipStatus = InternshipApplicationStatus.PENDING;
+		this.internshipStatus = status;
 		this.companyRep = companyRep;
-		this.numOfSlots = 10;
+		this.numOfSlots = numOfSlots;
 	}
 
 	public String getInternshipId() {
 		return this.internshipId;
 	}
 	
-	/*public void setInternshipId(int internshipId) {
-		this.internshipId = internshipId;
-	}*/
-
 	public String getTitle() {
 		return this.title;
 	}
@@ -68,8 +63,8 @@ public class Internship {
 		this.internshipLevel = internshipLevel;
 	}
 
-	public String getPreferredMajor() {
-		return App.studentMajors.get(this.preferredMajor);
+	public StudentMajor getPreferredMajor() {
+		return this.preferredMajor;
 	}
 	
 	public void setPreferredMajor(StudentMajor preferredMajor) {
@@ -92,24 +87,21 @@ public class Internship {
 		this.applicationCloseDate = applicationCloseDate;
 	}
 
-	public InternshipApplicationStatus getInternshipStatus() {
+	public InternshipStatus getInternshipStatus() {
 		return this.internshipStatus;
 	}
-	
 
-	public void setInternshipStatus(InternshipApplicationStatus internshipStatus) {
+	public void setInternshipStatus(InternshipStatus internshipStatus) {
 		this.internshipStatus = internshipStatus;
 	}
 	
 	public String getCompanyRep() {
 		return this.companyRep;
 	}
-	
 
 	public int getNumOfSlots() {
 		return this.numOfSlots;
 	}
-	
 
 	public void setNumOfSlots(int numOfSlots) {
 		this.numOfSlots = numOfSlots;

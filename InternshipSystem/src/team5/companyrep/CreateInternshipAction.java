@@ -12,14 +12,15 @@ import team5.App;
 import team5.CompanyRep;
 import team5.Internship;
 import team5.enums.InternshipLevel;
+import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
-import team5.enums.UserAccountStatus;
 
 public class CreateInternshipAction implements CompanyRepAction {
 	
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     List<Entry<StudentMajor, String>> majorList = App.studentMajors.entrySet().stream().toList();
 
+    public static final int MAX_SLOTS_NUM = 10;
 	@Override
 	public void run(CompanyRep rep) {
 		boolean continueCreate = true;
@@ -78,9 +79,9 @@ public class CreateInternshipAction implements CompanyRepAction {
 						String[] idsArray = App.internshipList.stream().map(i -> i.getInternshipId()).toArray(String[]::new);
 						String generatedId = App.generateUniqueId("I", idsArray);
 						
-						Internship internship = new Internship(
-								generatedId, title, description, internshipLevel, 
-								preferredMajor, startDate, endDate, App.currentUser.getEmail());
+						Internship internship = new Internship(generatedId, title, description, internshipLevel, 
+								preferredMajor, startDate, endDate, 
+								InternshipStatus.PENDING, App.currentUser.getEmail(), MAX_SLOTS_NUM);
 						
 						// Save to file
 						boolean isSuccessful = appendInternshipToCsv(internship, rep.getCompanyName());

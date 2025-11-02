@@ -19,4 +19,14 @@ public enum StudentMajor {
     // Usage:
     // System.out.println(major);               // CS
     // System.out.println(major.getFullName()); // Computer Science
+    
+    public static StudentMajor fromFullName(String fullName) {
+        for (StudentMajor major : StudentMajor.values()) {
+            if (major.getFullName().equalsIgnoreCase(fullName.trim())) {
+                return major;
+            }
+        }
+        System.out.println("Warning: Unknown major '" + fullName + "', defaulting to COMP");
+        return StudentMajor.COMP;
+    }
 }
