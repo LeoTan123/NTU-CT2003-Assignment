@@ -13,9 +13,6 @@ public class CompanyRep extends User{
 	private String department;
 	private String position;
 	private UserAccountStatus accountStatus;
-	// Can just use createdInternships.size()
-	//private int numInternshipCreated; 
-	//private Internship[] createdInternships;
 	private ArrayList<Internship> createdInternships = new ArrayList<Internship>();
 	
 	public CompanyRep() {
@@ -23,14 +20,14 @@ public class CompanyRep extends User{
 	}
 	
 	public CompanyRep(String userID, String name, String email, String password, 
-			String companyName, String department, String position, UserAccountStatus status) {
+			String companyName, String department, String position, UserAccountStatus status, ArrayList<Internship> createdInternships) {
 		super(userID, name, email, password);
 		super.setUserType(UserType.COMREP);
 		this.companyName = companyName;
 		this.department = department;
 		this.position = position;
 		this.accountStatus = status;
-		this.createdInternships.clear();
+		this.createdInternships = createdInternships;
 	}
 
 	// Setter and getter
@@ -98,82 +95,6 @@ public class CompanyRep extends User{
 	{
 		return this.createdInternships;
 	}
-	
-	public CompanyRep registerAccount() {
-		System.out.println("====== Register Account ======");
-		System.out.println("Please enter your company name (or Q to quit):");
-		String compName = App.sc.nextLine();
-		if (compName.equalsIgnoreCase("Q")) 
-			return null;
-		System.out.println("Please enter your name (or Q to quit):");
-		String name = App.sc.nextLine();
-		if (name.equalsIgnoreCase("Q")) 
-			return null;
-		System.out.println("Please enter your department (or Q to quit):");
-		String department = App.sc.nextLine();
-		if (department.equalsIgnoreCase("Q")) 
-			return null;
-		System.out.println("Please enter your position (or Q to quit):");
-		String position = App.sc.nextLine();
-		if (position.equalsIgnoreCase("Q")) 
-			return null;
-		System.out.println("Please enter your email (or Q to quit):");
-		String email = App.sc.nextLine();
-		if (email.equalsIgnoreCase("Q")) 
-			return null;
-		
-		// Use email as UserID
-		CompanyRep rep = new CompanyRep(email, name, email, "password", compName, department, position, UserAccountStatus.PENDING);
-		System.out.println("Registration successfully. Account is pending approval. Your User ID will be your email and password will be 'password'.");
-		return rep;
-	}
-	/*
-	public Internship createInternship() {
-		System.out.println("====== Create Internship Opportunities ======");
-		
-		// 5 digit random InternshipID 
-		int internshipID = 10000 + new Random().nextInt(90000);
-		System.out.println("Please enter the internship title (or Q to quit):");
-		String title = App.sc.nextLine();
-		if (title.equalsIgnoreCase("Q")) 
-			return null;
-		System.out.println("Please enter the internship description (or Q to quit):");
-		String description = App.sc.nextLine();
-		if (description.equalsIgnoreCase("Q")) 
-			return null;
-		System.out.println("Please choose the internship level (or Q to quit):");
-		System.out.println("1: Basic");
-		System.out.println("2: Intermediate");
-		System.out.println("3: Advanced");
-		String level = App.sc.nextLine();
-		if (level.equalsIgnoreCase("Q")) 
-			return null;
-		// If not equal to this 3 levels, return null
-		if(!level.equals("1") && !level.equals("2") && !level.equals("3")) {
-			System.out.println("Invalid input of level.");
-			return null;
-		}
-		InternshipLevel internshipLevel = InternshipLevel.NONE;
-		switch(level) {
-			case "1":
-				internshipLevel = InternshipLevel.BASIC;
-			case "2":
-				internshipLevel = InternshipLevel.INTERMEDIATE;
-			case "3":
-				internshipLevel = InternshipLevel.ADVANCED;
-		}
-		System.out.println("Please enter the internship preferred major (or Q to quit):");
-		String preferredMajor = App.sc.nextLine();
-		if (preferredMajor.equalsIgnoreCase("Q")) 
-			return null;
-		LocalDate startDate = readDate("Please enter the internship start date");
-		LocalDate endDate = readDate("Please enter the internship end date");
-		
-		Internship internship = new Internship(internshipID, title, description, internshipLevel, preferredMajor, startDate, endDate, "CompanyRep");
-		System.out.println("Internship opportunities created successfully. Please wait for approval.");
-		return internship;
-	}
-	*/
 	
 	public void editInternship() {
 		if(this.createdInternships.isEmpty()) {
