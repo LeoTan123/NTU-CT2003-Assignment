@@ -83,12 +83,20 @@ public class CompanyRep extends User{
 	
 	public boolean addInternship(Internship internship)
 	{
-		if(this.createdInternships.size() == 5) {
-			System.out.println("You have reached the maximum of 5 internship opportunities.");
+		boolean maximumReached = this.isMaxInternshipReached();
+		if (maximumReached) {
 			return false;
 		}
+		
 		this.createdInternships.add(internship);
 		return true;
+	}
+	
+	public boolean isMaxInternshipReached() {
+		if(this.createdInternships.size() == 5) {
+			return true;
+		}
+		return false;
 	}
 	
 	public ArrayList<Internship> getInternships()

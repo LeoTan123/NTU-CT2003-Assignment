@@ -49,12 +49,12 @@ public class App {
 	public static String envFilePathStaff;
 	public static String envFilePathRep;
 	public static String envFilePathInternship;
-	public static Map<StudentMajor, String> studentMajors = new HashMap<>();
+	public static DateTimeFormatter DATE_DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    public static DateTimeFormatter DATE_DB_FORMATTER = DateTimeFormatter.ofPattern("dd MM yyyy");
 	
 	public static void main(String[] args) {
 		// Initialise stuff
 		LoadEnvironmentVariables();
-		InitialiseStudentMajors();
 		
 		// Read from CSV files
 		studentList.clear();
@@ -430,15 +430,6 @@ public class App {
          } catch (IOException ex) {
              ex.printStackTrace();
          }
-	}
-	
-	public static void InitialiseStudentMajors() {
-		studentMajors.put(StudentMajor.CS, "Computer Science");
-		studentMajors.put(StudentMajor.DSAI, "Data Science & AI");
-		studentMajors.put(StudentMajor.CE, "Computer Engineering");
-		studentMajors.put(StudentMajor.IEM, "Information Engineering & Media");
-		studentMajors.put(StudentMajor.COMP, "Computing");
-        
 	}
 	
 	public static void printSectionTitle(String title) {
