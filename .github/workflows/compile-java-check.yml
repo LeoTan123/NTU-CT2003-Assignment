@@ -2,7 +2,7 @@ name: Compile Java Project (Eclipse - Java 17)
 
 on:
   push:
-    branches: [ main ]
+    branches: ["**"]   # Run on all branches
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -21,11 +21,18 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Compile Java sources
+      - name: Compile all Java sources recursively
         run: |
           mkdir -p bin
-          echo "🔧 Compiling Java sources from InternshipSystem/src..."
-          if ! javac -d bin $(find InternshipSystem/src -name "*.java"); then
+          echo "🔧 Compiling all Java sources under InternshipSystem/src..."
+          # Find all .java files recursively
+          JAVA_FILES=$(find InternshipSystem/src -name "*.java")
+          if [ -z "$JAVA_FILES" ]; then
+            echo "❌ No Java files found in InternshipSystem/src!"
+            exit 1
+          fi
+          # Compile to bin/
+          if ! javac -d bin $JAVA_FILES; then
             echo "❌ Compilation failed! Check for syntax errors or missing imports."
             exit 1
           fi
