@@ -2,9 +2,11 @@ package team5.registration;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import team5.App;
 import team5.CompanyRep;
+import team5.Internship;
 import team5.enums.UserAccountStatus;
 
 public class CompanyRepRegistrationHandler {
@@ -123,8 +125,9 @@ public class CompanyRepRegistrationHandler {
 	private boolean submitRegistration(String id, String name, String companyName, String department,
 			String position, String email) 
 	{
+		ArrayList<Internship> createdInternships = new ArrayList<Internship>();
 		CompanyRep registration = new CompanyRep(id, name, email, "password", companyName, 
-				department, position, UserAccountStatus.PENDING);
+				department, position, UserAccountStatus.PENDING, createdInternships);
 		
 		boolean isSuccessful = appendRegistrationToCsv(registration);
 		if (isSuccessful) {

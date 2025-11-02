@@ -3,10 +3,7 @@ package team5.companyrep;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.Map.Entry;
 
 import team5.App;
 import team5.CompanyRep;
@@ -17,12 +14,16 @@ import team5.enums.StudentMajor;
 
 public class CreateInternshipAction implements CompanyRepAction {
 	
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    List<Entry<StudentMajor, String>> majorList = App.studentMajors.entrySet().stream().toList();
-
+    private static final String MAXIMUM_MESSAGE = "You can create maximum of 5 internship opportunities.";
     public static final int MAX_SLOTS_NUM = 10;
+    
 	@Override
 	public void run(CompanyRep rep) {
+		if (rep.isMaxInternshipReached()) {
+			System.out.println(MAXIMUM_MESSAGE);
+			return;
+		}
+		
 		boolean continueCreate = true;
 		while (continueCreate) {
 			App.printSectionTitle("Create internship");
@@ -62,9 +63,9 @@ public class CreateInternshipAction implements CompanyRepAction {
 			System.out.println("Title: " + title);
 			System.out.println("Description: " + description);
 			System.out.println("Internship Level: " + internshipLevel);
-			System.out.println("Preferred Major: " + App.studentMajors.get(preferredMajor));
-			System.out.println("Start Date: " + startDate.format(formatter));
-			System.out.println("End Date: " + endDate.format(formatter));
+			System.out.println("Preferred Major: " + preferredMajor.getFullName());
+			System.out.println("Start Date: " + startDate.format(App.DATE_DISPLAY_FORMATTER));
+			System.out.println("End Date: " + endDate.format(App.DATE_DISPLAY_FORMATTER));
 			
 			boolean awaitingDecision = true;
 			while (awaitingDecision) {
@@ -91,6 +92,7 @@ public class CreateInternshipAction implements CompanyRepAction {
 							// If full do not add again
 							if(!isSuccess)
 							{
+								System.out.println(MAXIMUM_MESSAGE);
 								awaitingDecision = false;
 								continueCreate = false;
 								break;
@@ -143,11 +145,12 @@ public class CreateInternshipAction implements CompanyRepAction {
 	}
 	
 	private StudentMajor promptPreferredMajor() {
+		StudentMajor[] majorList = StudentMajor.values();
 		while (true) {
 			System.out.println("Choose preferred major:");
 			
-	        for (int i = 0; i < majorList.size(); i++) {
-	        	System.out.println((i+1) + ": "  + majorList.get(i).getValue());
+	        for (int i = 0; i < majorList.length; i++) {
+	        	System.out.println((i+1) + ": "  + majorList[i].getFullName());
 	        }
 
 			String input = App.sc.nextLine().trim();
@@ -158,7 +161,7 @@ public class CreateInternshipAction implements CompanyRepAction {
 			StudentMajor preferredMajor;
 			
 			try {
-				preferredMajor = majorList.get(Integer.parseInt(input)-1).getKey();
+				preferredMajor = majorList[Integer.parseInt(input)-1];
 			} 
 			catch (IndexOutOfBoundsException e) {
 				continue;
@@ -181,7 +184,7 @@ public class CreateInternshipAction implements CompanyRepAction {
 			}
 
 		    try {
-		        return LocalDate.parse(input, formatter);
+		        return LocalDate.parse(input, App.DATE_DISPLAY_FORMATTER);
 		    } catch (DateTimeParseException e) {
 		        System.out.println("Invalid date format! Please use DD/MM/YYYY.");
 		        continue;
@@ -196,9 +199,9 @@ public class CreateInternshipAction implements CompanyRepAction {
 			  .append(internship.getTitle()).append(",")
 			  .append(internship.getDescription()).append(",")
 			  .append(internship.getInternshipLevel()).append(",")
-			  .append(internship.getPreferredMajor()).append(",")
-			  .append(internship.getApplicationOpenDate()).append(",")
-			  .append(internship.getApplicationCloseDate()).append(",")
+			  .append(internship.getPreferredMajor().getFullName()).append(",")
+			  .append(internship.getApplicationOpenDate().format(App.DATE_DB_FORMATTER)).append(",")
+			  .append(internship.getApplicationCloseDate().format(App.DATE_DB_FORMATTER)).append(",")
 			  .append(internship.getInternshipStatus()).append(",")
 			  .append(companyName).append(",")
 			  .append(internship.getCompanyRep()).append(",")

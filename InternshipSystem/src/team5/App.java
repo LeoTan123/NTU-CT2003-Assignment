@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+
 import team5.controllers.CareerCenterStaffController;
 import team5.controllers.CompanyRepController;
 import team5.controllers.StudentController;
@@ -47,12 +49,12 @@ public class App {
 	public static String envFilePathStaff;
 	public static String envFilePathRep;
 	public static String envFilePathInternship;
-	public static Map<StudentMajor, String> studentMajors = new HashMap<>();
+	public static DateTimeFormatter DATE_DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    public static DateTimeFormatter DATE_DB_FORMATTER = DateTimeFormatter.ofPattern("dd MM yyyy");
 	
 	public static void main(String[] args) {
 		// Initialise stuff
 		LoadEnvironmentVariables();
-		InitialiseStudentMajors();
 		
 		// Read from CSV files
 		studentList.clear();
@@ -60,10 +62,10 @@ public class App {
 		compRepList.clear();
 		internshipList.clear();
 		
+		ReadFromCSV(envFilePathInternship, UserType.NONE); // Load internship before comrep so that comrep can use the data
 		ReadFromCSV(envFilePathStudent, UserType.STUDENT);
 		ReadFromCSV(envFilePathStaff, UserType.CCSTAFF);
 		ReadFromCSV(envFilePathRep, UserType.COMREP);
-		ReadFromCSV(envFilePathInternship, UserType.NONE);
 		
 		printSectionTitle("Welcome to Internship System");
         
@@ -311,7 +313,10 @@ public class App {
                 	   status = UserAccountStatus.PENDING;
                    }
                   
-                   CompanyRep registration = new CompanyRep(repId, name, email, "password", companyName, department, position, status);
+                   ArrayList<Internship> comrepInternships = App.internshipList.stream()
+                		   .filter(i -> i.getCompanyRep().toLowerCase().equals(repId.toLowerCase()))
+                		   .collect(Collectors.toCollection(ArrayList::new));
+                   CompanyRep registration = new CompanyRep(repId, name, email, "password", companyName, department, position, status, comrepInternships);
                    compRepList.add(registration);
                 }
                 else
@@ -323,7 +328,7 @@ public class App {
                         String title = values[1].trim();
                         String description = values[2].trim();
                         String level = values[3].trim();
-                        String prefferedMajor = values[4].trim();
+                        String preferredMajor = values[4].trim();
                         String openDate = values[5].trim();
                         String closeDate = values[6].trim();
                         String status = values[7].trim();
@@ -342,7 +347,7 @@ public class App {
                         	internshipLevel = InternshipLevel.ADVANCED;
                         }
                         
-                        StudentMajor major = StudentMajor.fromFullName(prefferedMajor);
+                        StudentMajor major = StudentMajor.fromFullName(preferredMajor);
                         
                         LocalDate appOpenDate = parseDate(openDate);
                         LocalDate appCloseDate = parseDate(closeDate);
@@ -425,15 +430,6 @@ public class App {
          } catch (IOException ex) {
              ex.printStackTrace();
          }
-	}
-	
-	public static void InitialiseStudentMajors() {
-		studentMajors.put(StudentMajor.CS, "Computer Science");
-		studentMajors.put(StudentMajor.DSAI, "Data Science & AI");
-		studentMajors.put(StudentMajor.CE, "Computer Engineering");
-		studentMajors.put(StudentMajor.IEM, "Information Engineering & Media");
-		studentMajors.put(StudentMajor.COMP, "Computing");
-        
 	}
 	
 	public static void printSectionTitle(String title) {
