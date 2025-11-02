@@ -35,7 +35,7 @@ public class CompanyRepRegistrationHandler {
 				return;
 			}
 
-			String email = promptInput("Company Email");
+			String email = promptUniqueCompanyEmail();
 			if (email == null) {
 				return;
 			}
@@ -98,6 +98,26 @@ public class CompanyRepRegistrationHandler {
 			}
 			System.out.println("Input cannot be empty. Please try again.");
 		}
+	}
+
+	private String promptUniqueCompanyEmail() {
+		while (true) {
+			String emailInput = promptInput("Company Email");
+			if (emailInput == null) {
+				return null;
+			}
+			if (isEmailInUse(emailInput)) {
+				System.out.println("An account with this company email already exists. Please use a different email.");
+				continue;
+			}
+			return emailInput;
+		}
+	}
+
+	private boolean isEmailInUse(String email) {
+		return App.compRepList.stream()
+				.anyMatch(rep -> rep.getUserID().equalsIgnoreCase(email)
+						|| rep.getEmail().equalsIgnoreCase(email));
 	}
 
 	private boolean submitRegistration(String id, String name, String companyName, String department,
