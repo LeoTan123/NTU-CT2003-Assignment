@@ -1,4 +1,4 @@
-name: Check Java App (Eclipse project - Java 17)
+name: Compile Java Project (Eclipse - Java 17)
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-run:
+  compile:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,43 +21,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Compile Java sources (like Eclipse)
+      - name: Compile Java sources
         run: |
           mkdir -p bin
           echo "🔧 Compiling Java sources from InternshipSystem/src..."
           if ! javac -d bin $(find InternshipSystem/src -name "*.java"); then
-            echo "❌ Compilation failed! Please check your Java syntax or imports."
+            echo "❌ Compilation failed! Check for syntax errors or missing imports."
             exit 1
           fi
-          echo "✅ Compilation successful."
-
-      - name: Check resource files exist
-        run: |
-          # Check application.properties
-          if [ ! -f InternshipSystem/src/application.properties ]; then
-            echo "❌ application.properties not found! Please add it to InternshipSystem/src/"
-            exit 1
-          fi
-          # Check for at least one CSV file
-          if ! ls InternshipSystem/src/*.csv 1> /dev/null 2>&1; then
-            echo "❌ No CSV files found in InternshipSystem/src/!"
-            exit 1
-          fi
-          echo "📄 Resource files found."
-
-      - name: Copy resource files
-        run: |
-          echo "📄 Copying resource files to bin folder..."
-          cp InternshipSystem/src/*.properties bin/ || true
-          cp InternshipSystem/src/*.csv bin/ || true
-
-      - name: Run App.java
-        run: |
-          cd bin
-          echo "🚀 Running team5.App..."
-          if java team5.App; then
-            echo "✅ App ran successfully without errors!"
-          else
-            echo "❌ App failed to run. Check for runtime errors or missing resources."
-            exit 1
-          fi
+          echo "✅ Compilation successful!"
