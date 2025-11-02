@@ -31,6 +31,26 @@ jobs:
           fi
           echo "✅ Compilation successful."
 
+      - name: Check resource files exist
+        run: |
+          # Check application.properties
+          if [ ! -f InternshipSystem/src/application.properties ]; then
+            echo "❌ application.properties not found! Please add it to InternshipSystem/src/"
+            exit 1
+          fi
+          # Check for at least one CSV file
+          if ! ls InternshipSystem/src/*.csv 1> /dev/null 2>&1; then
+            echo "❌ No CSV files found in InternshipSystem/src/!"
+            exit 1
+          fi
+          echo "📄 Resource files found."
+
+      - name: Copy resource files
+        run: |
+          echo "📄 Copying resource files to bin folder..."
+          cp InternshipSystem/src/*.properties bin/ || true
+          cp InternshipSystem/src/*.csv bin/ || true
+
       - name: Run App.java
         run: |
           cd bin
