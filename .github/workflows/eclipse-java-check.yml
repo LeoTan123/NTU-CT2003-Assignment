@@ -1,0 +1,43 @@
+name: Check Java App (Eclipse project - Java 17)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17 (LTS)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Compile Java sources (like Eclipse)
+        run: |
+          mkdir -p bin
+          echo "🔧 Compiling Java sources from InternshipSystem/src..."
+          if ! javac -d bin $(find InternshipSystem/src -name "*.java"); then
+            echo "❌ Compilation failed! Please check your Java syntax or imports."
+            exit 1
+          fi
+          echo "✅ Compilation successful."
+
+      - name: Run App.java
+        run: |
+          cd bin
+          echo "🚀 Running team5.App..."
+          if java team5.App; then
+            echo "✅ App ran successfully without errors!"
+          else
+            echo "❌ App failed to run. Check for runtime errors or missing resources."
+            exit 1
+          fi
