@@ -146,7 +146,7 @@ public class CreateInternshipAction implements CompanyRepAction {
 		while (true) {
 			System.out.println("Choose preferred major:");
 			
-	        for (var i = 0; i < majorList.size(); i++) {
+	        for (int i = 0; i < majorList.size(); i++) {
 	        	System.out.println((i+1) + ": "  + majorList.get(i).getValue());
 	        }
 
