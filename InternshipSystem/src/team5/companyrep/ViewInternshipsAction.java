@@ -42,7 +42,8 @@ public class ViewInternshipsAction implements CompanyRepAction {
 				
 				Internship chosen = App.internshipList.get(selection - 1);
 				displayInternshipDetails(chosen);
-			} catch (NumberFormatException ex) {
+			} 
+			catch (NumberFormatException ex) {
 				System.out.println("Please enter a valid number.");
 			}
 		}

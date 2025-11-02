@@ -7,21 +7,17 @@ import java.util.Random;
 
 import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipLevel;
+import team5.enums.StudentMajor;
 import team5.enums.UserType;
 
 public class Student extends User {
-	private String major;
+	private StudentMajor major;
 	private int yearOfStudy;
 	private boolean employedStatus;
 	//private InternshipApplication[] appliedInternships;
 	private ArrayList<InternshipApplication> appliedInternships = new ArrayList<>();
 	
-	public Student()
-	{
-		
-	}
-	
-	public Student(String userID, String name, String email, String password, String major, int yearOfStudy)
+	public Student(String userID, String name, String email, String password, StudentMajor major, int yearOfStudy)
 	{
 		super(userID, name, email, password);
 		this.major = major;
@@ -30,12 +26,12 @@ public class Student extends User {
 	}
 	
 	// Setter and getter
-	public void setMajor(String major)
+	public void setMajor(StudentMajor major)
 	{
 		this.major = major;
 	}
 	
-	public String getMajor()
+	public StudentMajor getMajor()
 	{
 		return this.major;
 	}
@@ -78,7 +74,7 @@ public class Student extends User {
 		+ " " + super.getPassword() + " " + this.major + " " + this.yearOfStudy;
 	}
 	
-	
+	/*
 	public void viewInternshipOpportunities() {
 		if(App.internshipList.isEmpty()) {
 			System.out.println("No internship opportunities created.");
@@ -171,5 +167,5 @@ public class Student extends User {
 		System.out.println("Offer "+ applicationId +" is not found.");
 		return false;
 	}
-	
+	*/
 }

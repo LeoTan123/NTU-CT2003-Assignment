@@ -26,6 +26,7 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 						reg.getCompanyName(),
 						reg.getAccountStatus());
 			}
+			// Handle accept or decline
 		}
 		boolean awaiting = true;
 		while (awaiting) {

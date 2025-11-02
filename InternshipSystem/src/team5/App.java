@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,6 +18,9 @@ import java.util.Scanner;
 import team5.controllers.CareerCenterStaffController;
 import team5.controllers.CompanyRepController;
 import team5.controllers.StudentController;
+import team5.enums.InternshipApplicationStatus;
+import team5.enums.InternshipLevel;
+import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
 import team5.enums.UserAccountStatus;
 import team5.enums.UserType;
@@ -53,9 +58,12 @@ public class App {
 		studentList.clear();
 		staffList.clear();
 		compRepList.clear();
+		internshipList.clear();
+		
 		ReadFromCSV(envFilePathStudent, UserType.STUDENT);
 		ReadFromCSV(envFilePathStaff, UserType.CCSTAFF);
 		ReadFromCSV(envFilePathRep, UserType.COMREP);
+		ReadFromCSV(envFilePathInternship, UserType.NONE);
 		
 		printSectionTitle("Welcome to Internship System");
         
@@ -262,10 +270,17 @@ public class App {
                 {
                    String id = values[0].trim();
  		    	   String name = values[1].trim();
- 		    	   String major = values[2].trim();
+ 		    	   String prefferedMajor = values[2].trim();
  		    	   int year = Integer.parseInt(values[3].trim());
  		    	   String email = values[4].trim();
  		    	   
+ 		    	  StudentMajor major = StudentMajor.CE;
+                  try {
+                  	major = StudentMajor.fromFullName(prefferedMajor);
+                  } catch (IllegalArgumentException ex) {
+                  	System.out.println("Invalid preffered major!");
+                  }
+                  
  		    	   Student student = new Student(id, name, email, "password", major, year);
 	               studentList.add(student);
                 }
@@ -299,6 +314,48 @@ public class App {
                    CompanyRep registration = new CompanyRep(repId, name, email, "password", companyName, department, position, status);
                    compRepList.add(registration);
                 }
+                else
+                {
+                	if(values.length == 11)
+                	{
+                		// Internship list
+                    	String internshipId = values[0].trim();
+                        String title = values[1].trim();
+                        String description = values[2].trim();
+                        String level = values[3].trim();
+                        String prefferedMajor = values[4].trim();
+                        String openDate = values[5].trim();
+                        String closeDate = values[6].trim();
+                        String status = values[7].trim();
+                        String companyName = values[8].trim(); // Not needed
+                        String companyRep = values[9].trim();
+                        String slots = values[10].trim();
+                        
+                        InternshipLevel internshipLevel = InternshipLevel.NONE;
+                        if(level.equalsIgnoreCase("Basic")){
+                        	internshipLevel = InternshipLevel.BASIC;
+                        }
+                        else if(level.equalsIgnoreCase("Intermediate")){
+                        	internshipLevel = InternshipLevel.INTERMEDIATE;
+                        }
+                        else if(level.equalsIgnoreCase("Advanced")){
+                        	internshipLevel = InternshipLevel.ADVANCED;
+                        }
+                        
+                        StudentMajor major = StudentMajor.fromFullName(prefferedMajor);
+                        
+                        LocalDate appOpenDate = parseDate(openDate);
+                        LocalDate appCloseDate = parseDate(closeDate);
+                        
+                        InternshipStatus appStatus = InternshipStatus.fromString(status.toUpperCase());
+                        int numOfSlots = Integer.parseInt(slots);
+                        
+                        Internship internship = new Internship(internshipId, title, description, 
+                        		internshipLevel, major, appOpenDate, appCloseDate,
+                        		appStatus, companyRep, numOfSlots);
+                        internshipList.add(internship);
+                	}
+                }
             }
         }
         catch (FileNotFoundException fe) {
@@ -322,7 +379,7 @@ public class App {
                 for (Student student : studentList) {
                 	String userID = student.getUserID();
                 	String name = student.getName();
-                	String major = student.getMajor();
+                	String major = student.getMajor().getFullName();
                 	int year = student.getYear();
                 	String email = student.getEmail();
                 	writer.append(userID + "," + name + "," + major + "," + year + "," + email + "\n");
@@ -426,5 +483,19 @@ public class App {
 
 	private static boolean idExists(String candidate, String[] ids) {
 		return Arrays.stream(ids).anyMatch(id -> id.equalsIgnoreCase(candidate));
+	}
+	
+	private static LocalDate parseDate(String text) {
+	    DateTimeFormatter[] formatters = new DateTimeFormatter[] {
+	        DateTimeFormatter.ofPattern("yyyy-MM-dd"),
+	        DateTimeFormatter.ofPattern("dd MM yyyy"),
+	        DateTimeFormatter.ofPattern("d M yyyy") // handles single-digit days/months
+	    };
+	    for (DateTimeFormatter f : formatters) {
+	        try {
+	            return LocalDate.parse(text.trim(), f);
+	        } catch (Exception ignored) {}
+	    }
+	    throw new IllegalArgumentException("Unrecognized date format: " + text);
 	}
 }

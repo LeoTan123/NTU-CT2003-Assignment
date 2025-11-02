@@ -18,7 +18,7 @@ public class ViewInternshipsAction implements StaffAction {
 			else {
 				for (int i = 0; i < App.internshipList.size(); i++) {
 					Internship internship = App.internshipList.get(i);
-					System.out.printf("%d. Internship ID: %d | Title: %s | Level: %s | Status: %s%n",
+					System.out.printf("%d. Internship ID: %s | Title: %s | Level: %s | Status: %s%n",
 							i + 1,
 							internship.getInternshipId(),
 							safeValue(internship.getTitle()),
