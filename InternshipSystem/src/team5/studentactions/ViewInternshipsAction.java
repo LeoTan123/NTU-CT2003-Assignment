@@ -13,28 +13,31 @@ import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
 
 public class ViewInternshipsAction implements StudentAction {
-	private final static String ErrorMessage = "Invalid input. Try again";
+	private final static String ErrorMessage = "Invalid input. Try again.";
 	@Override
 	public void run(Student student) {
 		boolean browsing = true;
 		while (browsing) {
-			App.printSectionTitle("Internship Opportunities");
 			if (App.internshipList.isEmpty()) {
 				System.out.println("No internships available at the moment.");
 				return;
 			} 
-			else 
+			
+			// Filter option
+			List<Internship> filteredInternships = filterInternships(App.internshipList);
+			if (filteredInternships == null)
+				return;
+			
+			// To store after filtered internships (only APPROVED internship)
+			List<Internship> displayedInternships = new ArrayList<>();
+			
+			while(true)
 			{
-				// Filter option
-				List<Internship> filteredInternships = filterInternships(App.internshipList);
+				App.printSectionTitle("Available Internship Opportunities");
 				
-				// Need to choose based on level
 				boolean hasInternship = false;
-				// To show normal indexing (1,2,3...)
 				int internshipIndex = 1;
-				// To store after filtered internships (only APPROVED internship)
-				List<Internship> displayedInternships = new ArrayList<>();
-				
+				displayedInternships.clear();
 				for(Internship internship: filteredInternships)
 				{
 					if(internship.getInternshipStatus() == InternshipStatus.APPROVED)
@@ -48,8 +51,8 @@ public class ViewInternshipsAction implements StudentAction {
 								safeValue(internship.getTitle()),
 								valueOrNA(internship.getInternshipLevel()),
 								safeValue(internship.getPreferredMajor().getFullName()),
-								internship.getApplicationOpenDate().format(App.DATE_DISPLAY_FORMATTER),
-								internship.getApplicationCloseDate().format(App.DATE_DISPLAY_FORMATTER)
+								safeValue(internship.getApplicationOpenDate().format(App.DATE_DISPLAY_FORMATTER)),
+								safeValue(internship.getApplicationCloseDate().format(App.DATE_DISPLAY_FORMATTER))
 								);
 						
 						internshipIndex++;
@@ -57,68 +60,66 @@ public class ViewInternshipsAction implements StudentAction {
 				}
 				if (!hasInternship) {
 					System.out.println("No internships available at the moment.");
-					return;
+					browsing = false;
+					break;
 			    }
 				
-				while(true)
-				{
-					System.out.println("Select internship number (or 0 to return):");
-			        String inputStr = App.sc.nextLine();
-			        int input = 0;
+				System.out.println("Select internship number (or 0 to return):");
+		        String inputStr = App.sc.nextLine();
+		        int input = 0;
 
-			        try 
-			        {
-			            input = Integer.parseInt(inputStr.trim());
+		        try 
+		        {
+		            input = Integer.parseInt(inputStr.trim());
 
-			            if (input == 0) {
-			            	browsing = false;
-			                break;
-			            }
+		            if (input == 0) {
+		            	browsing = false;
+		                break;
+		            }
 
-			            if (input < 1 || input > displayedInternships.size()) {
-			                System.out.println(ErrorMessage);
-			                continue;
-			            }
+		            if (input < 1 || input > displayedInternships.size()) {
+		                System.out.println(ErrorMessage);
+		                continue;
+		            }
+		            
+		            Internship chosen = displayedInternships.get(input - 1);
+		         
+		            // Show action options for the chosen internship
+		            boolean choosingAction = true;
+		            while (choosingAction) {
+		            	System.out.println("You have chosen Internship ID: " + chosen.getInternshipId() + " Title: " + safeValue(chosen.getTitle()));
+		                System.out.println("1. View Internship Details");
+		                System.out.println("2. Apply for this Internship");
+		                System.out.println("0. Return to internship list");
 
-			            // display the chosen internship
-			            Internship chosen = displayedInternships.get(input - 1);
-			         
-			            // Show action options for the chosen internship
-			            boolean choosingAction = true;
-			            while (choosingAction) {
-			                System.out.println("1. View Details");
-			                System.out.println("2. Apply for Internship");
-			                System.out.println("0. Return to list");
+		                String actionStr = App.sc.nextLine();
+		                int action = -1;
+		                try {
+		                    action = Integer.parseInt(actionStr.trim());
+		                } 
+		                catch (NumberFormatException ex) {
+		                    System.out.println(ErrorMessage);
+		                    continue;
+		                }
 
-			                String actionStr = App.sc.nextLine();
-			                int action = -1;
-			                try {
-			                    action = Integer.parseInt(actionStr.trim());
-			                } 
-			                catch (NumberFormatException ex) {
-			                    System.out.println(ErrorMessage);
-			                    continue;
-			                }
-
-			                switch (action) {
-			                    case 0:
-			                        choosingAction = false; // exit this internship's actions
-			                        break;
-			                    case 1:
-			                        displayInternshipDetails(chosen); // waits for Enter inside
-			                        break;
-			                    case 2:
-			                        applyForInternship(student, chosen);
-			                        break;
-			                    default:
-			                        System.out.println(ErrorMessage);
-			                }
-			            }
-			        } 
-			        catch (NumberFormatException ex) {
-			            System.out.println(ErrorMessage);
-			        }
-				}
+		                switch (action) {
+		                    case 0:
+		                        choosingAction = false; // exit this internship's actions
+		                        break;
+		                    case 1:
+		                        displayInternshipDetails(chosen);
+		                        break;
+		                    case 2:
+		                        applyForInternship(student, chosen);
+		                        break;
+		                    default:
+		                        System.out.println(ErrorMessage);
+		                }
+		            }
+		        } 
+		        catch (NumberFormatException ex) {
+		            System.out.println(ErrorMessage);
+		        }
 			}
 		}
 	}
@@ -130,10 +131,9 @@ public class ViewInternshipsAction implements StudentAction {
 		System.out.println("Description: " + safeValue(internship.getDescription()));
 		System.out.println("Level: " + valueOrNA(internship.getInternshipLevel()));
 		System.out.println("Preferred Majors: " + safeValue(internship.getPreferredMajor()));
-		System.out.println("Application Open Date: " + safeValue(internship.getApplicationOpenDate()));
-		System.out.println("Application Close Date: " + safeValue(internship.getApplicationCloseDate()));
+		System.out.println("Application Open Date: " + safeValue(internship.getApplicationOpenDate().format(App.DATE_DISPLAY_FORMATTER)));
+		System.out.println("Application Close Date: " + safeValue(internship.getApplicationCloseDate().format(App.DATE_DISPLAY_FORMATTER)));
 		System.out.println("Number of Slots: " + internship.getNumOfSlots());
-		System.out.println();
 
 	    while (true) {
 	        System.out.println("Enter 0 to return to the internship action list:");
@@ -199,7 +199,8 @@ public class ViewInternshipsAction implements StudentAction {
 	    
 	    InternshipApplication internApp = new InternshipApplication(student.getInternshipApplications().size() + 1,
 	    		chosen, student, LocalDate.now());
-	    student.getInternshipApplications().add(internApp);
+
+	    student.addInternshipApplications(internApp);
 	    chosen.setNumOfSlots(chosen.getNumOfSlots() - 1);
 	    
 	    System.out.println("Successfully applied for internship: " + chosen.getTitle());
@@ -221,11 +222,16 @@ public class ViewInternshipsAction implements StudentAction {
 		    System.out.println("2. Filter by Internship Level");
 		    System.out.println("3. Filter by Application Open Date");
 		    System.out.println("4. Filter by Application Close Date");
-		    System.out.println("0. Show all internships");
+		    System.out.println("5. Show all internships");
+		    System.out.println("0. Return to menu");
 	
 		    System.out.println("Enter your choice: ");
 		    String filterInput = App.sc.nextLine().trim();
-
+		    
+		    if ("0".equals(filterInput)) {
+	            return null;
+	        }
+		    
 		    switch (filterInput) {
 		        case "1":
 		        	validInput = true;
@@ -347,9 +353,8 @@ public class ViewInternshipsAction implements StudentAction {
 		                System.out.println("Invalid date format. Showing all internships.");
 		            }
 		            break;
-		        case "0":
+		        case "5":
 		        	validInput = true;
-		        	System.out.println("Showing all internships.");
 		        	break;
 		        default:
 		        	System.out.println(ErrorMessage);

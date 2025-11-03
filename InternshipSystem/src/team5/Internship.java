@@ -2,7 +2,6 @@ package team5;
 
 import java.time.LocalDate;
 
-import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipLevel;
 import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
