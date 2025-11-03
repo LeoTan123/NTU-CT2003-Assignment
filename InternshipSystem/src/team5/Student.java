@@ -1,12 +1,6 @@
 package team5;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Random;
-
-import team5.enums.InternshipApplicationStatus;
-import team5.enums.InternshipLevel;
 import team5.enums.StudentMajor;
 import team5.enums.UserType;
 
@@ -14,7 +8,6 @@ public class Student extends User {
 	private StudentMajor major;
 	private int yearOfStudy;
 	private boolean employedStatus;
-	//private InternshipApplication[] appliedInternships;
 	private ArrayList<InternshipApplication> appliedInternships = new ArrayList<>();
 	
 	public Student(String userID, String name, String email, String password, StudentMajor major, int yearOfStudy)

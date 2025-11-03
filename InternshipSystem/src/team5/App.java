@@ -10,8 +10,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Scanner;
@@ -20,7 +18,6 @@ import java.util.stream.Collectors;
 import team5.controllers.CareerCenterStaffController;
 import team5.controllers.CompanyRepController;
 import team5.controllers.StudentController;
-import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipLevel;
 import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
@@ -87,7 +84,7 @@ public class App {
 				if(choice == 0){
 					System.out.println("Exitting system...");
 					exitProgram = true;
-					continue;
+					break;
 				}
 				if(choice < 0 || choice > 4){
 					System.out.println("Invalid user type. Please enter again.");	
@@ -107,37 +104,40 @@ public class App {
 				String password = App.sc.nextLine();
 				
 				boolean foundUser = false;
+				
 				UserType userType = UserType.NONE;
-				if(choice == 1){
-					userType = UserType.STUDENT;
+				switch(choice)
+				{
+					case 1:
+						userType = UserType.STUDENT;
+						break;
+					case 2:
+						userType = UserType.CCSTAFF;
+						break;
+					case 3:
+						userType = UserType.COMREP;
+						break;
+					default:
+						System.out.println("Invalid user type. Please enter again.");
 				}
-				else if(choice == 2){
-					userType = UserType.CCSTAFF;
-				}
-				else {
-					userType = UserType.COMREP;
-				}
+
 				foundUser = verifyUserFromList(userType, userID, password);
-				if(!foundUser){
-					System.out.println("User ID not found.");	
+				if(!foundUser || currentUser == null){
 					continue;
 				}
-				// Not logged in
-				if(currentUser == null){
-					continue;
-				}
-				System.out.println("Login successful. Welcome " + currentUser.getName());
+
+				System.out.println("Login successful. Welcome " + currentUser.getName() + ".");
 				
 				// Display menu based on UserType
 				if (userType == UserType.STUDENT && currentUser instanceof Student) {
 					StudentController studentController = new StudentController();
-					studentController.showMenu((Student) currentUser);
+					studentController.showMenu((Student)currentUser);
 				} else if (userType == UserType.CCSTAFF && currentUser instanceof CareerCenterStaff) {
 					CareerCenterStaffController staffController = new CareerCenterStaffController();
-					staffController.showMenu((CareerCenterStaff) currentUser);
+					staffController.showMenu((CareerCenterStaff)currentUser);
 				} else if (userType == UserType.COMREP && currentUser instanceof CompanyRep) {
 					CompanyRepController companyRepController = new CompanyRepController();
-					companyRepController.showMenu((CompanyRep) currentUser);
+					companyRepController.showMenu((CompanyRep)currentUser);
 				}
 	        } 
 	        catch (NumberFormatException e) {
@@ -153,107 +153,71 @@ public class App {
 	// Helper
 	public static boolean verifyUserFromList(UserType userType, String userID, String password)
 	{ 
-		if(userType == UserType.STUDENT)
+		User foundUser = null;
+		switch(userType)
 		{
-			for (Student student : studentList) 
-			{
-	            String id = student.getUserID();
-	            String pw = student.getPassword();
-	            if(id.equals(userID))
-	            {
-	            	if(pw.equals(password))
-	            	{
-	            		currentUser = student;
-	            		student.login();
-	            	}
-	            	else
-	            	{
-	            		System.out.println("Password wrong, please enter again:");
-	            		String newPw = App.sc.nextLine();
-	            		if(pw.equals(newPw))
-	            		{
-	            			currentUser = student;
-	            			student.login();
-	            		}
-	            		else
-	            		{
-	            			 System.out.println("Wrong password again. Login Failed");
-	            		}
-	            	}
-	            	return true;
+			case UserType.STUDENT:
+				for (Student student : studentList) {
+	                if (student.getUserID().equals(userID)) {
+	                    foundUser = student;
+	                    break;
+	                }
 	            }
-			}
-		}
-		else if(userType == UserType.CCSTAFF)
-		{
-			for (CareerCenterStaff staff : staffList) 
-			{
-	            String id = staff.getUserID();
-	            String pw = staff.getPassword();
-	            if(id.equals(userID))
-	            {
-	            	if(pw.equals(password))
-	            	{
-	            		currentUser = staff;
-	            		staff.login();
-	            	}
-	            	else
-	            	{
-	            		System.out.println("Password wrong, please enter again:");
-	            		String newPw = App.sc.nextLine();
-	            		if(pw.equals(newPw))
-	            		{
-	            			currentUser = staff;
-	            			staff.login();
-	            		}
-	            		else
-	            		{
-	            			 System.out.println("Wrong password again. Login Failed");
-	            		}
-	            	}
-	            	return true;
+				break;
+			case UserType.CCSTAFF:
+				for (CareerCenterStaff staff : staffList) {
+	                if (staff.getUserID().equals(userID)) {
+	                    foundUser = staff;
+	                    break;
+	                }
 	            }
-			}
+				break;
+			case UserType.COMREP:
+				for (CompanyRep rep : compRepList) {
+	                if (rep.getUserID().equalsIgnoreCase(userID)){
+	                    foundUser = rep;
+	                    break;
+	                }
+	            }
+				break;
+			default:
+				System.out.println("Invalid User Type.");
+	            return false;	
 		}
-		else if(userType == UserType.COMREP)
-		{
-			for (CompanyRep rep : compRepList) {
-				String repId = rep.getUserID();
-				if(repId.equalsIgnoreCase(userID))
-				{
-					if(rep.getAccountStatus() != UserAccountStatus.APPROVED)
-					{
-						System.out.println("Your account is not approved yet. Please contact the career center staff for approval.");
-						return true;
-					}
-					String expectedPassword = rep.getPassword();
-					//String expectedPassword = "password";
-					if(expectedPassword.equals(password))
-					{
-						currentUser = rep;
-						currentUser.setUserType(UserType.COMREP);
-						currentUser.login();
-						//currentCompanyRep = registration;
-					}
-					else
-					{
-						System.out.println("Password wrong, please enter again:");
-	            		String newPw = App.sc.nextLine();
-	            		if(expectedPassword.equals(newPw))
-	            		{
-	            			currentUser = rep;
-	            			currentUser.login();
-	            		}
-	            		else
-	            		{
-	            			 System.out.println("Wrong password again. Login Failed");
-	            		}
-					}
-					return true;
-				}
-			}
-		}
-		return false;
+		
+		// User not found in either lists
+		if (foundUser == null) {
+			System.out.println("User ID not found in system.");
+	        return false;
+	    }
+		
+		// Special check for COMREP account status
+	    if (userType == UserType.COMREP && ((CompanyRep)foundUser).getAccountStatus() != UserAccountStatus.APPROVED) {
+	        System.out.println("Your account is not approved yet. Please contact the career center staff for approval.");
+	        return false;
+	    }
+	    
+	    // Check password
+	    int maxAttempts = 3;
+	    for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+	        if (foundUser.getPassword().equals(password)) {
+	            currentUser = foundUser;
+	            currentUser.setUserType(userType);
+	            foundUser.login();
+	            return true;
+	        } 
+	        else {
+	            if (attempt < maxAttempts) {
+	                System.out.println("Password wrong, please enter again:");
+	                password = App.sc.nextLine().trim(); // update password for next attempt
+	            } 
+	            else {
+	                System.out.println("Wrong password 3 times. Login Failed.");
+	            }
+	        }
+	    }
+	    // Failed after 3 attempts
+	    return false;
 	}
 	
 	public static void ReadFromCSV(String fileName, UserType userType)
@@ -276,12 +240,7 @@ public class App {
  		    	   int year = Integer.parseInt(values[3].trim());
  		    	   String email = values[4].trim();
  		    	   
- 		    	  StudentMajor major = StudentMajor.CE;
-                  try {
-                  	major = StudentMajor.fromFullName(prefferedMajor);
-                  } catch (IllegalArgumentException ex) {
-                  	System.out.println("Invalid preffered major!");
-                  }
+ 		    	   StudentMajor major = StudentMajor.fromFullName(prefferedMajor);
                   
  		    	   Student student = new Student(id, name, email, "password", major, year);
 	               studentList.add(student);
@@ -306,16 +265,13 @@ public class App {
                    String position = values[4].trim();
                    String email = values[5].trim();
                    String statusValue = values[6].trim().toUpperCase();
-                   UserAccountStatus status;
-                   try {
-                	   status = UserAccountStatus.valueOf(statusValue);
-                   } catch (IllegalArgumentException ex) {
-                	   status = UserAccountStatus.PENDING;
-                   }
+                   
+                   UserAccountStatus status = UserAccountStatus.fromString(statusValue);
                   
                    ArrayList<Internship> comrepInternships = App.internshipList.stream()
                 		   .filter(i -> i.getCompanyRep().toLowerCase().equals(repId.toLowerCase()))
                 		   .collect(Collectors.toCollection(ArrayList::new));
+                   
                    CompanyRep registration = new CompanyRep(repId, name, email, "password", companyName, department, position, status, comrepInternships);
                    compRepList.add(registration);
                 }
@@ -332,27 +288,18 @@ public class App {
                         String openDate = values[5].trim();
                         String closeDate = values[6].trim();
                         String status = values[7].trim();
-                        String companyName = values[8].trim(); // Not needed
+                        //String companyName = values[8].trim(); // Not needed
                         String companyRep = values[9].trim();
                         String slots = values[10].trim();
                         
-                        InternshipLevel internshipLevel = InternshipLevel.NONE;
-                        if(level.equalsIgnoreCase("Basic")){
-                        	internshipLevel = InternshipLevel.BASIC;
-                        }
-                        else if(level.equalsIgnoreCase("Intermediate")){
-                        	internshipLevel = InternshipLevel.INTERMEDIATE;
-                        }
-                        else if(level.equalsIgnoreCase("Advanced")){
-                        	internshipLevel = InternshipLevel.ADVANCED;
-                        }
+                        InternshipLevel internshipLevel = InternshipLevel.fromString(level);
                         
                         StudentMajor major = StudentMajor.fromFullName(preferredMajor);
                         
                         LocalDate appOpenDate = parseDate(openDate);
                         LocalDate appCloseDate = parseDate(closeDate);
                         
-                        InternshipStatus appStatus = InternshipStatus.fromString(status.toUpperCase());
+                        InternshipStatus appStatus = InternshipStatus.fromString(status);
                         int numOfSlots = Integer.parseInt(slots);
                         
                         Internship internship = new Internship(internshipId, title, description, 
@@ -418,7 +365,7 @@ public class App {
 		 Properties prop = new Properties();
          try (InputStream input = App.class.getClassLoader().getResourceAsStream("application.properties")) {
              if (input == null) {
-                 System.out.println("Unable to find src/application.properties");
+                 System.out.println("Unable to find application.properties file.");
                  return;
              }
              prop.load(input);
@@ -427,7 +374,8 @@ public class App {
              envFilePathStaff = prop.getProperty("filepath.staff");
              envFilePathRep = prop.getProperty("filepath.rep");
              envFilePathInternship = prop.getProperty("filepath.internship");
-         } catch (IOException ex) {
+         } 
+         catch (IOException ex) {
              ex.printStackTrace();
          }
 	}
@@ -490,7 +438,10 @@ public class App {
 	    for (DateTimeFormatter f : formatters) {
 	        try {
 	            return LocalDate.parse(text.trim(), f);
-	        } catch (Exception ignored) {}
+	        } 
+	        catch (Exception ignored) 
+	        {
+	        }
 	    }
 	    throw new IllegalArgumentException("Unrecognized date format: " + text);
 	}
