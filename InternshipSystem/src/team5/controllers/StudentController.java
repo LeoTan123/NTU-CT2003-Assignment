@@ -19,8 +19,7 @@ public class StudentController {
     public void showMenu(Student student) {
         boolean exit = false;
         while (!exit) {
-        	System.out.println();
-        	App.printSectionTitle("Student Menu");
+        	App.printSectionTitle("Student Menu", true);
             System.out.println("1. View Internship");
             System.out.println("2. Check Internship Application Status");
             System.out.println("3. Update Password");

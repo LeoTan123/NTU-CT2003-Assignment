@@ -1,4 +1,4 @@
-package team5.companyrep;
+package team5.companyrepactions;
 
 import team5.CompanyRep;
 

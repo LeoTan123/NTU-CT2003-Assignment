@@ -40,11 +40,11 @@ public class ViewInternshipsAction implements StudentAction {
 				displayedInternships.clear();
 				for(Internship internship: filteredInternships)
 				{
-					if(internship.getInternshipStatus() == InternshipStatus.APPROVED)
+					if(internship.getInternshipStatus() == InternshipStatus.APPROVED) // TODO: to only show based on student's major
 					{
 						hasInternship = true;
 						displayedInternships.add(internship);
-						System.out.printf("%d. Internship ID: %s | Title: %s | Level: %s | Preffered Major: %s | "
+						System.out.printf("%d. Internship ID: %s | Title: %s | Level: %s | Preferred Major: %s | "
 								+ "Application Opening Date: %s | Application Closing Date: %s%n",
 								internshipIndex,
 								internship.getInternshipId(),
@@ -130,7 +130,7 @@ public class ViewInternshipsAction implements StudentAction {
 		System.out.println("Title: " + safeValue(internship.getTitle()));
 		System.out.println("Description: " + safeValue(internship.getDescription()));
 		System.out.println("Level: " + valueOrNA(internship.getInternshipLevel()));
-		System.out.println("Preferred Majors: " + safeValue(internship.getPreferredMajor()));
+		System.out.println("Preferred Majors: " + safeValue(internship.getPreferredMajor().getFullName()));
 		System.out.println("Application Open Date: " + safeValue(internship.getApplicationOpenDate().format(App.DATE_DISPLAY_FORMATTER)));
 		System.out.println("Application Close Date: " + safeValue(internship.getApplicationCloseDate().format(App.DATE_DISPLAY_FORMATTER)));
 		System.out.println("Number of Slots: " + internship.getNumOfSlots());
@@ -218,8 +218,8 @@ public class ViewInternshipsAction implements StudentAction {
 		
 		while (!validInput) {
 		    System.out.println("Would you like to filter internships?");
-		    System.out.println("1. Filter by Preferred Major");
-		    System.out.println("2. Filter by Internship Level");
+		    System.out.println("1. Filter by Preferred Major"); // TODO: student should not have this option
+		    System.out.println("2. Filter by Internship Level"); // TODO: only year 3 and year 4 should have this option as year 1 and 2 can only view basic level internships
 		    System.out.println("3. Filter by Application Open Date");
 		    System.out.println("4. Filter by Application Close Date");
 		    System.out.println("5. Show all internships");
