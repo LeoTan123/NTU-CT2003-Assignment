@@ -68,8 +68,7 @@ public class App {
         
         boolean exitProgram = false;
         while (!exitProgram) {
-        	System.out.println();
-        	printSectionTitle("Login");
+        	printSectionTitle("Login", true);
 	        try 
 	        {
 				// Choose login type
@@ -288,7 +287,7 @@ public class App {
                         String openDate = values[5].trim();
                         String closeDate = values[6].trim();
                         String status = values[7].trim();
-                        //String companyName = values[8].trim(); // Not needed
+                        //String companyName = values[8].trim(); // TODO: add this field in Check Internship Application Status
                         String companyRep = values[9].trim();
                         String slots = values[10].trim();
                         
@@ -381,6 +380,14 @@ public class App {
 	}
 	
 	public static void printSectionTitle(String title) {
+		System.out.println("===== " + title + " =====");
+	}
+	
+	public static void printSectionTitle(String title, boolean marginTop) {
+		if (marginTop == true)
+		{
+			System.out.println();
+		}
 		System.out.println("===== " + title + " =====");
 	}
 	

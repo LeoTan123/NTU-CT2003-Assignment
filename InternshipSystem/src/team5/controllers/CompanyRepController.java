@@ -2,19 +2,16 @@ package team5.controllers;
 
 import team5.App;
 import team5.CompanyRep;
-import team5.companyrep.CompanyRepAction;
-import team5.companyrep.CreateInternshipAction;
-import team5.companyrep.ListOwnInternshipsAction;
-import team5.companyrep.ViewInternshipsAction;
+import team5.companyrepactions.CompanyRepAction;
+import team5.companyrepactions.CreateInternshipAction;
+import team5.companyrepactions.ListOwnInternshipsAction;
 
 public class CompanyRepController {
 
-	private final CompanyRepAction viewInternshipsAction;
 	private final CompanyRepAction createInternshipAction;
 	private final CompanyRepAction listOwnInternshipsAction;
 
 	public CompanyRepController() {
-		this.viewInternshipsAction = new ViewInternshipsAction();
 		this.createInternshipAction = new CreateInternshipAction();
 		this.listOwnInternshipsAction = new ListOwnInternshipsAction();
 	}
@@ -22,27 +19,22 @@ public class CompanyRepController {
 	public void showMenu(CompanyRep companyRep) {
 		boolean exit = false;
 		while (!exit) {
-			System.out.println();
-			App.printSectionTitle("Company Representative Menu");
-			System.out.println("1. View Internship Opportunities");
-			System.out.println("2. Create Internship");
-			System.out.println("3. Display My Created Internships");
-			System.out.println("4. Update Password");
-			System.out.println("5. Logout");
+			App.printSectionTitle("Company Representative Menu", true);
+			System.out.println("1. Create Internship");
+			System.out.println("2. View My Created Internships");
+			System.out.println("3. Update Password");
+			System.out.println("4. Logout");
 			System.out.println("Please choose an option:");
 
 			String input = App.sc.nextLine();
 			switch (input) {
 				case "1":
-					viewInternshipsAction.run(companyRep);
-					break;
-				case "2":
 					createInternshipAction.run(companyRep);
 					break;
-				case "3":
+				case "2":
 					listOwnInternshipsAction.run(companyRep);
 					break;
-				case "4":
+				case "3":
 					boolean updated = companyRep.changePassword();
 					if (updated) {
 						companyRep.logout();
@@ -50,7 +42,7 @@ public class CompanyRepController {
 						exit = true;
 					}
 					break;
-				case "5":
+				case "4":
 					companyRep.logout();
 					exit = true;
 					break;
