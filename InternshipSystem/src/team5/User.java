@@ -100,6 +100,8 @@ public class User {
 			return;
 		}
 		this.loginState = false;
+		App.currentUser = null;
+		System.out.println("You have already logged out.");
 	}
 	
 	public boolean changePassword() {

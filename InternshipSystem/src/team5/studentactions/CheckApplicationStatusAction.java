@@ -103,7 +103,7 @@ public class CheckApplicationStatusAction implements StudentAction {
 		System.out.println("Application ID: " + chosen.getApplicationId());
 		System.out.println("Title: " + safeValue(chosen.getInternshipInfo().getTitle()));
 		System.out.println("Description: " + safeValue(chosen.getInternshipInfo().getDescription()));
-		System.out.println("Application Date: " + chosen.getAppliedDate());
+		System.out.println("Application Date: " + chosen.getAppliedDate().format(App.DATE_DISPLAY_FORMATTER));
 		System.out.println("Application Status: " + valueOrNA(chosen.getStatus()));
 		System.out.println("Press Enter to return to the application list.");
 		App.sc.nextLine();
