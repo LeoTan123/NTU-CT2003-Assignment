@@ -156,7 +156,7 @@ public class App {
 		User foundUser = null;
 		switch(userType)
 		{
-			case UserType.STUDENT:
+			case STUDENT:
 				for (Student student : studentList) {
 	                if (student.getUserID().equals(userID)) {
 	                    foundUser = student;
@@ -164,7 +164,7 @@ public class App {
 	                }
 	            }
 				break;
-			case UserType.CCSTAFF:
+			case CCSTAFF:
 				for (CareerCenterStaff staff : staffList) {
 	                if (staff.getUserID().equals(userID)) {
 	                    foundUser = staff;
@@ -172,7 +172,7 @@ public class App {
 	                }
 	            }
 				break;
-			case UserType.COMREP:
+			case COMREP:
 				for (CompanyRep rep : compRepList) {
 	                if (rep.getUserID().equalsIgnoreCase(userID)){
 	                    foundUser = rep;
