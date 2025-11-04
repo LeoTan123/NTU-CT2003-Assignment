@@ -58,6 +58,10 @@ public class CreateInternshipAction implements CompanyRepAction {
 			if (endDate == null) {
 				return;
 			}
+			if (endDate.isBefore(startDate)) {
+				System.out.println("End date cannot be before the start date. Please re-enter the internship details.");
+				continue;
+			}
 			
 			App.printSectionTitle("Internship Summary");
 			System.out.println("Title: " + title);
