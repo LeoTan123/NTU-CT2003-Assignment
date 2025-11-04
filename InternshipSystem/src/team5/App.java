@@ -191,9 +191,17 @@ public class App {
 	    }
 		
 		// Special check for COMREP account status
-	    if (userType == UserType.COMREP && ((CompanyRep)foundUser).getAccountStatus() != UserAccountStatus.APPROVED) {
-	        System.out.println("Your account is not approved yet. Please contact the career center staff for approval.");
-	        return false;
+	    if (userType == UserType.COMREP) {
+	    	CompanyRep rep = (CompanyRep) foundUser;
+	    	UserAccountStatus status = rep.getAccountStatus();
+	    	if (status == UserAccountStatus.PENDING) {
+	    		System.out.println("Your account is pending approval. Please wait for the career center staff to review it.");
+	    		return false;
+	    	}
+	    	if (status == UserAccountStatus.REJECTED) {
+	    		System.out.println("Your registration was rejected. Please submit a new registration request for review.");
+	    		return false;
+	    	}
 	    }
 	    
 	    // Check password
