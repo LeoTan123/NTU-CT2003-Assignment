@@ -4,12 +4,21 @@ import java.util.ArrayList;
 
 import team5.App;
 import team5.Internship;
+import team5.enums.InternshipLevel;
+import team5.enums.StudentMajor;
 
 public class InternshipBoundary extends ConsoleBoundary {
 	
 	public InternshipBoundary() { }
 	
-	public static void displayInternshipList(ArrayList<Internship> internshipList) {
+	/*
+	 * Convention:
+	 * - print: To only display info
+	 * - display: To display menu and ask for input
+	 * - prompt: To prompt user input for form fields
+	 * */
+	
+	public static void printInternshipList(ArrayList<Internship> internshipList) {
 		for (int i = 0; i < internshipList.size(); i++) {
 			Internship internship = internshipList.get(i);
 			System.out.printf("%d. Internship ID: %s | Title: %s | Level: %s | Status: %s%n",
@@ -21,7 +30,7 @@ public class InternshipBoundary extends ConsoleBoundary {
 		}
 	}
 	
-	public static void displayInternshipDetails(Internship internship) {
+	public static void printInternshipDetails(Internship internship) {
 		App.printSectionTitle("Internship Details", true);
 		System.out.println("Internship ID: \t\t" + internship.getInternshipId());
 		System.out.println("Title: \t\t\t" + safeValue(internship.getTitle()));
@@ -34,5 +43,118 @@ public class InternshipBoundary extends ConsoleBoundary {
 		System.out.println("Number of Slots: \t" + internship.getNumOfSlots());
 	}
 	
+	/**** Company Rep ****/
+	public static void printNoInternshipCreated() {
+		System.out.println("You have not created any internship yet.");
+	}
 	
+	public static int displaySubMenu(boolean showUpdateOption) {
+		while (true) {
+			System.out.println();
+			System.out.println("Choose option: (or 0 to return)");
+			System.out.println("1. View student applications");
+			if (showUpdateOption == true) 
+			{
+				System.out.println("2. Update internship");
+				System.out.println("3. Delete internship");
+			}
+			else
+			{
+				System.out.println("2. Delete internship");
+			}
+			String input = App.sc.nextLine().trim();
+			try {
+				int selectedOption = Integer.parseInt(input);
+				if (selectedOption < 0 || selectedOption > 3) {
+					ConsoleBoundary.printInvalidSelection();
+					continue;
+				}
+				
+				return selectedOption;
+			}
+			catch (NumberFormatException ex) {
+				ConsoleBoundary.printInvalidSelection();
+			}
+		}
+		
+	}
+	
+	public static int displayUpdateInternshipMenu() {
+		while (true) {
+			System.out.println();
+			System.out.println("Choose field to edit: (or 0 to return)");
+			System.out.println("1. Title");
+			System.out.println("2. Description");
+			System.out.println("3. Level");
+			System.out.println("4. Preferred Majors");
+			System.out.println("5. Application Open Date");
+			System.out.println("6. Application Close Date");
+			System.out.println("7. Number of Slots");
+			String input = App.sc.nextLine().trim();
+			try {
+				int selectedOption = Integer.parseInt(input);
+				if (selectedOption < 0 || selectedOption > 7) {
+					ConsoleBoundary.printInvalidSelection();
+					continue;
+				}
+				
+				return selectedOption;
+			}
+			catch (NumberFormatException ex) {
+				ConsoleBoundary.printInvalidSelection();
+			}
+		}
+	}
+	
+	public static InternshipLevel promptInternshipLevel() {
+		while (true) {
+			System.out.println("Choose internship level:");
+			System.out.println("1: Basic");
+			System.out.println("2: Intermediate");
+			System.out.println("3: Advanced");
+			String input = App.sc.nextLine().trim();
+			switch (input) {
+				case "1":
+					return InternshipLevel.BASIC;
+				case "2":
+					return InternshipLevel.INTERMEDIATE;
+				case "3":
+					return InternshipLevel.ADVANCED;
+				default:
+					continue;
+			}
+		}
+		
+	}
+	
+	public static StudentMajor promptPreferredMajor() {
+		StudentMajor[] majorList = StudentMajor.values();
+		while (true) {
+			System.out.println("Choose preferred major:");
+			
+	        for (int i = 0; i < majorList.length; i++) {
+	        	System.out.println((i+1) + ": "  + majorList[i].getFullName());
+	        }
+
+			String input = App.sc.nextLine().trim();
+			if ("0".equals(input)) {
+				return null;
+			}
+			
+			StudentMajor preferredMajor;
+			
+			try {
+				preferredMajor = majorList[Integer.parseInt(input)-1];
+			} 
+			catch (IndexOutOfBoundsException e) {
+				continue;
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				continue;
+			}
+			
+			return preferredMajor;
+		}
+	}
 }

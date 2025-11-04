@@ -399,21 +399,6 @@ public class App {
 		System.out.println("===== " + title + " =====");
 	}
 	
-	public static String promptFormInput(String label) {
-		while (true) {
-			System.out.println(label + ":");
-			String input = App.sc.nextLine().trim();
-			if ("0".equals(input)) {
-				System.out.println("Cancelled.");
-				return null;
-			}
-			if (!input.isEmpty()) {
-				return input;
-			}
-			System.out.println("Input cannot be empty. Please try again.");
-		}
-	}
-	
 	public static String generateUniqueId(String prefix, String[] ids) {
 		Random random = new Random();
 		
