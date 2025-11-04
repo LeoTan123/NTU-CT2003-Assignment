@@ -1,5 +1,10 @@
 package team5.boundaries;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+
+import team5.App;
+
 public abstract class ConsoleBoundary {
 
 	public static void clearScreen() {
@@ -20,5 +25,62 @@ public abstract class ConsoleBoundary {
 
 	public static String valueOrNA(Enum<?> value) {
 		return value != null ? value.name() : "N/A";
+	}
+	
+	/**** Prompt ****/
+	public static String promptUserInput() {
+		return App.sc.nextLine();
+	}
+	
+	public static LocalDate promptDate(String prompt) {
+		while (true) {
+			System.out.println(prompt + " (format DD/MM/YYYY):");
+		    String input = App.sc.nextLine().trim();
+		    if ("0".equals(input)) {
+				return null;
+			}
+
+		    try {
+		        return LocalDate.parse(input, App.DATE_DISPLAY_FORMATTER);
+		    } catch (DateTimeParseException e) {
+		        System.out.println("Invalid date format! Please use DD/MM/YYYY.");
+		        continue;
+		    }
+		}
+	}
+	
+	public static String promptFormInput(String label) {
+		while (true) {
+			System.out.println(label + ": ");
+			String input = App.sc.nextLine().trim();
+			if ("0".equals(input)) {
+				System.out.println("Cancelled.");
+				return null;
+			}
+			if (!input.isEmpty()) {
+				return input;
+			}
+			System.out.println("Input cannot be empty. Please try again.");
+		}
+	}
+	
+	/**** Print ****/
+	public static void printText(String text) {
+		System.out.println(text);
+	}
+	public static void printChooseOption() {
+		System.out.println("Choose option: (or 0 to return)");
+	}
+	
+	public static void printInvalidSelection() {
+		System.out.println("Invalid selection. Please try again.");
+	}
+	
+	public static void printErrorMessage() {
+		System.out.println(App.ERROR_MESSAGE);
+	}
+	
+	public static void printWIP() {
+		System.out.println("WIP");
 	}
 }
