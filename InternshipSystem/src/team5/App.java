@@ -364,7 +364,9 @@ public class App {
         	System.out.println("CSV file not found!");
         }
         catch (IOException e) {
-            e.printStackTrace();
+        	System.out.println("Failed to save to file: " + e.getMessage());
+        	System.out.println("Stack trace:");
+        	e.printStackTrace();
         }
 	}
 	

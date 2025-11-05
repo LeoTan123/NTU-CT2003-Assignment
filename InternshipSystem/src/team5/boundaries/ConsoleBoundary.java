@@ -64,6 +64,25 @@ public abstract class ConsoleBoundary {
 		}
 	}
 	
+	public static boolean promptTryAgain() {
+		while (true) {
+			System.out.println("Something went wrong. Would you like to try again? (y/n)");
+			String input = App.sc.nextLine().trim().toLowerCase();
+			
+			if (input.equalsIgnoreCase("y")) {
+				return true;
+			}
+			else if (input.equalsIgnoreCase("n")) {
+				return false;
+			}
+			else {
+				printInvalidInput();
+				continue;
+			}
+		}
+		
+	}
+	
 	/**** Print ****/
 	public static void printText(String text) {
 		System.out.println(text);
@@ -74,6 +93,10 @@ public abstract class ConsoleBoundary {
 	
 	public static void printInvalidSelection() {
 		System.out.println("Invalid selection. Please try again.");
+	}
+	
+	public static void printInvalidInput() {
+		System.out.println("Invalid input. Please try again.");
 	}
 	
 	public static void printErrorMessage() {

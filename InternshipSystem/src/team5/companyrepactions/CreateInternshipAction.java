@@ -48,12 +48,12 @@ public class CreateInternshipAction implements CompanyRepAction {
 				return;
 			}
 			
-			LocalDate startDate = ConsoleBoundary.promptDate("Enter the internship start date:");
+			LocalDate startDate = ConsoleBoundary.promptDate("Enter the application start date");
 			if (startDate == null) {
 				return;
 			}
 			
-			LocalDate endDate = ConsoleBoundary.promptDate("Enter the internship end date:");
+			LocalDate endDate = ConsoleBoundary.promptDate("Enter the application end date");
 			if (endDate == null) {
 				return;
 			}
@@ -62,13 +62,19 @@ public class CreateInternshipAction implements CompanyRepAction {
 				continue;
 			}
 			
+			int numOfSlots = InternshipBoundary.promptNumOfSlots("Enter number of slots");
+			if (numOfSlots == 0) {
+				return;
+			}
+			
 			App.printSectionTitle("Internship Summary");
 			System.out.println("Title: " + title);
 			System.out.println("Description: " + description);
 			System.out.println("Internship Level: " + internshipLevel);
 			System.out.println("Preferred Major: " + preferredMajor.getFullName());
-			System.out.println("Start Date: " + startDate.format(App.DATE_DISPLAY_FORMATTER));
-			System.out.println("End Date: " + endDate.format(App.DATE_DISPLAY_FORMATTER));
+			System.out.println("Application Start Date: " + startDate.format(App.DATE_DISPLAY_FORMATTER));
+			System.out.println("Application End Date: " + endDate.format(App.DATE_DISPLAY_FORMATTER));
+			System.out.println("Number of slots: " + numOfSlots);
 			
 			boolean awaitingDecision = true;
 			while (awaitingDecision) {
@@ -87,7 +93,7 @@ public class CreateInternshipAction implements CompanyRepAction {
 						// Create a new internship instance
 						Internship internship = new Internship(generatedId, title, description, internshipLevel, 
 								preferredMajor, startDate, endDate, 
-								InternshipStatus.PENDING, App.currentUser.getEmail(), MAX_SLOTS_NUM);
+								InternshipStatus.PENDING, App.currentUser.getEmail(), numOfSlots);
 						
 						// Save to file
 						boolean isSuccessful = FileBoundary.appendInternshipToCsv(internship, rep.getCompanyName());

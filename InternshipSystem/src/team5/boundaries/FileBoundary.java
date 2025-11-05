@@ -21,15 +21,15 @@ public class FileBoundary {
             }
             writer.flush();
             return true;
-        } 
-        catch (FileNotFoundException fe) {
-        	System.out.println("CSV file not found!");
         }
         catch (IOException e) {
-            e.printStackTrace();
+        	System.out.println("Failed to save to file: " + e.getMessage());
+        	System.out.println("Stack trace:");
+        	e.printStackTrace();
+            return false;
             
         }
-        return false;
+        
 	}
 	
 	public static boolean appendInternshipToCsv(Internship internship, String companyName) {
@@ -39,6 +39,8 @@ public class FileBoundary {
 			return true;
 		} catch (IOException e) {
 			System.out.println("Failed to save to file: " + e.getMessage());
+        	System.out.println("Stack trace:");
+        	e.printStackTrace();
 			return false;
 		}
 	}
