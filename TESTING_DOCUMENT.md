@@ -1670,5 +1670,5 @@ I002,Data Analyst Intern,Data analysis and visualization,BASIC,Data Science and 
 **Document Version:** 1.0
 **Last Updated:** November 2025
 **Document Owner:** Team 5, CT2003
-**Status:** Draft / Under Review / Approved
+**Status:** Draft 
 
