@@ -5,7 +5,7 @@
 
 ## Overview
 
-This guide provides quick instructions on how to use the testing materials for your final report and presentation.
+This guide provides quick instructions on how to use the testing materials for the final report and presentation.
 
 ---
 
@@ -36,7 +36,7 @@ This guide provides quick instructions on how to use the testing materials for y
 
 **How to use:**
 1. Open in Excel or Google Sheets
-2. Update "Status" column as you execute tests:
+2. Update "Status" column as tests are executed:
    - Not Started
    - In Progress
    - Passed
@@ -281,7 +281,7 @@ Low       |   2   |  0   |   1   |   2
 
 ## Test Completion Checklist
 
-Before finalizing your report:
+Before finalizing the report:
 
 - [ ] All 86 test cases executed
 - [ ] TEST_EXECUTION_TRACKER.csv completely filled out
@@ -329,7 +329,5 @@ Example:
 - Low Severity + Low Priority = Fix if time permits
 
 ---
-
-**Good luck with your testing and presentation!**
 
 **Team 5, CT2003**

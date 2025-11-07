@@ -5,7 +5,7 @@
 
 ## All Documents Created
 
-I've created comprehensive documentation for your project. Here's what each document is for and how to use them:
+Comprehensive documentation has been created for the project. Here's what each document is for and how to use them:
 
 ---
 
@@ -13,11 +13,11 @@ I've created comprehensive documentation for your project. Here's what each docu
 **Size:** ~75 KB | **Read Time:** 2-3 hours | **Priority:** MUST READ
 
 **What it is:**
-Your complete, detailed guide to understanding the ENTIRE project. This is your bible for the presentation.
+A complete, detailed guide to understanding the ENTIRE project. Essential for presentation preparation.
 
 **What's inside:**
-- ✅ Project overview (what are we building and why?)
-- ✅ Java concepts explained like you're learning for the first time (OOP, classes, inheritance, enums, etc.)
+- ✅ Project overview (what we built and why)
+- ✅ Java concepts explained from fundamentals (OOP, classes, inheritance, enums, etc.)
 - ✅ Complete architecture breakdown
 - ✅ Step-by-step CLI usage examples (exactly what users see)
 - ✅ Detailed feature walkthroughs for all three user types
@@ -27,14 +27,14 @@ Your complete, detailed guide to understanding the ENTIRE project. This is your 
 - ✅ Troubleshooting guide
 
 **When to use:**
-- READ THIS FIRST before your presentation
-- Use as reference when team members ask "how does X work?"
+- Read this first before the presentation
+- Use as reference when explaining "how does X work?"
 - Review the Q&A section before presenting
-- Use to understand the code you're presenting
+- Use to understand the codebase thoroughly
 
 **Best way to read:**
 1. Start with Section 1-2 (Project Overview)
-2. Read Section 3 (Java Concepts) - this teaches you the fundamentals
+2. Read Section 3 (Java Concepts) - teaches the fundamentals
 3. Read Section 5 (How Users Use the System) - understand the user experience
 4. Read Section 9 (Q&A) - prepare for questions
 5. Refer to other sections as needed
@@ -45,7 +45,7 @@ Your complete, detailed guide to understanding the ENTIRE project. This is your 
 **Size:** 44 KB | **Read Time:** 1 hour | **Priority:** HIGH
 
 **What it is:**
-Comprehensive testing plan with 86 test cases for your final report.
+Comprehensive testing plan with 86 test cases for the final report.
 
 **What's inside:**
 - ✅ Executive summary and test strategy
@@ -58,13 +58,13 @@ Comprehensive testing plan with 86 test cases for your final report.
 - ✅ Defect tracking templates
 
 **When to use:**
-- Include in your final report's testing section
+- Include in the final report's testing section
 - Use during actual testing of the system
 - Reference when discussing quality assurance in presentation
 - Show to demonstrate thoroughness
 
-**For your report:**
-- Copy relevant sections into your report
+**For the report:**
+- Copy relevant sections into the report
 - Use test case format for documentation
 - Include test execution summary
 - Show test coverage metrics
@@ -86,8 +86,8 @@ Practical guide on HOW to actually execute the tests.
 - ✅ Test completion checklist
 
 **When to use:**
-- When you actually run tests on the system
-- To create test metrics for your report
+- When actually running tests on the system
+- To create test metrics for the report
 - To set up test data
 - To generate pass/fail statistics
 
@@ -223,7 +223,7 @@ Template for logging bugs found during testing.
 ### If asked "Show me the code"
 → Refer to PERSONAL_REFERENCE_GUIDE.md Section 7 (Code Deep Dive)
 
-### If asked "How did you test this?"
+### If asked "How was this tested?"
 → Refer to TESTING_DOCUMENT.md
 
 ### If asked "What are the limitations?"
@@ -350,10 +350,10 @@ InternshipSystem/                ← The actual code
 ## Sample Presentation Script
 
 **Opening:**
-"Good morning/afternoon. I'm [your name] from Team 5, and I'll be presenting our Internship Management System developed for CT2003. This system streamlines the internship application process for students, companies, and career center staff."
+"Good morning/afternoon. I'm [name] from Team 5, and I'll be presenting our Internship Management System developed for CT2003. This system streamlines the internship application process for students, companies, and career center staff."
 
 **Demo Introduction:**
-"Let me walk you through a typical user journey. Alice is a Year 2 Computer Science student looking for an internship..."
+"I'll walk through a typical user journey. Alice is a Year 2 Computer Science student looking for an internship..."
 
 **Technical Explanation:**
 "The system is built using object-oriented programming principles in Java. We implemented a three-tier inheritance hierarchy with User as the parent class..."
@@ -362,19 +362,19 @@ InternshipSystem/                ← The actual code
 "To ensure quality, we developed 86 comprehensive test cases covering all modules, with a focus on validation rules and business logic..."
 
 **Closing:**
-"In conclusion, our system successfully demonstrates key OOP concepts while solving a real-world problem. We're now open for any questions you may have."
+"In conclusion, our system successfully demonstrates key OOP concepts while solving a real-world problem. We're now open for any questions."
 
 ---
 
 ## Contact for Questions
 
-If you have questions about the documentation or need clarification:
+For questions about the documentation or clarification:
 - Review PERSONAL_REFERENCE_GUIDE.md first (most answers are there)
-- Check the relevant section based on your question type
+- Check the relevant section based on the question type
 - Use the Quick Reference section above
 
 ---
 
-**Good luck with your presentation and report!**
+**Team 5, CT2003**
 
-Remember: You don't need to memorize everything. Understand the concepts, know where to find details, and be able to explain the "why" behind design decisions.
+Remember: Focus on understanding the concepts, knowing where to find details, and being able to explain the "why" behind design decisions.
