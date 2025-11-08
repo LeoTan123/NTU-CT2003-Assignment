@@ -134,4 +134,9 @@ public class User {
 		System.out.println("Password has been changed.");
 		return true;
 	}
+
+	public void setPassword(String newPassword) {
+		// TODO Auto-generated method stub
+		this.password = newPassword;
+		}
 }

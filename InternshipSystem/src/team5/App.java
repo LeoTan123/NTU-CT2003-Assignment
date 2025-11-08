@@ -50,7 +50,7 @@ public class App {
     public static DateTimeFormatter DATE_DB_FORMATTER = DateTimeFormatter.ofPattern("dd MM yyyy");
 	
 	public static void main(String[] args) {
-		// Initialise stuff
+		// Initialize stuff
 		LoadEnvironmentVariables();
 		
 		// Read from CSV files
@@ -239,7 +239,7 @@ public class App {
         	
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(csvSplitBy);
-                if(userType == UserType.STUDENT && values.length == 5)
+                if(userType == UserType.STUDENT && values.length == 6)
                 {
                    String id = values[0].trim();
  		    	   String name = values[1].trim();
@@ -247,9 +247,11 @@ public class App {
  		    	   int year = Integer.parseInt(values[3].trim());
  		    	   String email = values[4].trim();
  		    	   
+ 		    	   String pwd = (values.length >= 6) ? values[5].trim(): "password";
+ 		    	   
  		    	   StudentMajor major = StudentMajor.fromFullName(prefferedMajor);
                   
- 		    	   Student student = new Student(id, name, email, "password", major, year);
+ 		    	   Student student = new Student(id, name, email, pwd, major, year);
 	               studentList.add(student);
                 }
                 else if(userType == UserType.CCSTAFF && values.length == 5)
@@ -333,15 +335,16 @@ public class App {
         	if(userType == UserType.STUDENT)
         	{
         		// Header
-                writer.append("StudentID,Name,Major,Year,Email\n");
+                writer.append("StudentID,Name,Major,Year,Email,Password\n");
                 // Need to include old data
                 for (Student student : studentList) {
-                	String userID = student.getUserID();
-                	String name = student.getName();
-                	String major = student.getMajor().getFullName();
-                	int year = student.getYear();
-                	String email = student.getEmail();
-                	writer.append(userID + "," + name + "," + major + "," + year + "," + email + "\n");
+                	writer.append(student.getUserID()).append(",")
+                    .append(student.getName()).append(",")
+                    .append(student.getMajor().getFullName()).append(",")
+                    .append(String.valueOf(student.getYear())).append(",")
+                    .append(student.getEmail()).append(",")
+                    .append(student.getPassword()).append("\n");
+                	
                 }
         	}
         	else if(userType == UserType.CCSTAFF)
@@ -368,6 +371,42 @@ public class App {
         	System.out.println("Stack trace:");
         	e.printStackTrace();
         }
+	}
+	public static boolean updatePasswordAndPersist(UserType type, String userId, String newPassword) {
+	    User target = null;
+
+	    switch (type) {
+	        case STUDENT:
+	            for (Student student : studentList)
+	                if (student.getUserID().equals(userId)) { target = student; break; }
+	            break;
+
+	        case CCSTAFF:
+	            for (CareerCenterStaff staff : staffList)
+	                if (staff.getUserID().equals(userId)) { target = staff; break; }
+	            break;
+
+	        case COMREP:
+	            for (CompanyRep s : compRepList)
+	                if (s.getUserID().equalsIgnoreCase(userId)) { target = s; break; }
+	            break;
+	    }
+
+	    if (target == null) return false;
+
+	    // ✅ update in memory
+	    target.setPassword(newPassword);
+
+	    // ✅ save to correct CSV
+	    String path = (type == UserType.STUDENT) ? envFilePathStudent :
+	                  (type == UserType.CCSTAFF) ? envFilePathStaff :
+	                  (type == UserType.COMREP) ? envFilePathRep : null;
+
+	    if (path == null) return false;
+
+	    WriteToCSV(path, type);
+
+	    return true;
 	}
 	
 	public static void LoadEnvironmentVariables() {
