@@ -56,7 +56,7 @@ public class App {
 	
 	public static void main(String[] args) {
 		// Initialize stuff
-		LoadEnvironmentVariables();
+		loadEnvironmentVariables();
 		
 		// Read from CSV files
 		studentList.clear();
@@ -416,7 +416,7 @@ public class App {
         }
 	}
 	
-	public static void LoadEnvironmentVariables() {
+	public static void loadEnvironmentVariables() {
 		 Properties prop = new Properties();
          try (InputStream input = App.class.getClassLoader().getResourceAsStream("application.properties")) {
              if (input == null) {
@@ -436,6 +436,8 @@ public class App {
          }
 	}
 	
+	
+	// TODO: to refactor to ConsoleBoundary
 	public static void printSectionTitle(String title) {
 		System.out.println("===== " + title + " =====");
 	}
