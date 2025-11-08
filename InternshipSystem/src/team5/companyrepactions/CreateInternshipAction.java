@@ -93,7 +93,7 @@ public class CreateInternshipAction implements CompanyRepAction {
 						// Create a new internship instance
 						Internship internship = new Internship(generatedId, title, description, internshipLevel, 
 								preferredMajor, startDate, endDate, 
-								InternshipStatus.PENDING, App.currentUser.getEmail(), numOfSlots);
+								InternshipStatus.PENDING, rep.getCompanyName(), rep.getEmail(), numOfSlots);
 						
 						// Save to file
 						boolean isSuccessful = FileBoundary.appendInternshipToCsv(internship, rep.getCompanyName());

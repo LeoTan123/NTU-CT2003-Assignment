@@ -301,7 +301,7 @@ public class App {
                     String openDate = values[5].trim();
                     String closeDate = values[6].trim();
                     String status = values[7].trim();
-                    //String companyName = values[8].trim(); // TODO: add this field in Check Internship Application Status
+                    String companyName = values[8].trim(); // TODO: add this field in Check Internship Application Status
                     String companyRep = values[9].trim();
                     String slots = values[10].trim();
                     
@@ -317,7 +317,7 @@ public class App {
                     
                     Internship internship = new Internship(internshipId, title, description, 
                     		internshipLevel, major, appOpenDate, appCloseDate,
-                    		appStatus, companyRep, numOfSlots);
+                    		appStatus, companyName, companyRep, numOfSlots);
                     internshipList.add(internship);
                 }
                 else if(type == CSVType.InternshipApplication && values.length == 5)

@@ -78,8 +78,6 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 						ConsoleBoundary.printInvalidSelection();
 						continue;
 					}
-					
-					
 				}
 			} 
 			catch (NumberFormatException ex) {
@@ -99,6 +97,7 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 				chosenInternship.getApplicationOpenDate(), 
 				chosenInternship.getApplicationCloseDate(), 
 				chosenInternship.getInternshipStatus(), 
+				chosenInternship.getCompanyName(), 
 				chosenInternship.getCompanyRep(), 
 				chosenInternship.getNumOfSlots()
 		);
