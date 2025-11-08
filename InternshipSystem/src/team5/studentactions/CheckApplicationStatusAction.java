@@ -21,7 +21,7 @@ public class CheckApplicationStatusAction implements StudentAction {
                 System.out.println("No internship applications found.");
                 return;
             } 
-        	App.printSectionTitle("Your Internship Applications");
+        	ConsoleBoundary.printSectionTitle("Your Internship Applications");
         	boolean hasInternship = false;
 			for (int i = 0; i < applications.size(); i++) {
 				InternshipApplication internship = applications.get(i);
@@ -99,7 +99,7 @@ public class CheckApplicationStatusAction implements StudentAction {
 	}
 	
 	private void displayApplicationDetails(InternshipApplication chosen) {
-		App.printSectionTitle("Application Details");		
+		ConsoleBoundary.printSectionTitle("Application Details");		
 		System.out.println("Application ID: " + ConsoleBoundary.safeValue(chosen.getApplicationId()));
 		System.out.println("Internship ID: " + ConsoleBoundary.safeValue(chosen.getInternshipInfo().getInternshipId()));
 		System.out.println("Company Name: " + ConsoleBoundary.safeValue(chosen.getInternshipInfo().getCompanyName()));

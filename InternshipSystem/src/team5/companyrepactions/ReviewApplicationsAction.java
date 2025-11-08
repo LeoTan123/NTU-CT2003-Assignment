@@ -10,6 +10,7 @@ import team5.CompanyRep;
 import team5.Internship;
 import team5.InternshipApplication;
 import team5.Student;
+import team5.boundaries.ConsoleBoundary;
 import team5.enums.InternshipApplicationStatus;
 
 /**
@@ -29,7 +30,7 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 		boolean reviewing = true;
 
 		while (reviewing) {
-			App.printSectionTitle("Review Internship Applications", true);
+			ConsoleBoundary.printSectionTitle("Review Internship Applications", true);
 
 			// Get all internships owned by this company rep
 			ArrayList<Internship> ownedInternships = rep.getInternships();
@@ -182,7 +183,7 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 		boolean reviewing = true;
 
 		while (reviewing) {
-			App.printSectionTitle("Applications for: " + internship.getTitle());
+			ConsoleBoundary.printSectionTitle("Applications for: " + internship.getTitle());
 
 			if (applications.isEmpty()) {
 				System.out.println("No applications for this internship.");
@@ -254,7 +255,7 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 		Student student = application.getStudentInfo();
 
 		// Display detailed application information
-		App.printSectionTitle("Application Details");
+		ConsoleBoundary.printSectionTitle("Application Details");
 		System.out.println("Application ID: " + application.getApplicationId());
 		System.out.println("Student Name: " + student.getName());
 		System.out.println("Student ID: " + student.getUserID());

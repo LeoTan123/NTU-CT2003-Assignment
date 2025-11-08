@@ -4,6 +4,9 @@ import java.time.LocalDate;
 
 import team5.enums.InternshipApplicationStatus;
 
+/**
+ * InternshipApplication class
+ */
 public class InternshipApplication {
 	private String applicationID;
 	private Internship internship;
@@ -11,7 +14,16 @@ public class InternshipApplication {
 	private LocalDate appliedDate;
 	private InternshipApplicationStatus status;
 	
-	public InternshipApplication(String applicationID, Internship internship, Student student, LocalDate appliedDate, InternshipApplicationStatus status) {
+	/**
+	 * InternshipApplication constructor
+	 * @param applicationID
+	 * @param internship
+	 * @param student
+	 * @param appliedDate
+	 * @param status
+	 */
+	public InternshipApplication(String applicationID, Internship internship, 
+			Student student, LocalDate appliedDate, InternshipApplicationStatus status) {
 		this.applicationID = applicationID;
 		this.internship = internship;
 		this.student = student;
@@ -28,14 +40,6 @@ public class InternshipApplication {
 		this.applicationID = applicationID;
 	}
 	
-	/*public int getInternshipId() {
-		return this.internshipID;
-	}
-	
-	public void setInternshipId(int internshipId) {
-		this.internshipID = internshipId;
-	}*/
-	
 	public Internship getInternshipInfo() {
 		return this.internship;
 	}
@@ -43,14 +47,6 @@ public class InternshipApplication {
 	public void setInternshipInfo(Internship internship) {
 		this.internship = internship;
 	}
-	
-	/*public String getStudentUsername() {
-		return this.studentUsername;
-	}
-	
-	public void setStudentUsername(String studentUsername) {
-		this.studentUsername = studentUsername;
-	}*/
 	
 	public Student getStudentInfo()
 	{

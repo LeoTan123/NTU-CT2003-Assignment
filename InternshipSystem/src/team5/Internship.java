@@ -6,6 +6,9 @@ import team5.enums.InternshipLevel;
 import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
 
+/**
+ * Internship class
+ */
 public class Internship {
 	private String internshipId;
 	private String title;
@@ -19,6 +22,20 @@ public class Internship {
 	private String companyRep;
 	private int numOfSlots;
 	
+	/** 
+	 * Internship constructor
+	 * @param internshipId
+	 * @param title
+	 * @param description
+	 * @param internshipLevel
+	 * @param preferredMajor
+	 * @param applicationOpenDate
+	 * @param applicationCloseDate
+	 * @param status
+	 * @param companyName
+	 * @param companyRep
+	 * @param numOfSlots
+	 */
 	public Internship(String internshipId, String title, String description, InternshipLevel internshipLevel, 
 			StudentMajor preferredMajor, LocalDate applicationOpenDate, LocalDate applicationCloseDate, InternshipStatus status,
 			String companyName, String companyRep, int numOfSlots) {

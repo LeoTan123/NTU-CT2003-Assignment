@@ -2,6 +2,7 @@ package team5.controllers;
 
 import team5.App;
 import team5.CompanyRep;
+import team5.boundaries.ConsoleBoundary;
 import team5.companyrepactions.CompanyRepAction;
 import team5.companyrepactions.CreateInternshipAction;
 import team5.companyrepactions.ListOwnInternshipsAction;
@@ -22,7 +23,7 @@ public class CompanyRepController {
 	public void showMenu(CompanyRep companyRep) {
 		boolean exit = false;
 		while (!exit) {
-			App.printSectionTitle("Company Representative Menu", true);
+			ConsoleBoundary.printSectionTitle("Company Representative Menu", true);
 			System.out.println("1. Create Internship");
 			System.out.println("2. View My Created Internships");
 			System.out.println("3. Review Internship Applications");

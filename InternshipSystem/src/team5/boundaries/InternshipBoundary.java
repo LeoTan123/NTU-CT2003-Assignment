@@ -32,7 +32,7 @@ public class InternshipBoundary extends ConsoleBoundary {
 	}
 	
 	public static void printInternshipDetails(Internship internship) {
-		App.printSectionTitle("Internship Details", true);
+		ConsoleBoundary.printSectionTitle("Internship Details", true);
 		System.out.println("Internship ID: \t\t" + internship.getInternshipId());
 		System.out.println("Title: \t\t\t" + safeValue(internship.getTitle()));
 		System.out.println("Description: \t\t" + safeValue(internship.getDescription()));

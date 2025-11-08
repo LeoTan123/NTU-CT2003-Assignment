@@ -2,6 +2,7 @@ package team5.controllers;
 
 import team5.App;
 import team5.Student;
+import team5.boundaries.ConsoleBoundary;
 import team5.studentactions.CheckApplicationStatusAction;
 import team5.studentactions.StudentAction;
 import team5.studentactions.ViewInternshipsAction;
@@ -19,7 +20,7 @@ public class StudentController {
     public void showMenu(Student student) {
         boolean exit = false;
         while (!exit) {
-        	App.printSectionTitle("Student Menu", true);
+        	ConsoleBoundary.printSectionTitle("Student Menu", true);
             System.out.println("1. View Internship");
             System.out.println("2. Check Internship Application Status");
             System.out.println("3. Update Password");

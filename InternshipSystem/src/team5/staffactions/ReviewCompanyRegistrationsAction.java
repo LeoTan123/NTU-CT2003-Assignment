@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import team5.App;
 import team5.CareerCenterStaff;
 import team5.CompanyRep;
+import team5.boundaries.ConsoleBoundary;
 import team5.enums.UserAccountStatus;
 
 public class ReviewCompanyRegistrationsAction implements StaffAction {
@@ -16,7 +17,7 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 
 	@Override
 	public void run(CareerCenterStaff staff) {
-		App.printSectionTitle("Pending Company Registrations");
+		ConsoleBoundary.printSectionTitle("Pending Company Registrations");
 
 		List<CompanyRep> pending = App.compRepList.stream()
 				.filter(rep -> rep.getAccountStatus() == UserAccountStatus.PENDING)

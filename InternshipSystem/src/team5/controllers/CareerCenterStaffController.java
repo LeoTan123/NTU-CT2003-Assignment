@@ -2,6 +2,7 @@ package team5.controllers;
 
 import team5.App;
 import team5.CareerCenterStaff;
+import team5.boundaries.ConsoleBoundary;
 import team5.staffactions.ReviewCompanyRegistrationsAction;
 import team5.staffactions.ReviewInternshipSubmissionsAction;
 import team5.staffactions.StaffAction;
@@ -23,7 +24,7 @@ public class CareerCenterStaffController {
 		boolean exit = false;
 		while (!exit) {
 			System.out.println();
-			App.printSectionTitle("Career Center Staff Menu");
+			ConsoleBoundary.printSectionTitle("Career Center Staff Menu");
 			System.out.println("1. Review Company Representative Registrations");
 			System.out.println("2. Review Internship Submissions");
 			System.out.println("3. View Internship Opportunities");

@@ -2,6 +2,9 @@ package team5;
 
 import team5.enums.UserAccountStatus;
 
+/**
+ * Company Representative Registration class
+ */
 public class CompanyRepRegistration {
 	private String companyRepId;
 	private String name;
@@ -11,6 +14,16 @@ public class CompanyRepRegistration {
 	private String email;
 	private UserAccountStatus status;
 	
+	/**
+	 * Company Representative constructor
+	 * @param companyRepId
+	 * @param name
+	 * @param companyName
+	 * @param department
+	 * @param position
+	 * @param email
+	 * @param status
+	 */
 	public CompanyRepRegistration(String companyRepId, String name, String companyName, String department,
 			String position, String email, UserAccountStatus status) {
 		this.companyRepId = companyRepId;
@@ -23,31 +36,31 @@ public class CompanyRepRegistration {
 	}
 	
 	public String getCompanyRepId() {
-		return companyRepId;
+		return this.companyRepId;
 	}
 	
 	public String getName() {
-		return name;
+		return this.name;
 	}
 	
 	public String getCompanyName() {
-		return companyName;
+		return this.companyName;
 	}
 	
 	public String getDepartment() {
-		return department;
+		return this.department;
 	}
 	
 	public String getPosition() {
-		return position;
+		return this.position;
 	}
 	
 	public String getEmail() {
-		return email;
+		return this.email;
 	}
 	
 	public UserAccountStatus getStatus() {
-		return status;
+		return this.status;
 	}
 	
 	public void setStatus(UserAccountStatus status) {

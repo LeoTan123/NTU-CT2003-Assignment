@@ -25,7 +25,7 @@ public class CreateInternshipAction implements CompanyRepAction {
 		
 		boolean continueCreate = true;
 		while (continueCreate) {
-			App.printSectionTitle("Create internship", true);
+			ConsoleBoundary.printSectionTitle("Create internship", true);
 			System.out.println("Enter the details below (press 0 at any time to cancel):");
 
 			String title = ConsoleBoundary.promptFormInput("Title");
@@ -67,7 +67,7 @@ public class CreateInternshipAction implements CompanyRepAction {
 				return;
 			}
 			
-			App.printSectionTitle("Internship Summary");
+			ConsoleBoundary.printSectionTitle("Internship Summary");
 			System.out.println("Title: " + title);
 			System.out.println("Description: " + description);
 			System.out.println("Internship Level: " + internshipLevel);
@@ -113,7 +113,7 @@ public class CreateInternshipAction implements CompanyRepAction {
 							System.out.println("Internship opportunity created successfully. Please wait for approval.");
 						}
 						else {
-							System.out.println(App.ERROR_MESSAGE);
+							ConsoleBoundary.printErrorMessage();
 						}
 						
 						awaitingDecision = false;
