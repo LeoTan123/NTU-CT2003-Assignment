@@ -3,6 +3,7 @@ package team5.studentactions;
 import java.util.List;
 
 import team5.App;
+import team5.Internship;
 import team5.InternshipApplication;
 import team5.Student;
 import team5.enums.InternshipApplicationStatus;
@@ -97,11 +98,12 @@ public class CheckApplicationStatusAction implements StudentAction {
 	
 	private void displayApplicationDetails(InternshipApplication chosen) {
 		App.printSectionTitle("Application Details");		
-		System.out.println("Application ID: " + chosen.getApplicationId());
+		System.out.println("Application ID: " + safeValue(chosen.getApplicationId()));
+		System.out.println("Internship ID: " + safeValue(chosen.getInternshipInfo().getInternshipId()));
 		System.out.println("Title: " + safeValue(chosen.getInternshipInfo().getTitle()));
 		System.out.println("Description: " + safeValue(chosen.getInternshipInfo().getDescription()));
 		System.out.println("Application Date: " + chosen.getAppliedDate().format(App.DATE_DISPLAY_FORMATTER));
-		System.out.println("Application Status: " + valueOrNA(chosen.getStatus()));
+		System.out.println("Status: " + valueOrNA(chosen.getStatus()));
 		
 		while (true) {
 	        System.out.println("Enter 0 to return to the internship action list:");
@@ -135,7 +137,7 @@ public class CheckApplicationStatusAction implements StudentAction {
 		// If student is employed already
 		if(student.getEmployedStatus())
 		{
-			System.out.println("You have already accepted another internship. You are not allowed to accept this internship.");
+			System.out.println("You have already accepted another internship opportunity. You are not allowed to accept this internship.");
 			return;
 		}
 		
@@ -143,9 +145,18 @@ public class CheckApplicationStatusAction implements StudentAction {
 		+ chosen.getInternshipInfo().getTitle() + ". Please contact " 
 		+ chosen.getInternshipInfo().getCompanyRep() + " for more details.");
 		
-		student.setEmployedStatus(true);
-		student.getInternshipApplications().clear();// Clear student application list
-		chosen.setHasStudentAccepted(true);
+		student.setEmployedStatus(true); // Set Student as employed
+		student.clearInternshipApplications(); // Clear application list after accepted offer
+		
+		// Update the NumOfSlots of the specific internship
+		Internship internshipInfo = chosen.getInternshipInfo();
+		int remainingSlots = internshipInfo.getNumOfSlots();
+		if (remainingSlots > 0) {
+			internshipInfo.setNumOfSlots(remainingSlots - 1);
+		    if (internshipInfo.getNumOfSlots() == 0) {
+		    	internshipInfo.setInternshipStatus(InternshipStatus.FILLED);
+		    }
+		}
 		return;
 	}
 

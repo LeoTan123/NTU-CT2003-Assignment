@@ -49,6 +49,11 @@ public class Student extends User {
 		return this.employedStatus;
 	}
 	
+	public void clearInternshipApplications()
+	{
+		appliedInternships.clear();
+	}
+	
 	public void addInternshipApplications(InternshipApplication internshipApplication)
 	{
 		appliedInternships.add(internshipApplication);

@@ -5,35 +5,26 @@ import java.time.LocalDate;
 import team5.enums.InternshipApplicationStatus;
 
 public class InternshipApplication {
-	private int applicationID;
-	//private int internshipID;
+	private String applicationID;
 	private Internship internship;
-	//private String studentUsername;
 	private Student student;
 	private LocalDate appliedDate;
 	private InternshipApplicationStatus status;
-	private boolean hasStudentAccepted;
 	
-	public InternshipApplication() {
-	}
-	
-	public InternshipApplication(int applicationID, Internship internship, Student student, LocalDate appliedDate) {
+	public InternshipApplication(String applicationID, Internship internship, Student student, LocalDate appliedDate, InternshipApplicationStatus status) {
 		this.applicationID = applicationID;
-		//this.internshipID = internshipID;
-		//this.studentUsername = studentUsername;
 		this.internship = internship;
 		this.student = student;
 		this.appliedDate = appliedDate;
-		this.status = InternshipApplicationStatus.PENDING;
-		this.hasStudentAccepted = false;
+		this.status = status;
 	}
 	
 	// Setter and getter
-	public int getApplicationId() {
+	public String getApplicationId() {
 		return this.applicationID;
 	}
 	
-	public void setApplicationId(int applicationID) {
+	public void setApplicationId(String applicationID) {
 		this.applicationID = applicationID;
 	}
 	
@@ -87,20 +78,9 @@ public class InternshipApplication {
 		this.status = status;
 	}
 	
-	public boolean hasStudentAccepted() {
-		return this.hasStudentAccepted;
-	}
-	
-	public void setHasStudentAccepted(boolean hasStudentAccepted) {
-		this.hasStudentAccepted = hasStudentAccepted;
-	}
-	
 	@Override
 	public String toString()
 	{
-		return this.applicationID + " " + this.internship + " " + this.student + " " + this.appliedDate + " " + this.status + " " + this.hasStudentAccepted;
-	}
-
-	public void apply(int internshipId, String studentUserName) {
+		return this.applicationID + " " + this.internship + " " + this.student + " " + this.appliedDate + " " + this.status + " ";
 	}
 }

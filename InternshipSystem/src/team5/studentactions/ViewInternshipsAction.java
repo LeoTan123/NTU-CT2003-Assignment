@@ -1,5 +1,7 @@
 package team5.studentactions;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +10,7 @@ import team5.App;
 import team5.Internship;
 import team5.InternshipApplication;
 import team5.Student;
+import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipLevel;
 import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
@@ -197,12 +200,17 @@ public class ViewInternshipsAction implements StudentAction {
 	        return;
 	    }
 	    
-	    InternshipApplication internApp = new InternshipApplication(student.getInternshipApplications().size() + 1,
-	    		chosen, student, LocalDate.now());
+	    // Generate new random application ID
+		String[] idsArray = App.internshipApplicationList.stream().map(i -> i.getApplicationId()).toArray(String[]::new);
+		String generatedId = App.generateUniqueId("A", idsArray);
+		
+	    InternshipApplication internApp = new InternshipApplication(generatedId, chosen, student, today, InternshipApplicationStatus.PENDING);
 
+	    // Add to student's own internship application list
 	    student.addInternshipApplications(internApp);
-	    chosen.setNumOfSlots(chosen.getNumOfSlots() - 1);
-	    
+	    // Add to the global list for database saving
+	    App.internshipApplicationList.add(internApp);
+	    appendInternshipApplicationToCsv(internApp);
 	    System.out.println("Successfully applied for internship: " + chosen.getTitle());
 	}
 
@@ -367,6 +375,31 @@ public class ViewInternshipsAction implements StudentAction {
 	    }
 
 	    return filteredList;
+	}
+	
+	// Write to CSV
+	private static boolean appendInternshipApplicationToCsv(InternshipApplication internship) {
+		try (FileWriter writer = new FileWriter(App.envFilePathInternshipApplication, true)) {
+			writer.append(buildInternshipString(internship).toString());
+			writer.flush();
+			return true;
+		} 
+		catch (IOException e) {
+			System.out.println("Failed to save to file: " + e.getMessage());
+        	System.out.println("Stack trace:");
+        	e.printStackTrace();
+			return false;
+		}
+	}
+	
+	private static StringBuilder buildInternshipString(InternshipApplication internshipApp) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(internshipApp.getApplicationId()).append(",")
+		  .append(internshipApp.getInternshipInfo().getInternshipId()).append(",")
+		  .append(internshipApp.getStudentInfo().getName()).append(",")
+		  .append(internshipApp.getAppliedDate().format(App.DATE_DB_FORMATTER)).append(",")
+		  .append(internshipApp.getStatus()).append("\n");
+		return sb;
 	}
 	
 	private String safeValue(Object value) {

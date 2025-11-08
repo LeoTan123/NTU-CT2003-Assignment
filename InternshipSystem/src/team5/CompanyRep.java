@@ -2,7 +2,6 @@ package team5;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import team5.enums.InternshipLevel;
 import team5.enums.UserAccountStatus;
@@ -292,21 +291,5 @@ public class CompanyRep extends User{
 	
 	public void viewInternshipApplicationFromStudent() {
 		
-	}
-	
-	// Helper
-	private LocalDate readDate(String prompt) {
-	    System.out.println(prompt + " (format DD/MM/YYYY or Q to quit):");
-	    String input = App.sc.nextLine();
-	    if (input.equalsIgnoreCase("Q")) 
-	    	return null;
-
-	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-	    try {
-	        return LocalDate.parse(input, formatter);
-	    } catch (DateTimeParseException e) {
-	        System.out.println("Invalid date format! Please use DD/MM/YYYY.");
-	        return null;
-	    }
 	}
 }

@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 import team5.controllers.CareerCenterStaffController;
 import team5.controllers.CompanyRepController;
 import team5.controllers.StudentController;
+import team5.enums.CSVType;
+import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipLevel;
 import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
@@ -37,6 +39,8 @@ public class App {
 	public static ArrayList<CompanyRep> compRepList = new ArrayList<>();
 	// Internship List
 	public static ArrayList<Internship> internshipList = new ArrayList<>();
+	// Internship application List
+	public static ArrayList<InternshipApplication> internshipApplicationList = new ArrayList<>();
 	// Current user
 	public static User currentUser = null;
 	
@@ -46,11 +50,12 @@ public class App {
 	public static String envFilePathStaff;
 	public static String envFilePathRep;
 	public static String envFilePathInternship;
+	public static String envFilePathInternshipApplication;
 	public static DateTimeFormatter DATE_DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     public static DateTimeFormatter DATE_DB_FORMATTER = DateTimeFormatter.ofPattern("dd MM yyyy");
 	
 	public static void main(String[] args) {
-		// Initialise stuff
+		// Initialize stuff
 		LoadEnvironmentVariables();
 		
 		// Read from CSV files
@@ -58,11 +63,14 @@ public class App {
 		staffList.clear();
 		compRepList.clear();
 		internshipList.clear();
+		internshipApplicationList.clear();
 		
-		ReadFromCSV(envFilePathInternship, UserType.NONE); // Load internship before comrep so that comrep can use the data
-		ReadFromCSV(envFilePathStudent, UserType.STUDENT);
-		ReadFromCSV(envFilePathStaff, UserType.CCSTAFF);
-		ReadFromCSV(envFilePathRep, UserType.COMREP);
+		// Load internship before CompanyRep so that CompanyRep can use the data
+		ReadFromCSV(envFilePathInternship, CSVType.Internship); 
+		ReadFromCSV(envFilePathStudent, CSVType.Student);
+		ReadFromCSV(envFilePathStaff, CSVType.CCStaff);
+		ReadFromCSV(envFilePathRep, CSVType.CompanyRep);
+		ReadFromCSV(envFilePathInternshipApplication, CSVType.InternshipApplication);
 		
 		printSectionTitle("Welcome to Internship System");
         
@@ -227,7 +235,7 @@ public class App {
 	    return false;
 	}
 	
-	public static void ReadFromCSV(String fileName, UserType userType)
+	public static void ReadFromCSV(String fileName, CSVType type)
 	{
 		String csvFile = fileName;
         String line;
@@ -239,7 +247,7 @@ public class App {
         	
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(csvSplitBy);
-                if(userType == UserType.STUDENT && values.length == 5)
+                if(type == CSVType.Student && values.length == 5)
                 {
                    String id = values[0].trim();
  		    	   String name = values[1].trim();
@@ -252,7 +260,7 @@ public class App {
  		    	   Student student = new Student(id, name, email, "password", major, year);
 	               studentList.add(student);
                 }
-                else if(userType == UserType.CCSTAFF && values.length == 5)
+                else if(type == CSVType.CCStaff && values.length == 5)
                 {
                    String id = values[0].trim();
   		    	   String name = values[1].trim();
@@ -263,7 +271,7 @@ public class App {
   		    	   CareerCenterStaff staff = new CareerCenterStaff(id, name, email, "password", role, department);
   		    	   staffList.add(staff);
                 }
-                else if(userType == UserType.COMREP && values.length == 7)
+                else if(type == CSVType.CompanyRep && values.length == 7)
                 {
                    String repId = values[0].trim();
                    String name = values[1].trim();
@@ -282,43 +290,81 @@ public class App {
                    CompanyRep registration = new CompanyRep(repId, name, email, "password", companyName, department, position, status, comrepInternships);
                    compRepList.add(registration);
                 }
-                else
+                else if(type == CSVType.Internship && values.length == 11)
                 {
-                	if(values.length == 11)
-                	{
-                		// Internship list
-                    	String internshipId = values[0].trim();
-                        String title = values[1].trim();
-                        String description = values[2].trim();
-                        String level = values[3].trim();
-                        String preferredMajor = values[4].trim();
-                        String openDate = values[5].trim();
-                        String closeDate = values[6].trim();
-                        String status = values[7].trim();
-                        //String companyName = values[8].trim(); // TODO: add this field in Check Internship Application Status
-                        String companyRep = values[9].trim();
-                        String slots = values[10].trim();
-                        
-                        InternshipLevel internshipLevel = InternshipLevel.fromString(level);
-                        
-                        StudentMajor major = StudentMajor.fromFullName(preferredMajor);
-                        
-                        LocalDate appOpenDate = parseDate(openDate);
-                        LocalDate appCloseDate = parseDate(closeDate);
-                        
-                        InternshipStatus appStatus = InternshipStatus.fromString(status);
-                        int numOfSlots = Integer.parseInt(slots);
-                        
-                        Internship internship = new Internship(internshipId, title, description, 
-                        		internshipLevel, major, appOpenDate, appCloseDate,
-                        		appStatus, companyRep, numOfSlots);
-                        internshipList.add(internship);
-                	}
+            		// Internship list
+                	String internshipId = values[0].trim();
+                    String title = values[1].trim();
+                    String description = values[2].trim();
+                    String level = values[3].trim();
+                    String preferredMajor = values[4].trim();
+                    String openDate = values[5].trim();
+                    String closeDate = values[6].trim();
+                    String status = values[7].trim();
+                    //String companyName = values[8].trim(); // TODO: add this field in Check Internship Application Status
+                    String companyRep = values[9].trim();
+                    String slots = values[10].trim();
+                    
+                    InternshipLevel internshipLevel = InternshipLevel.fromString(level);
+                    
+                    StudentMajor major = StudentMajor.fromFullName(preferredMajor);
+                    
+                    LocalDate appOpenDate = parseDate(openDate);
+                    LocalDate appCloseDate = parseDate(closeDate);
+                    
+                    InternshipStatus appStatus = InternshipStatus.fromString(status);
+                    int numOfSlots = Integer.parseInt(slots);
+                    
+                    Internship internship = new Internship(internshipId, title, description, 
+                    		internshipLevel, major, appOpenDate, appCloseDate,
+                    		appStatus, companyRep, numOfSlots);
+                    internshipList.add(internship);
+                }
+                else if(type == CSVType.InternshipApplication && values.length == 5)
+                {
+                	String applicationId = values[0].trim();
+                    String internshipId = values[1].trim();
+                    String studentName = values[2].trim();
+                    String appliedDate = values[3].trim();
+                    String status = values[4].trim();
+                    
+                    LocalDate appDate = parseDate(appliedDate);
+                    InternshipApplicationStatus appStatus = InternshipApplicationStatus.fromString(status);
+                    
+                    Student selectedStudent = null;
+                    for(Student s: studentList)
+                    {
+                    	if(s.getName().equals(studentName)) {
+                    		selectedStudent = s;
+                    		break;
+                    	}
+                    }
+                    if(selectedStudent == null) {
+                    	return;
+                    }
+                    
+                    Internship selectedInternship = null;
+                    for(Internship internship: internshipList)
+                    {
+                    	if(internship.getInternshipId().equals(internshipId)) {
+                    		selectedInternship = internship;
+                    		break;
+                    	}
+                    }
+                    if(selectedInternship == null) {
+                    	return;
+                    }
+                    
+                    InternshipApplication internshipApp = new InternshipApplication(applicationId, selectedInternship, selectedStudent, appDate, appStatus);
+                    // Add to global internship application list
+                    internshipApplicationList.add(internshipApp);
+                    // Add to specific student's internship application
+                    selectedStudent.addInternshipApplications(internshipApp);
                 }
             }
         }
         catch (FileNotFoundException fe) {
-        	System.out.println("CSV file not found!");
+        	System.out.println("CSV file path not found!");
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -383,6 +429,7 @@ public class App {
              envFilePathStaff = prop.getProperty("filepath.staff");
              envFilePathRep = prop.getProperty("filepath.rep");
              envFilePathInternship = prop.getProperty("filepath.internship");
+             envFilePathInternshipApplication = prop.getProperty("filepath.internshipApplication");
          } 
          catch (IOException ex) {
              ex.printStackTrace();
