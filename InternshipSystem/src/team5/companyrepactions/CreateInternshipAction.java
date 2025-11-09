@@ -5,7 +5,8 @@ import team5.App;
 import team5.CompanyRep;
 import team5.Internship;
 import team5.boundaries.ConsoleBoundary;
-import team5.boundaries.FileBoundary;
+import team5.boundaries.CsvFileBoundary;
+import team5.interfaces.FileBoundary;
 import team5.boundaries.InternshipBoundary;
 import team5.enums.InternshipLevel;
 import team5.enums.InternshipStatus;
@@ -16,6 +17,8 @@ public class CreateInternshipAction implements CompanyRepAction {
     private static final String MAXIMUM_MESSAGE = "You can create maximum of 5 internship opportunities.";
     public static final int MAX_SLOTS_NUM = 10;
     
+    private final FileBoundary fileBoundary = new CsvFileBoundary();
+    
 	@Override
 	public void run(CompanyRep rep) {
 		if (rep.isMaxInternshipReached()) {
@@ -25,7 +28,7 @@ public class CreateInternshipAction implements CompanyRepAction {
 		
 		boolean continueCreate = true;
 		while (continueCreate) {
-			App.printSectionTitle("Create internship", true);
+			ConsoleBoundary.printSectionTitle("Create internship", true);
 			System.out.println("Enter the details below (press 0 at any time to cancel):");
 
 			String title = ConsoleBoundary.promptFormInput("Title");
@@ -48,12 +51,12 @@ public class CreateInternshipAction implements CompanyRepAction {
 				return;
 			}
 			
-			LocalDate startDate = ConsoleBoundary.promptDate("Enter the internship start date:");
+			LocalDate startDate = ConsoleBoundary.promptDate("Enter the application start date");
 			if (startDate == null) {
 				return;
 			}
 			
-			LocalDate endDate = ConsoleBoundary.promptDate("Enter the internship end date:");
+			LocalDate endDate = ConsoleBoundary.promptDate("Enter the application end date");
 			if (endDate == null) {
 				return;
 			}
@@ -62,13 +65,19 @@ public class CreateInternshipAction implements CompanyRepAction {
 				continue;
 			}
 			
-			App.printSectionTitle("Internship Summary");
+			int numOfSlots = InternshipBoundary.promptNumOfSlots("Enter number of slots");
+			if (numOfSlots == 0) {
+				return;
+			}
+			
+			ConsoleBoundary.printSectionTitle("Internship Summary");
 			System.out.println("Title: " + title);
 			System.out.println("Description: " + description);
 			System.out.println("Internship Level: " + internshipLevel);
 			System.out.println("Preferred Major: " + preferredMajor.getFullName());
-			System.out.println("Start Date: " + startDate.format(App.DATE_DISPLAY_FORMATTER));
-			System.out.println("End Date: " + endDate.format(App.DATE_DISPLAY_FORMATTER));
+			System.out.println("Application Start Date: " + startDate.format(App.DATE_DISPLAY_FORMATTER));
+			System.out.println("Application End Date: " + endDate.format(App.DATE_DISPLAY_FORMATTER));
+			System.out.println("Number of slots: " + numOfSlots);
 			
 			boolean awaitingDecision = true;
 			while (awaitingDecision) {
@@ -87,10 +96,10 @@ public class CreateInternshipAction implements CompanyRepAction {
 						// Create a new internship instance
 						Internship internship = new Internship(generatedId, title, description, internshipLevel, 
 								preferredMajor, startDate, endDate, 
-								InternshipStatus.PENDING, App.currentUser.getEmail(), MAX_SLOTS_NUM);
+								InternshipStatus.PENDING, rep.getCompanyName(), rep.getEmail(), numOfSlots);
 						
 						// Save to file
-						boolean isSuccessful = FileBoundary.appendInternshipToCsv(internship, rep.getCompanyName());
+						boolean isSuccessful = fileBoundary.appendInternship(internship);
 						if (isSuccessful) {
 							// only add to list after saving successfully to CSV
 							boolean isSuccess = rep.addInternship(internship);
@@ -107,7 +116,7 @@ public class CreateInternshipAction implements CompanyRepAction {
 							System.out.println("Internship opportunity created successfully. Please wait for approval.");
 						}
 						else {
-							System.out.println(App.ERROR_MESSAGE);
+							ConsoleBoundary.printErrorMessage();
 						}
 						
 						awaitingDecision = false;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import team5.App;
 import team5.Internship;
+import team5.companyrepactions.CreateInternshipAction;
 import team5.enums.InternshipLevel;
 import team5.enums.StudentMajor;
 
@@ -31,7 +32,7 @@ public class InternshipBoundary extends ConsoleBoundary {
 	}
 	
 	public static void printInternshipDetails(Internship internship) {
-		App.printSectionTitle("Internship Details", true);
+		ConsoleBoundary.printSectionTitle("Internship Details", true);
 		System.out.println("Internship ID: \t\t" + internship.getInternshipId());
 		System.out.println("Title: \t\t\t" + safeValue(internship.getTitle()));
 		System.out.println("Description: \t\t" + safeValue(internship.getDescription()));
@@ -86,7 +87,7 @@ public class InternshipBoundary extends ConsoleBoundary {
 			System.out.println("1. Title");
 			System.out.println("2. Description");
 			System.out.println("3. Level");
-			System.out.println("4. Preferred Majors");
+			System.out.println("4. Preferred Major");
 			System.out.println("5. Application Open Date");
 			System.out.println("6. Application Close Date");
 			System.out.println("7. Number of Slots");
@@ -114,6 +115,8 @@ public class InternshipBoundary extends ConsoleBoundary {
 			System.out.println("3: Advanced");
 			String input = App.sc.nextLine().trim();
 			switch (input) {
+				case "0":
+					return null;
 				case "1":
 					return InternshipLevel.BASIC;
 				case "2":
@@ -155,6 +158,28 @@ public class InternshipBoundary extends ConsoleBoundary {
 			}
 			
 			return preferredMajor;
+		}
+	}
+	
+	public static int promptNumOfSlots(String promptText) {
+		while (true) {
+			System.out.println(promptText + ":");
+			String input = App.sc.nextLine().trim();
+			try {
+				int slots = Integer.parseInt(input);
+				if (slots < 0) {
+					ConsoleBoundary.printInvalidInput();
+					continue;
+				} else if (slots > 10) {
+					ConsoleBoundary.printText("You can have maximum of " + CreateInternshipAction.MAX_SLOTS_NUM + " slots.");
+					continue;
+				}
+				
+				return slots;
+			}
+			catch (NumberFormatException ex) {
+				ConsoleBoundary.printInvalidInput();
+			}
 		}
 	}
 }

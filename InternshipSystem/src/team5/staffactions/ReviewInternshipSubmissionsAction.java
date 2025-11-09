@@ -10,6 +10,7 @@ import team5.App;
 import team5.CareerCenterStaff;
 import team5.CompanyRep;
 import team5.Internship;
+import team5.boundaries.ConsoleBoundary;
 import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
 
@@ -19,7 +20,7 @@ public class ReviewInternshipSubmissionsAction implements StaffAction {
 
 	@Override
 	public void run(CareerCenterStaff staff) {
-		App.printSectionTitle("Pending Internship Submissions");
+		ConsoleBoundary.printSectionTitle("Pending Internship Submissions");
 
 		List<Internship> pending = App.internshipList.stream()
 				.filter(internship -> internship.getInternshipStatus() == InternshipStatus.PENDING)
@@ -98,7 +99,7 @@ public class ReviewInternshipSubmissionsAction implements StaffAction {
 	}
 
 	private void handleReview(Internship internship) {
-		App.printSectionTitle("Review Internship Submission", true);
+		ConsoleBoundary.printSectionTitle("Review Internship Submission", true);
 		System.out.println("Internship ID: " + internship.getInternshipId());
 		System.out.println("Title: " + safeValue(internship.getTitle()));
 		System.out.println("Description: " + safeValue(internship.getDescription()));
