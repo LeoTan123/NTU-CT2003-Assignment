@@ -2,6 +2,7 @@ package team5.companyrepactions;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import team5.App;
@@ -9,81 +10,139 @@ import team5.CompanyRep;
 import team5.Internship;
 import team5.boundaries.ConsoleBoundary;
 import team5.boundaries.CsvFileBoundary;
-import team5.interfaces.FileBoundary;
 import team5.boundaries.InternshipBoundary;
+import team5.enums.InternshipFilterOption;
 import team5.enums.InternshipLevel;
 import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
+import team5.filters.InternshipFilter;
+import team5.filters.InternshipFilterCriteria;
+import team5.filters.InternshipFilterPrompt;
+import team5.interfaces.FileBoundary;
 
 public class ListOwnInternshipsAction implements CompanyRepAction {
 	
+	private static final int PAGE_SIZE = 5;
+	private static final List<InternshipFilterOption> FILTER_OPTIONS = List.of(
+			InternshipFilterOption.PREFERRED_MAJOR,
+			InternshipFilterOption.INTERNSHIP_LEVEL,
+			InternshipFilterOption.INTERNSHIP_STATUS,
+			InternshipFilterOption.APPLICATION_CLOSE_TO);
     private final FileBoundary fileBoundary = new CsvFileBoundary();
 
 	@Override
 	public void run(CompanyRep rep) {
-		boolean browsing = true;
-		while (browsing) {
-			
+		ArrayList<Internship> ownInternships = rep.getInternships();
+		if (ownInternships.isEmpty()) {
 			ConsoleBoundary.printSectionTitle("My Created Internships", true);
-			ArrayList<Internship> createdInternships = rep.getInternships();
-			if(createdInternships.isEmpty()){
-				InternshipBoundary.printNoInternshipCreated();
-				return;
-			}
-			
-			InternshipBoundary.printInternshipList(createdInternships);
-			ConsoleBoundary.printChooseOption();
-			String inputInternship = ConsoleBoundary.promptUserInput();
-			if ("0".equals(inputInternship)) {
-				browsing = false;
-				continue;
-			} 
-			
-			try {
-				int selectedInternshipOption = Integer.parseInt(inputInternship);
-				if (selectedInternshipOption < 1 || selectedInternshipOption > createdInternships.size()) {
-					ConsoleBoundary.printInvalidSelection();
+			InternshipBoundary.printNoInternshipCreated();
+			return;
+		}
+
+		List<Internship> baseList = new ArrayList<>(ownInternships);
+		List<Internship> workingList = new ArrayList<>(baseList);
+		int pageIndex = 0;
+		
+		while (true) {
+			if (workingList.isEmpty()) {
+				System.out.println("No internships match your current filter.");
+				System.out.println("Enter 'a' to show all internships or 0 to return.");
+				String emptyInput = ConsoleBoundary.promptUserInput().trim();
+				if ("0".equals(emptyInput)) {
+					return;
+				}
+				if ("a".equalsIgnoreCase(emptyInput)) {
+					baseList = new ArrayList<>(rep.getInternships());
+					workingList = new ArrayList<>(baseList);
+					pageIndex = 0;
 					continue;
 				}
-				
-				Internship chosen = createdInternships.get(selectedInternshipOption - 1);
-				InternshipBoundary.printInternshipDetails(chosen);
-				
-				while (true) {
-					boolean showUpdateOption = false;
-					if (chosen.getInternshipStatus() == InternshipStatus.PENDING) // can only update before approval
-					{
-						showUpdateOption = true;
-					}
-					
-					int selectedOption = InternshipBoundary.displaySubMenu(showUpdateOption);
-					if (selectedOption == 0) {
-						break;
-					}
-					else if (selectedOption == 1) {
-						ConsoleBoundary.printWIP();
-					}
-					else if (selectedOption == 2) {
-						if (showUpdateOption) {
-							// update
-							updateInternship(chosen, rep, selectedInternshipOption);
-						}
-						else {
-							// delete
-							deleteInternship();
-						}
-					}
-					else if (showUpdateOption && selectedOption == 3) {
-						// delete
-						deleteInternship();
-					}
-					else {
+				ConsoleBoundary.printInvalidSelection();
+				continue;
+			}
+
+			ConsoleBoundary.printSectionTitle("My Created Internships", true);
+			int start = pageIndex * PAGE_SIZE;
+			int end = Math.min(start + PAGE_SIZE, workingList.size());
+
+			if (start >= workingList.size()) {
+				pageIndex = 0;
+				continue;
+			}
+
+			for (int i = start; i < end; i++) {
+				Internship internship = workingList.get(i);
+				System.out.printf("%d. %s%n", i + 1, InternshipBoundary.buildSummaryLine(internship, true));
+			}
+
+			printNavigationPrompt(pageIndex > 0, end < workingList.size());
+			String input = ConsoleBoundary.promptUserInput().trim();
+
+			if ("0".equals(input)) {
+				return;
+			} else if ("f".equalsIgnoreCase(input)) {
+				baseList = new ArrayList<>(rep.getInternships());
+				InternshipFilterCriteria criteria = InternshipFilterPrompt.prompt(FILTER_OPTIONS);
+				if (criteria == null) {
+					return;
+				}
+				workingList = InternshipFilter.apply(baseList, criteria);
+				pageIndex = 0;
+			} else if ("a".equalsIgnoreCase(input)) {
+				baseList = new ArrayList<>(rep.getInternships());
+				workingList = new ArrayList<>(baseList);
+				pageIndex = 0;
+			} else if ("n".equalsIgnoreCase(input)) {
+				if (end < workingList.size()) {
+					pageIndex++;
+				} else {
+					ConsoleBoundary.printInvalidSelection();
+				}
+			} else if ("p".equalsIgnoreCase(input)) {
+				if (pageIndex > 0) {
+					pageIndex--;
+				} else {
+					ConsoleBoundary.printInvalidSelection();
+				}
+			} else {
+				try {
+					int selection = Integer.parseInt(input);
+					if (selection < 1 || selection > workingList.size()) {
 						ConsoleBoundary.printInvalidSelection();
 						continue;
 					}
+					
+					Internship chosen = workingList.get(selection - 1);
+					InternshipBoundary.printInternshipDetails(chosen);
+					handleInternshipActions(rep, chosen);
+					// refresh lists to capture any updates/deletions
+					baseList = new ArrayList<>(rep.getInternships());
+					workingList = new ArrayList<>(baseList);
+					pageIndex = 0;
+				} catch (NumberFormatException ex) {
+					ConsoleBoundary.printInvalidSelection();
 				}
-			} 
-			catch (NumberFormatException ex) {
+			}
+		}
+	}
+
+	private void handleInternshipActions(CompanyRep rep, Internship chosen) {
+		while (true) {
+			boolean showUpdateOption = chosen.getInternshipStatus() == InternshipStatus.PENDING;
+			int selectedOption = InternshipBoundary.displaySubMenu(showUpdateOption);
+			if (selectedOption == 0) {
+				return;
+			} else if (selectedOption == 1) {
+				ConsoleBoundary.printWIP();
+			} else if (selectedOption == 2) {
+				if (showUpdateOption) {
+					updateInternship(chosen, rep, 0);
+				} else {
+					deleteInternship();
+				}
+			} else if (showUpdateOption && selectedOption == 3) {
+				deleteInternship();
+			} else {
 				ConsoleBoundary.printInvalidSelection();
 			}
 		}
@@ -240,6 +299,17 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 			ConsoleBoundary.printErrorMessage();
 			return null;
 		}
+	}
+	
+	private void printNavigationPrompt(boolean hasPrev, boolean hasNext) {
+		System.out.print("Enter a number to view/edit details");
+		if (hasPrev) {
+			System.out.print(", 'p' for previous page");
+		}
+		if (hasNext) {
+			System.out.print(", 'n' for next page");
+		}
+		System.out.println(", 'f' to filter, 'a' to show all, or 0 to return:");
 	}
 	
 	
