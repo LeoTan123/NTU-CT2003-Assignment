@@ -3,7 +3,6 @@ package team5;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -14,7 +13,6 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.stream.Collectors;
-
 import team5.boundaries.ConsoleBoundary;
 import team5.controllers.CareerCenterStaffController;
 import team5.controllers.CompanyRepController;
@@ -59,7 +57,8 @@ public class App {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		LoadEnvironmentVariables();
+		// Initialize stuff
+		loadEnvironmentVariables();
 		
 		// Read from CSV files
 		studentList.clear();
@@ -387,7 +386,7 @@ public class App {
 	/**
 	 * To load CSV file in application.properties
 	 */
-	public static void LoadEnvironmentVariables() {
+	public static void loadEnvironmentVariables() {
 		 Properties prop = new Properties();
          try (InputStream input = App.class.getClassLoader().getResourceAsStream("application.properties")) {
              if (input == null) {

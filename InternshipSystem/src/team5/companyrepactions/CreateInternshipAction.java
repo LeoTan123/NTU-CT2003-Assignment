@@ -5,7 +5,8 @@ import team5.App;
 import team5.CompanyRep;
 import team5.Internship;
 import team5.boundaries.ConsoleBoundary;
-import team5.boundaries.FileBoundary;
+import team5.boundaries.CsvFileBoundary;
+import team5.interfaces.FileBoundary;
 import team5.boundaries.InternshipBoundary;
 import team5.enums.InternshipLevel;
 import team5.enums.InternshipStatus;
@@ -15,6 +16,8 @@ public class CreateInternshipAction implements CompanyRepAction {
 	
     private static final String MAXIMUM_MESSAGE = "You can create maximum of 5 internship opportunities.";
     public static final int MAX_SLOTS_NUM = 10;
+    
+    private final FileBoundary fileBoundary = new CsvFileBoundary();
     
 	@Override
 	public void run(CompanyRep rep) {
@@ -96,7 +99,7 @@ public class CreateInternshipAction implements CompanyRepAction {
 								InternshipStatus.PENDING, rep.getCompanyName(), rep.getEmail(), numOfSlots);
 						
 						// Save to file
-						boolean isSuccessful = FileBoundary.appendInternshipToCsv(internship, rep.getCompanyName());
+						boolean isSuccessful = fileBoundary.appendInternship(internship);
 						if (isSuccessful) {
 							// only add to list after saving successfully to CSV
 							boolean isSuccess = rep.addInternship(internship);

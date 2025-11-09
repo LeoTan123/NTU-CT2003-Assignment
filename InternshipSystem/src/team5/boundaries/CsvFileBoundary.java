@@ -5,18 +5,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import team5.App;
 import team5.Internship;
+import team5.interfaces.FileBoundary;
 
-public class FileBoundary {
+public class CsvFileBoundary implements FileBoundary {
 	
-	public FileBoundary() { }
+	public CsvFileBoundary() { }
 	
-	public static boolean writeInternshipToCSV(ArrayList<Internship> internships) {
+	public boolean writeInternship(ArrayList<Internship> internships) {
         try (FileWriter writer = new FileWriter(App.envFilePathInternship)) {
     		// Header
             writer.append("InternshipID,Title,Description,Level,PreferredMajor,OpenDate,CloseDate,Status,CompanyName,CompanyRep,Slots\n");
             // Rows
             for (Internship internship : internships) {
-            	writer.append(buildInternshipString(internship, "test").toString()); //TODO: add companyname to internship
+            	writer.append(buildInternshipString(internship).toString());
             }
             writer.flush();
             return true;
@@ -31,9 +32,9 @@ public class FileBoundary {
         
 	}
 	
-	public static boolean appendInternshipToCsv(Internship internship, String companyName) {
+	public boolean appendInternship(Internship internship) {
 		try (FileWriter writer = new FileWriter(App.envFilePathInternship, true)) {
-			writer.append(buildInternshipString(internship, companyName).toString());
+			writer.append(buildInternshipString(internship).toString());
 			writer.flush();
 			return true;
 		} catch (IOException e) {
@@ -44,7 +45,7 @@ public class FileBoundary {
 		}
 	}
 	
-	private static StringBuilder buildInternshipString(Internship internship, String companyName) {
+	private static StringBuilder buildInternshipString(Internship internship) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(internship.getInternshipId()).append(",")
 		  .append(internship.getTitle()).append(",")
@@ -54,7 +55,7 @@ public class FileBoundary {
 		  .append(internship.getApplicationOpenDate().format(App.DATE_DB_FORMATTER)).append(",")
 		  .append(internship.getApplicationCloseDate().format(App.DATE_DB_FORMATTER)).append(",")
 		  .append(internship.getInternshipStatus()).append(",")
-		  .append(companyName).append(",")
+		  .append(internship.getCompanyName()).append(",")
 		  .append(internship.getCompanyRep()).append(",")
 		  .append(internship.getNumOfSlots()).append("\n");
 		return sb;
