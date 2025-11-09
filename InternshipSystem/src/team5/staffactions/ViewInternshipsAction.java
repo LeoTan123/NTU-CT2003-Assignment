@@ -7,6 +7,7 @@ import java.util.List;
 import team5.App;
 import team5.CareerCenterStaff;
 import team5.Internship;
+import team5.boundaries.ConsoleBoundary;
 import team5.enums.InternshipLevel;
 import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
@@ -18,7 +19,7 @@ public class ViewInternshipsAction implements StaffAction {
 	@Override
 	public void run(CareerCenterStaff staff) {
 		if (App.internshipList.isEmpty()) {
-			App.printSectionTitle("All Internship Details");
+			ConsoleBoundary.printSectionTitle("All Internship Details");
 			System.out.println("No internships available at the moment.");
 			return;
 		}
@@ -45,7 +46,7 @@ public class ViewInternshipsAction implements StaffAction {
 				continue;
 			}
 
-			App.printSectionTitle("All Internship Details");
+			ConsoleBoundary.printSectionTitle("All Internship Details");
 			int start = pageIndex * PAGE_SIZE;
 			int end = Math.min(start + PAGE_SIZE, workingList.size());
 
@@ -97,7 +98,7 @@ public class ViewInternshipsAction implements StaffAction {
 	}
 
 	private void displayInternshipDetails(Internship internship) {
-		App.printSectionTitle("Internship Details");
+		ConsoleBoundary.printSectionTitle("Internship Details");
 		System.out.println("Internship ID: " + internship.getInternshipId());
 		System.out.println("Title: " + safeValue(internship.getTitle()));
 		System.out.println("Description: " + safeValue(internship.getDescription()));

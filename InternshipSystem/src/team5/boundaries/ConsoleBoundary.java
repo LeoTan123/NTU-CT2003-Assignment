@@ -65,6 +65,14 @@ public abstract class ConsoleBoundary {
 	}
 	
 	/**** Print ****/
+	public static void printSectionTitle(String title) {
+		App.printSectionTitle(title);
+	}
+
+	public static void printSectionTitle(String title, boolean marginTop) {
+		App.printSectionTitle(title, marginTop);
+	}
+
 	public static void printText(String text) {
 		System.out.println(text);
 	}
