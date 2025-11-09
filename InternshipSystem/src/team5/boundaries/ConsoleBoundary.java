@@ -103,11 +103,14 @@ public abstract class ConsoleBoundary {
 	
 	/**** Print ****/
 	public static void printSectionTitle(String title) {
-		App.printSectionTitle(title);
+		printSectionTitle(title, false);
 	}
 
 	public static void printSectionTitle(String title, boolean marginTop) {
-		App.printSectionTitle(title, marginTop);
+		if (marginTop) {
+			System.out.println();
+		}
+		System.out.println("===== " + title + " =====");
 	}
 
 	public static void printText(String text) {
@@ -131,17 +134,5 @@ public abstract class ConsoleBoundary {
 	
 	public static void printWIP() {
 		System.out.println("WIP");
-	}
-	
-	public static void printSectionTitle(String title) {
-		System.out.println("===== " + title + " =====");
-	}
-	
-	public static void printSectionTitle(String title, boolean marginTop) {
-		if (marginTop == true)
-		{
-			System.out.println();
-		}
-		System.out.println("===== " + title + " =====");
 	}
 }
