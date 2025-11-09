@@ -1,5 +1,6 @@
 package team5.boundaries;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import team5.App;
@@ -20,15 +21,39 @@ public class InternshipBoundary extends ConsoleBoundary {
 	 * */
 	
 	public static void printInternshipList(ArrayList<Internship> internshipList) {
+		printInternshipList(internshipList, false);
+	}
+	
+	public static void printInternshipList(ArrayList<Internship> internshipList, boolean includeCompanyName) {
 		for (int i = 0; i < internshipList.size(); i++) {
 			Internship internship = internshipList.get(i);
-			System.out.printf("%d. Internship ID: %s | Title: %s | Level: %s | Status: %s%n",
-					i + 1,
-					internship.getInternshipId(),
-					safeValue(internship.getTitle()),
-					valueOrNA(internship.getInternshipLevel()),
-					valueOrNA(internship.getInternshipStatus()));
+			System.out.printf("%d. %s%n", i + 1, buildSummaryLine(internship, includeCompanyName));
 		}
+	}
+	
+	public static String buildSummaryLine(Internship internship, boolean includeCompanyName) {
+		String preferredMajor = internship.getPreferredMajor() != null
+				? internship.getPreferredMajor().getFullName()
+				: "N/A";
+		String openDate = formatDate(internship.getApplicationOpenDate());
+		String closeDate = formatDate(internship.getApplicationCloseDate());
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("Internship ID: ").append(internship.getInternshipId())
+		  .append(" | Title: ").append(safeValue(internship.getTitle()))
+		  .append(" | Level: ").append(valueOrNA(internship.getInternshipLevel()))
+		  .append(" | Preferred Major: ").append(preferredMajor)
+		  .append(" | Application Opening Date: ").append(openDate)
+		  .append(" | Application Closing Date: ").append(closeDate);
+		
+		if (includeCompanyName) {
+			sb.append(" | Company Name: ").append(safeValue(internship.getCompanyName()));
+		}
+		return sb.toString();
+	}
+	
+	private static String formatDate(LocalDate date) {
+		return date != null ? date.format(App.DATE_DISPLAY_FORMATTER) : "N/A";
 	}
 	
 	public static void printInternshipDetails(Internship internship) {
