@@ -24,7 +24,7 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 		boolean browsing = true;
 		while (browsing) {
 			
-			App.printSectionTitle("My Created Internships", true);
+			ConsoleBoundary.printSectionTitle("My Created Internships", true);
 			ArrayList<Internship> createdInternships = rep.getInternships();
 			if(createdInternships.isEmpty()){
 				InternshipBoundary.printNoInternshipCreated();

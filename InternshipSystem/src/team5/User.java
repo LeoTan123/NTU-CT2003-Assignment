@@ -2,6 +2,9 @@ package team5;
 
 import team5.enums.UserType;
 
+/**
+ * User class
+ */
 public class User {
 	private String userID;
 	private String name;
@@ -10,9 +13,13 @@ public class User {
 	private UserType userType;
 	private boolean loginState;
 	
-	public User() {
-	}
-	
+	/**
+	 * User constructor
+	 * @param userID
+	 * @param name
+	 * @param email
+	 * @param password
+	 */
 	public User(String userID, String name, String email, String password) {
 		this.userID = userID;
 		this.name = name;
@@ -22,7 +29,6 @@ public class User {
 		this.loginState = false;
 	}
 	
-	// Setter and getter
 	public void setUserID(String userID)
 	{
 		this.userID = userID;
@@ -84,6 +90,9 @@ public class User {
 	    return userID + " " + name + " " + email + " " + userType + " " + loginState;
 	}
 	
+	/**
+	 * Login method
+	 */
 	public void login() {
 		if(this.loginState)
 		{
@@ -93,6 +102,9 @@ public class User {
 		this.loginState = true;
 	}
 	
+	/**
+	 * Logout method
+	 */
 	public void logout() {
 		if(!this.loginState)
 		{
@@ -104,34 +116,34 @@ public class User {
 		System.out.println("You have already logged out.");
 	}
 	
+	/**
+	 * Change password method
+	 * @return true for change successfully, else false
+	 */
 	public boolean changePassword() {
 		System.out.println("Please enter your old password (or 0 to exit):");
 		String oldPassword = App.sc.nextLine();
-		if(oldPassword.equals("0"))
-		{
+		if(oldPassword.equals("0")){
 			return false;
 		}
-		if(!oldPassword.equals(this.password))
-		{
+		if(!oldPassword.equals(this.password)){
 			System.out.println("Old password does not match.");
 			return false;
 		}
 		System.out.println("Please enter your new password:");
 		String newPassword = App.sc.nextLine();
-		if(newPassword.equals(this.password))
-		{
-			System.out.println("New password and old password is the same.");
+		if(newPassword.equals(this.password)){
+			System.out.println("New password and old password are the same.");
 			return false;
 		}
 		System.out.println("Please confirm your new password:");
 		String confirmPassword = App.sc.nextLine();
-		if(!newPassword.equals(confirmPassword))
-		{
+		if(!newPassword.equals(confirmPassword)){
 			System.out.println("New password and confirmation do not match.");
 			return false;
 		}
 		this.password = newPassword;
-		System.out.println("Password has been changed.");
+		System.out.println("Your password has been changed.");
 		return true;
 	}
 }

@@ -3,7 +3,6 @@ package team5;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -14,7 +13,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.stream.Collectors;
-
+import team5.boundaries.ConsoleBoundary;
 import team5.controllers.CareerCenterStaffController;
 import team5.controllers.CompanyRepController;
 import team5.controllers.StudentController;
@@ -45,7 +44,6 @@ public class App {
 	public static User currentUser = null;
 	
 	// System variables
-	public static final String ERROR_MESSAGE = "Something went wrong. Please try again later.";
 	public static String envFilePathStudent;
 	public static String envFilePathStaff;
 	public static String envFilePathRep;
@@ -54,6 +52,10 @@ public class App {
 	public static DateTimeFormatter DATE_DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     public static DateTimeFormatter DATE_DB_FORMATTER = DateTimeFormatter.ofPattern("dd MM yyyy");
 	
+	/**
+	 * 	Main function to run the whole program
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		// Initialize stuff
 		loadEnvironmentVariables();
@@ -72,11 +74,11 @@ public class App {
 		ReadFromCSV(envFilePathRep, CSVType.CompanyRep);
 		ReadFromCSV(envFilePathInternshipApplication, CSVType.InternshipApplication);
 		
-		printSectionTitle("Welcome to Internship System");
+		ConsoleBoundary.printSectionTitle("Welcome to Internship System");
         
         boolean exitProgram = false;
         while (!exitProgram) {
-        	printSectionTitle("Login", true);
+        	ConsoleBoundary.printSectionTitle("Login", true);
 	        try 
 	        {
 				// Choose login type
@@ -94,7 +96,7 @@ public class App {
 					break;
 				}
 				if(choice < 0 || choice > 4){
-					System.out.println("Invalid user type. Please enter again.");	
+					ConsoleBoundary.printInvalidSelection();	
 					continue;
 				}
 
@@ -125,7 +127,7 @@ public class App {
 						userType = UserType.COMREP;
 						break;
 					default:
-						System.out.println("Invalid user type. Please enter again.");
+						ConsoleBoundary.printInvalidSelection();
 				}
 
 				foundUser = verifyUserFromList(userType, userID, password);
@@ -148,16 +150,22 @@ public class App {
 				}
 	        } 
 	        catch (NumberFormatException e) {
-	            System.out.println("Invalid input! Please enter a number for user type.");
+	            ConsoleBoundary.printInvalidInput();
 	        } 
 	        catch (Exception e) {
-	            System.out.println("An error occurred during login: " + e.getMessage());
+	        	ConsoleBoundary.printErrorMessage();
 	            e.printStackTrace();
 	        }
         }
 	}
 	
-	// Helper
+	/**
+	 * To verify user type using userID and password
+	 * @param userType: User type from user input
+	 * @param userID: User ID
+	 * @param password: User password
+	 * @return true for found user and login successfully, else false
+	 */
 	public static boolean verifyUserFromList(UserType userType, String userID, String password)
 	{ 
 		User foundUser = null;
@@ -200,13 +208,13 @@ public class App {
 		
 		// Special check for COMREP account status
 	    if (userType == UserType.COMREP) {
-	    	CompanyRep rep = (CompanyRep) foundUser;
+	    	CompanyRep rep = (CompanyRep)foundUser;
 	    	UserAccountStatus status = rep.getAccountStatus();
 	    	if (status == UserAccountStatus.PENDING) {
 	    		System.out.println("Your account is pending approval. Please wait for the career center staff to review it.");
 	    		return false;
 	    	}
-	    	if (status == UserAccountStatus.REJECTED) {
+	    	else if (status == UserAccountStatus.REJECTED) {
 	    		System.out.println("Your registration was rejected. Please submit a new registration request for review.");
 	    		return false;
 	    	}
@@ -235,18 +243,21 @@ public class App {
 	    return false;
 	}
 	
+	
+	/**
+	 * To read database from CSV file
+	 * @param fileName: CSV file path, written in application.properties
+	 * @param type: CSV file type
+	 */
 	public static void ReadFromCSV(String fileName, CSVType type)
 	{
-		String csvFile = fileName;
         String line;
-        String csvSplitBy = ",";
-
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
         	// Skip header
         	br.readLine();
         	
             while ((line = br.readLine()) != null) {
-                String[] values = line.split(csvSplitBy);
+                String[] values = line.split(",");
                 if(type == CSVType.Student && values.length == 5)
                 {
                    String id = values[0].trim();
@@ -301,7 +312,7 @@ public class App {
                     String openDate = values[5].trim();
                     String closeDate = values[6].trim();
                     String status = values[7].trim();
-                    String companyName = values[8].trim(); // TODO: add this field in Check Internship Application Status
+                    String companyName = values[8].trim();
                     String companyRep = values[9].trim();
                     String slots = values[10].trim();
                     
@@ -309,8 +320,8 @@ public class App {
                     
                     StudentMajor major = StudentMajor.fromFullName(preferredMajor);
                     
-                    LocalDate appOpenDate = parseDate(openDate);
-                    LocalDate appCloseDate = parseDate(closeDate);
+                    LocalDate appOpenDate = ConsoleBoundary.parseDate(openDate);
+                    LocalDate appCloseDate = ConsoleBoundary.parseDate(closeDate);
                     
                     InternshipStatus appStatus = InternshipStatus.fromString(status);
                     int numOfSlots = Integer.parseInt(slots);
@@ -328,7 +339,7 @@ public class App {
                     String appliedDate = values[3].trim();
                     String status = values[4].trim();
                     
-                    LocalDate appDate = parseDate(appliedDate);
+                    LocalDate appDate = ConsoleBoundary.parseDate(appliedDate);
                     InternshipApplicationStatus appStatus = InternshipApplicationStatus.fromString(status);
                     
                     Student selectedStudent = null;
@@ -367,60 +378,19 @@ public class App {
         	System.out.println("CSV file path not found!");
         }
         catch (IOException e) {
+        	ConsoleBoundary.printErrorMessage();
             e.printStackTrace();
         }
 	}
 	
-	public static void WriteToCSV(String fileName, UserType userType) {
-        String csvFile = fileName;
-        
-        try (FileWriter writer = new FileWriter(csvFile)) {
-        	
-        	if(userType == UserType.STUDENT)
-        	{
-        		// Header
-                writer.append("StudentID,Name,Major,Year,Email\n");
-                // Need to include old data
-                for (Student student : studentList) {
-                	String userID = student.getUserID();
-                	String name = student.getName();
-                	String major = student.getMajor().getFullName();
-                	int year = student.getYear();
-                	String email = student.getEmail();
-                	writer.append(userID + "," + name + "," + major + "," + year + "," + email + "\n");
-                }
-        	}
-        	else if(userType == UserType.CCSTAFF)
-        	{
-        		// Header
-                writer.append("StaffID,Name,Role,Department,Email\n");
-                for (CareerCenterStaff staff : staffList) {
-                	String userID = staff.getUserID();
-                	String name = staff.getName();
-                	String role = staff.getRole();
-                	String department = staff.getDepartment();
-                	String email = staff.getEmail();
-                	writer.append(userID + "," + name + "," + role + "," + department + "," + email + "\n");
-                }
-        	}
-            writer.flush();
-            System.out.println("CSV file written successfully!");
-        } 
-        catch (FileNotFoundException fe) {
-        	System.out.println("CSV file not found!");
-        }
-        catch (IOException e) {
-        	System.out.println("Failed to save to file: " + e.getMessage());
-        	System.out.println("Stack trace:");
-        	e.printStackTrace();
-        }
-	}
-	
+	/**
+	 * To load CSV file in application.properties
+	 */
 	public static void loadEnvironmentVariables() {
 		 Properties prop = new Properties();
          try (InputStream input = App.class.getClassLoader().getResourceAsStream("application.properties")) {
              if (input == null) {
-                 System.out.println("Unable to find application.properties file.");
+                 ConsoleBoundary.printText("application.properties not found!");
                  return;
              }
              prop.load(input);
@@ -431,25 +401,19 @@ public class App {
              envFilePathInternship = prop.getProperty("filepath.internship");
              envFilePathInternshipApplication = prop.getProperty("filepath.internshipApplication");
          } 
-         catch (IOException ex) {
-             ex.printStackTrace();
+         catch (IOException e) {
+        	 ConsoleBoundary.printErrorMessage();
+             e.printStackTrace();
          }
 	}
 	
 	
-	// TODO: to refactor to ConsoleBoundary
-	public static void printSectionTitle(String title) {
-		System.out.println("===== " + title + " =====");
-	}
-	
-	public static void printSectionTitle(String title, boolean marginTop) {
-		if (marginTop == true)
-		{
-			System.out.println();
-		}
-		System.out.println("===== " + title + " =====");
-	}
-	
+	/**
+	 * To generate random ID for ApplicationID and InternshipID
+	 * @param prefix: Prefix to differentiate between ApplicationID and InternshipID
+	 * @param ids: To check whether the ID already exists
+	 * @return UniqueID string
+	 */
 	public static String generateUniqueId(String prefix, String[] ids) {
 		Random random = new Random();
 		
@@ -476,24 +440,13 @@ public class App {
 		return candidate;
 	}
 
+	/**
+	 * To check whether ID already exists
+	 * @param candidate: current ID 
+	 * @param ids: ID lists
+	 * @return true if already exists, else false
+	 */
 	private static boolean idExists(String candidate, String[] ids) {
 		return Arrays.stream(ids).anyMatch(id -> id.equalsIgnoreCase(candidate));
-	}
-	
-	private static LocalDate parseDate(String text) {
-	    DateTimeFormatter[] formatters = new DateTimeFormatter[] {
-	        DateTimeFormatter.ofPattern("yyyy-MM-dd"),
-	        DateTimeFormatter.ofPattern("dd MM yyyy"),
-	        DateTimeFormatter.ofPattern("d M yyyy") // handles single-digit days/months
-	    };
-	    for (DateTimeFormatter f : formatters) {
-	        try {
-	            return LocalDate.parse(text.trim(), f);
-	        } 
-	        catch (Exception ignored) 
-	        {
-	        }
-	    }
-	    throw new IllegalArgumentException("Unrecognized date format: " + text);
 	}
 }

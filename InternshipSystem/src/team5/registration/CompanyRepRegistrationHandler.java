@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import team5.App;
 import team5.CompanyRep;
 import team5.Internship;
+import team5.boundaries.ConsoleBoundary;
 import team5.enums.UserAccountStatus;
 
 public class CompanyRepRegistrationHandler {
@@ -16,7 +17,7 @@ public class CompanyRepRegistrationHandler {
 	public void startRegistration() {
 		boolean continueRegistration = true;
 		while (continueRegistration) {
-			App.printSectionTitle("Company Representative Registration");
+			ConsoleBoundary.printSectionTitle("Company Representative Registration");
 			System.out.println("Enter the details below (press 0 at any time to cancel):");
 
 			String name = promptInput("Full Name");
@@ -46,7 +47,7 @@ public class CompanyRepRegistrationHandler {
 
 			//String generatedId = generateUniqueId(name);
 
-			App.printSectionTitle("Registration Summary");
+			ConsoleBoundary.printSectionTitle("Registration Summary");
 			System.out.println("Representative ID: " + email);
 			System.out.println("Name: " + name);
 			System.out.println("Company: " + companyName);
@@ -74,7 +75,7 @@ public class CompanyRepRegistrationHandler {
 								System.out.println("Registration submitted. A career center staff member will review your account.");
 							}
 							else {
-								System.out.println(App.ERROR_MESSAGE);
+								ConsoleBoundary.printErrorMessage();
 							}
 						}
 						

@@ -37,7 +37,7 @@ public class ViewInternshipsAction implements StudentAction {
 			
 			while(true)
 			{
-				App.printSectionTitle("Available Internship Opportunities");
+				ConsoleBoundary.printSectionTitle("Available Internship Opportunities");
 				
 				boolean hasInternship = false;
 				int internshipIndex = 1;
@@ -129,7 +129,7 @@ public class ViewInternshipsAction implements StudentAction {
 	}
 
 	private void displayInternshipDetails(Internship internship) {
-		App.printSectionTitle("Internship Details");		
+		ConsoleBoundary.printSectionTitle("Internship Details");		
 		System.out.println("Internship ID: " + ConsoleBoundary.safeValue(internship.getInternshipId()));
 		System.out.println("Company Name: " + ConsoleBoundary.safeValue(internship.getCompanyName()));
 		System.out.println("Title: " + ConsoleBoundary.safeValue(internship.getTitle()));

@@ -3,6 +3,7 @@ package team5.staffactions;
 import team5.App;
 import team5.CareerCenterStaff;
 import team5.Internship;
+import team5.boundaries.ConsoleBoundary;
 
 public class ViewInternshipsAction implements StaffAction {
 
@@ -10,7 +11,7 @@ public class ViewInternshipsAction implements StaffAction {
 	public void run(CareerCenterStaff staff) {
 		boolean browsing = true;
 		while (browsing) {
-			App.printSectionTitle("All Internship Details");
+			ConsoleBoundary.printSectionTitle("All Internship Details");
 			if (App.internshipList.isEmpty()) {
 				System.out.println("No internships available at the moment.");
 				return;
@@ -50,7 +51,7 @@ public class ViewInternshipsAction implements StaffAction {
 	}
 
 	private void displayInternshipDetails(Internship internship) {
-		App.printSectionTitle("Internship Details");
+		ConsoleBoundary.printSectionTitle("Internship Details");
 		System.out.println("Internship ID: " + internship.getInternshipId());
 		System.out.println("Title: " + safeValue(internship.getTitle()));
 		System.out.println("Description: " + safeValue(internship.getDescription()));
