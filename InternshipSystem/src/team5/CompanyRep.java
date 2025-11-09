@@ -2,12 +2,14 @@ package team5;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import team5.enums.InternshipLevel;
 import team5.enums.UserAccountStatus;
 import team5.enums.UserType;
 
+/**
+ * Company representative class
+ */
 public class CompanyRep extends User{
 	private String companyName;
 	private String department;
@@ -15,22 +17,30 @@ public class CompanyRep extends User{
 	private UserAccountStatus accountStatus;
 	private ArrayList<Internship> createdInternships = new ArrayList<Internship>();
 	
-	public CompanyRep() {
-		
-	}
-	
+	/**
+	 * Company representative constructor
+	 * @param userID
+	 * @param name
+	 * @param email
+	 * @param password
+	 * @param companyName
+	 * @param department
+	 * @param position
+	 * @param status
+	 * @param createdInternships
+	 */
 	public CompanyRep(String userID, String name, String email, String password, 
-			String companyName, String department, String position, UserAccountStatus status, ArrayList<Internship> createdInternships) {
+			String companyName, String department, String position, 
+			UserAccountStatus status, ArrayList<Internship> createdInternships) {
 		super(userID, name, email, password);
-		super.setUserType(UserType.COMREP);
 		this.companyName = companyName;
 		this.department = department;
 		this.position = position;
 		this.accountStatus = status;
 		this.createdInternships = createdInternships;
+		super.setUserType(UserType.COMREP);
 	}
 
-	// Setter and getter
 	public void setCompanyName(String compName)
 	{
 		this.companyName = compName;
@@ -70,17 +80,7 @@ public class CompanyRep extends User{
 	{
 		return this.accountStatus;
 	}
-	
-	/*public void addNumOfInternship()
-	{
-		this.numInternshipCreated += 1;
-	}
-	
-	public int getNumOfInternship()
-	{
-		return this.numInternshipCreated;
-	}*/
-	
+
 	public boolean addInternship(Internship internship)
 	{
 		boolean maximumReached = this.isMaxInternshipReached();
@@ -292,21 +292,5 @@ public class CompanyRep extends User{
 	
 	public void viewInternshipApplicationFromStudent() {
 		
-	}
-	
-	// Helper
-	private LocalDate readDate(String prompt) {
-	    System.out.println(prompt + " (format DD/MM/YYYY or Q to quit):");
-	    String input = App.sc.nextLine();
-	    if (input.equalsIgnoreCase("Q")) 
-	    	return null;
-
-	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-	    try {
-	        return LocalDate.parse(input, formatter);
-	    } catch (DateTimeParseException e) {
-	        System.out.println("Invalid date format! Please use DD/MM/YYYY.");
-	        return null;
-	    }
 	}
 }

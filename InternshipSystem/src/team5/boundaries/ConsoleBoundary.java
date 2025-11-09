@@ -1,6 +1,7 @@
 package team5.boundaries;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 import team5.App;
@@ -25,6 +26,23 @@ public abstract class ConsoleBoundary {
 
 	public static String valueOrNA(Enum<?> value) {
 		return value != null ? value.name() : "N/A";
+	}
+	
+	public static LocalDate parseDate(String text) {
+	    DateTimeFormatter[] formatters = new DateTimeFormatter[] {
+	        DateTimeFormatter.ofPattern("yyyy-MM-dd"),
+	        DateTimeFormatter.ofPattern("dd MM yyyy"),
+	        DateTimeFormatter.ofPattern("d M yyyy") // handles single-digit days/months
+	    };
+	    for (DateTimeFormatter f : formatters) {
+	        try {
+	            return LocalDate.parse(text.trim(), f);
+	        } 
+	        catch (Exception ignored) 
+	        {
+	        }
+	    }
+	    throw new IllegalArgumentException("Unrecognized date format: " + text);
 	}
 	
 	/**** Prompt ****/
@@ -64,6 +82,25 @@ public abstract class ConsoleBoundary {
 		}
 	}
 	
+	public static boolean promptTryAgain() {
+		while (true) {
+			System.out.println("Something went wrong. Would you like to try again? (y/n)");
+			String input = App.sc.nextLine().trim().toLowerCase();
+			
+			if (input.equalsIgnoreCase("y")) {
+				return true;
+			}
+			else if (input.equalsIgnoreCase("n")) {
+				return false;
+			}
+			else {
+				printInvalidInput();
+				continue;
+			}
+		}
+		
+	}
+	
 	/**** Print ****/
 	public static void printText(String text) {
 		System.out.println(text);
@@ -76,11 +113,27 @@ public abstract class ConsoleBoundary {
 		System.out.println("Invalid selection. Please try again.");
 	}
 	
+	public static void printInvalidInput() {
+		System.out.println("Invalid input. Please try again.");
+	}
+	
 	public static void printErrorMessage() {
-		System.out.println(App.ERROR_MESSAGE);
+		System.out.println("Something went wrong. Please try again later.");
 	}
 	
 	public static void printWIP() {
 		System.out.println("WIP");
+	}
+	
+	public static void printSectionTitle(String title) {
+		System.out.println("===== " + title + " =====");
+	}
+	
+	public static void printSectionTitle(String title, boolean marginTop) {
+		if (marginTop == true)
+		{
+			System.out.println();
+		}
+		System.out.println("===== " + title + " =====");
 	}
 }

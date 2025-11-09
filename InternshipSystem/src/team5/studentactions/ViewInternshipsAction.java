@@ -1,5 +1,7 @@
 package team5.studentactions;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,12 +10,14 @@ import team5.App;
 import team5.Internship;
 import team5.InternshipApplication;
 import team5.Student;
+import team5.boundaries.ConsoleBoundary;
+import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipLevel;
 import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
 
 public class ViewInternshipsAction implements StudentAction {
-	private final static String ErrorMessage = "Invalid input. Try again.";
+	//private final static String ErrorMessage = "Invalid input. Try again.";
 	@Override
 	public void run(Student student) {
 		boolean browsing = true;
@@ -33,7 +37,7 @@ public class ViewInternshipsAction implements StudentAction {
 			
 			while(true)
 			{
-				App.printSectionTitle("Available Internship Opportunities");
+				ConsoleBoundary.printSectionTitle("Available Internship Opportunities");
 				
 				boolean hasInternship = false;
 				int internshipIndex = 1;
@@ -48,11 +52,11 @@ public class ViewInternshipsAction implements StudentAction {
 								+ "Application Opening Date: %s | Application Closing Date: %s%n",
 								internshipIndex,
 								internship.getInternshipId(),
-								safeValue(internship.getTitle()),
-								valueOrNA(internship.getInternshipLevel()),
-								safeValue(internship.getPreferredMajor().getFullName()),
-								safeValue(internship.getApplicationOpenDate().format(App.DATE_DISPLAY_FORMATTER)),
-								safeValue(internship.getApplicationCloseDate().format(App.DATE_DISPLAY_FORMATTER))
+								ConsoleBoundary.safeValue(internship.getTitle()),
+								ConsoleBoundary.valueOrNA(internship.getInternshipLevel()),
+								ConsoleBoundary.safeValue(internship.getPreferredMajor().getFullName()),
+								ConsoleBoundary.safeValue(internship.getApplicationOpenDate().format(App.DATE_DISPLAY_FORMATTER)),
+								ConsoleBoundary.safeValue(internship.getApplicationCloseDate().format(App.DATE_DISPLAY_FORMATTER))
 								);
 						
 						internshipIndex++;
@@ -78,7 +82,7 @@ public class ViewInternshipsAction implements StudentAction {
 		            }
 
 		            if (input < 1 || input > displayedInternships.size()) {
-		                System.out.println(ErrorMessage);
+		            	ConsoleBoundary.printInvalidInput();
 		                continue;
 		            }
 		            
@@ -87,7 +91,7 @@ public class ViewInternshipsAction implements StudentAction {
 		            // Show action options for the chosen internship
 		            boolean choosingAction = true;
 		            while (choosingAction) {
-		            	System.out.println("You have chosen Internship ID: " + chosen.getInternshipId() + " Title: " + safeValue(chosen.getTitle()));
+		            	System.out.println("You have chosen Internship ID: " + ConsoleBoundary.safeValue(chosen.getInternshipId()) + " Title: " + ConsoleBoundary.safeValue(chosen.getTitle()));
 		                System.out.println("1. View Internship Details");
 		                System.out.println("2. Apply for this Internship");
 		                System.out.println("0. Return to internship list");
@@ -98,7 +102,7 @@ public class ViewInternshipsAction implements StudentAction {
 		                    action = Integer.parseInt(actionStr.trim());
 		                } 
 		                catch (NumberFormatException ex) {
-		                    System.out.println(ErrorMessage);
+		                	ConsoleBoundary.printInvalidInput();
 		                    continue;
 		                }
 
@@ -113,26 +117,27 @@ public class ViewInternshipsAction implements StudentAction {
 		                        applyForInternship(student, chosen);
 		                        break;
 		                    default:
-		                        System.out.println(ErrorMessage);
+		                    	ConsoleBoundary.printInvalidInput();
 		                }
 		            }
 		        } 
 		        catch (NumberFormatException ex) {
-		            System.out.println(ErrorMessage);
+		        	ConsoleBoundary.printInvalidInput();
 		        }
 			}
 		}
 	}
 
 	private void displayInternshipDetails(Internship internship) {
-		App.printSectionTitle("Internship Details");		
-		System.out.println("Internship ID: " + internship.getInternshipId());
-		System.out.println("Title: " + safeValue(internship.getTitle()));
-		System.out.println("Description: " + safeValue(internship.getDescription()));
-		System.out.println("Level: " + valueOrNA(internship.getInternshipLevel()));
-		System.out.println("Preferred Majors: " + safeValue(internship.getPreferredMajor().getFullName()));
-		System.out.println("Application Open Date: " + safeValue(internship.getApplicationOpenDate().format(App.DATE_DISPLAY_FORMATTER)));
-		System.out.println("Application Close Date: " + safeValue(internship.getApplicationCloseDate().format(App.DATE_DISPLAY_FORMATTER)));
+		ConsoleBoundary.printSectionTitle("Internship Details");		
+		System.out.println("Internship ID: " + ConsoleBoundary.safeValue(internship.getInternshipId()));
+		System.out.println("Company Name: " + ConsoleBoundary.safeValue(internship.getCompanyName()));
+		System.out.println("Title: " + ConsoleBoundary.safeValue(internship.getTitle()));
+		System.out.println("Description: " + ConsoleBoundary.safeValue(internship.getDescription()));
+		System.out.println("Level: " + ConsoleBoundary.valueOrNA(internship.getInternshipLevel()));
+		System.out.println("Preferred Majors: " + ConsoleBoundary.safeValue(internship.getPreferredMajor().getFullName()));
+		System.out.println("Application Open Date: " + ConsoleBoundary.safeValue(internship.getApplicationOpenDate().format(App.DATE_DISPLAY_FORMATTER)));
+		System.out.println("Application Close Date: " + ConsoleBoundary.safeValue(internship.getApplicationCloseDate().format(App.DATE_DISPLAY_FORMATTER)));
 		System.out.println("Number of Slots: " + internship.getNumOfSlots());
 
 	    while (true) {
@@ -197,12 +202,17 @@ public class ViewInternshipsAction implements StudentAction {
 	        return;
 	    }
 	    
-	    InternshipApplication internApp = new InternshipApplication(student.getInternshipApplications().size() + 1,
-	    		chosen, student, LocalDate.now());
+	    // Generate new random application ID
+		String[] idsArray = App.internshipApplicationList.stream().map(i -> i.getApplicationId()).toArray(String[]::new);
+		String generatedId = App.generateUniqueId("A", idsArray);
+		
+	    InternshipApplication internApp = new InternshipApplication(generatedId, chosen, student, today, InternshipApplicationStatus.PENDING);
 
+	    // Add to student's own internship application list
 	    student.addInternshipApplications(internApp);
-	    chosen.setNumOfSlots(chosen.getNumOfSlots() - 1);
-	    
+	    // Add to the global list for database saving
+	    App.internshipApplicationList.add(internApp);
+	    appendInternshipApplicationToCsv(internApp);
 	    System.out.println("Successfully applied for internship: " + chosen.getTitle());
 	}
 
@@ -270,7 +280,7 @@ public class ViewInternshipsAction implements StudentAction {
 			                	majorValidInput = true;
 			                	break;
 			                default:
-			                    System.out.println(ErrorMessage);
+			                	ConsoleBoundary.printInvalidInput();
 			            }
 		        	}
 		            if (selectedMajor != null) {
@@ -309,7 +319,7 @@ public class ViewInternshipsAction implements StudentAction {
 			                	levelValidInput = true;
 			                    break;
 			                default:
-			                    System.out.println(ErrorMessage);
+			                	ConsoleBoundary.printInvalidInput();
 			                    break;
 			            }
 		        	}
@@ -357,7 +367,7 @@ public class ViewInternshipsAction implements StudentAction {
 		        	validInput = true;
 		        	break;
 		        default:
-		        	System.out.println(ErrorMessage);
+		        	ConsoleBoundary.printInvalidInput();
 		    }
 	    }
 
@@ -369,18 +379,28 @@ public class ViewInternshipsAction implements StudentAction {
 	    return filteredList;
 	}
 	
-	private String safeValue(Object value) {
-		if (value == null) {
-			return "N/A";
+	// Write to CSV
+	private static boolean appendInternshipApplicationToCsv(InternshipApplication internship) {
+		try (FileWriter writer = new FileWriter(App.envFilePathInternshipApplication, true)) {
+			writer.append(buildInternshipString(internship).toString());
+			writer.flush();
+			return true;
+		} 
+		catch (IOException e) {
+			System.out.println("Failed to save to file: " + e.getMessage());
+        	System.out.println("Stack trace:");
+        	e.printStackTrace();
+			return false;
 		}
-		if (value instanceof String) {
-			String str = (String) value;
-			return str.isEmpty() ? "N/A" : str;
-		}
-		return value.toString();
 	}
-
-	private String valueOrNA(Enum<?> value) {
-		return value != null ? value.name() : "N/A";
+	
+	private static StringBuilder buildInternshipString(InternshipApplication internshipApp) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(internshipApp.getApplicationId()).append(",")
+		  .append(internshipApp.getInternshipInfo().getInternshipId()).append(",")
+		  .append(internshipApp.getStudentInfo().getName()).append(",")
+		  .append(internshipApp.getAppliedDate().format(App.DATE_DB_FORMATTER)).append(",")
+		  .append(internshipApp.getStatus()).append("\n");
+		return sb;
 	}
 }
