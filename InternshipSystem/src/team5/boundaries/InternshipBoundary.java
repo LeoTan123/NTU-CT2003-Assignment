@@ -74,19 +74,33 @@ public class InternshipBoundary extends ConsoleBoundary {
 		System.out.println("You have not created any internship yet.");
 	}
 	
+	public static void printMaxInternshipsReached() {
+		System.out.println("You can create maximum of 5 internship opportunities.");
+	}
+	
+	public static void printCreateInternshipSummary(Internship internship) {
+		ConsoleBoundary.printSectionTitle("Internship Summary");
+		System.out.println("Title: " + internship.getTitle());
+		System.out.println("Description: " + internship.getDescription());
+		System.out.println("Internship Level: " + internship.getInternshipLevel());
+		System.out.println("Preferred Major: " + internship.getPreferredMajor().getFullName());
+		System.out.println("Application Start Date: " + internship.getApplicationOpenDate().format(App.DATE_DISPLAY_FORMATTER));
+		System.out.println("Application End Date: " + internship.getApplicationCloseDate().format(App.DATE_DISPLAY_FORMATTER));
+		System.out.println("Number of slots: " + internship.getNumOfSlots());
+	}
+	
 	public static int displaySubMenu(boolean showUpdateOption) {
 		while (true) {
 			System.out.println();
 			System.out.println("Choose option: (or 0 to return)");
-			System.out.println("1. View student applications");
 			if (showUpdateOption == true) 
 			{
-				System.out.println("2. Update internship");
-				System.out.println("3. Delete internship");
+				System.out.println("1. Update internship");
+				System.out.println("2. Delete internship");
 			}
 			else
 			{
-				System.out.println("2. Delete internship");
+				System.out.println("1. Delete internship");
 			}
 			String input = App.sc.nextLine().trim();
 			try {

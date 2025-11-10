@@ -109,16 +109,34 @@ public abstract class ConsoleBoundary {
 		
 	}
 	
+	public static boolean promptConfirmation() {
+		while (true) {
+			System.out.println("Are you sure you want to perform this action? (y/n)");
+			String input = App.sc.nextLine().trim().toLowerCase();
+			if (input.equalsIgnoreCase("y")) {
+				return true;
+			}
+			else if (input.equalsIgnoreCase("n")) {
+				return false;
+			}
+			else {
+				printInvalidInput();
+				continue;
+			}
+		}
+	}
+	
 	/**** Print ****/
 	public static void printSectionTitle(String title) {
-		printSectionTitle(title, false);
+		System.out.println("===== " + title + " =====");
+		
 	}
 
 	public static void printSectionTitle(String title, boolean marginTop) {
 		if (marginTop) {
 			System.out.println();
 		}
-		System.out.println("===== " + title + " =====");
+		printSectionTitle(title);
 	}
 
 	public static void printText(String text) {

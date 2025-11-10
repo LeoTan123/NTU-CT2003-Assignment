@@ -32,7 +32,7 @@ public class ViewInternshipsAction implements StudentAction {
 	@Override
 	public void run(Student student) {
 		ConsoleBoundary.printSectionTitle("Available Internship Opportunities");
-		List<Internship> baseList = getApprovedInternships();
+		List<Internship> baseList = getEligibleInternships(student);
 		if (baseList.isEmpty()) {
 			System.out.println("No internships available at the moment.");
 			return;
@@ -51,7 +51,7 @@ public class ViewInternshipsAction implements StudentAction {
 					return;
 				}
 				if ("a".equalsIgnoreCase(emptyInput)) {
-					baseList = getApprovedInternships();
+					baseList = getEligibleInternships(student);
 					workingList = new ArrayList<>(baseList);
 					pageIndex = 0;
 					continue;
@@ -81,7 +81,7 @@ public class ViewInternshipsAction implements StudentAction {
 				return;
 			} 
 			else if ("f".equalsIgnoreCase(input)) {
-				baseList = getApprovedInternships();
+				baseList = getEligibleInternships(student);
 				InternshipFilterCriteria criteria = InternshipFilterPrompt.prompt(FILTER_OPTIONS);
 				if (criteria == null) {
 					return;
@@ -90,7 +90,7 @@ public class ViewInternshipsAction implements StudentAction {
 				pageIndex = 0;
 			} 
 			else if ("a".equalsIgnoreCase(input)) {
-				baseList = getApprovedInternships();
+				baseList = getEligibleInternships(student);
 				workingList = new ArrayList<>(baseList);
 				pageIndex = 0;
 			} 
@@ -128,9 +128,16 @@ public class ViewInternshipsAction implements StudentAction {
 		}
 	}
 	
-	private List<Internship> getApprovedInternships() {
+	private List<Internship> getEligibleInternships(Student student) {
 		return App.internshipList.stream()
-				.filter(i -> i.getInternshipStatus() == InternshipStatus.APPROVED)
+				.filter(i -> i.getInternshipStatus() == InternshipStatus.APPROVED) // filter to show only approved
+				.filter(i -> i.getPreferredMajor() == student.getMajor()) // filter to show only student's major
+				.filter(i -> {
+					if (student.getYear() == 1 || student.getYear() == 2) { // if student is year 1 or 2, 
+						return i.getInternshipLevel() == InternshipLevel.BASIC; // filter to show only basic
+					}
+					return true;
+				})
 				.collect(Collectors.toList());
 	}
 	

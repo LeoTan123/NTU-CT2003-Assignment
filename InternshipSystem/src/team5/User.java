@@ -113,7 +113,7 @@ public class User {
 		}
 		this.loginState = false;
 		App.currentUser = null;
-		System.out.println("You have already logged out.");
+		System.out.println("You have logged out.");
 	}
 	
 	/**
