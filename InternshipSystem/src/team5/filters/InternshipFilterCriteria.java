@@ -17,7 +17,7 @@ public class InternshipFilterCriteria {
 	private LocalDate applicationCloseTo;
 
 	public StudentMajor getPreferredMajor() {
-		return preferredMajor;
+		return this.preferredMajor;
 	}
 
 	public void setPreferredMajor(StudentMajor preferredMajor) {
@@ -25,7 +25,7 @@ public class InternshipFilterCriteria {
 	}
 
 	public InternshipLevel getInternshipLevel() {
-		return internshipLevel;
+		return this.internshipLevel;
 	}
 
 	public void setInternshipLevel(InternshipLevel internshipLevel) {
@@ -33,7 +33,7 @@ public class InternshipFilterCriteria {
 	}
 
 	public InternshipStatus getInternshipStatus() {
-		return internshipStatus;
+		return this.internshipStatus;
 	}
 
 	public void setInternshipStatus(InternshipStatus internshipStatus) {
@@ -41,7 +41,7 @@ public class InternshipFilterCriteria {
 	}
 
 	public LocalDate getApplicationOpenFrom() {
-		return applicationOpenFrom;
+		return this.applicationOpenFrom;
 	}
 
 	public void setApplicationOpenFrom(LocalDate applicationOpenFrom) {
@@ -49,7 +49,7 @@ public class InternshipFilterCriteria {
 	}
 
 	public LocalDate getApplicationCloseTo() {
-		return applicationCloseTo;
+		return this.applicationCloseTo;
 	}
 
 	public void setApplicationCloseTo(LocalDate applicationCloseTo) {
@@ -57,10 +57,10 @@ public class InternshipFilterCriteria {
 	}
 
 	public boolean isEmpty() {
-		return preferredMajor == null
-				&& internshipLevel == null
-				&& internshipStatus == null
-				&& applicationOpenFrom == null
-				&& applicationCloseTo == null;
+		return this.preferredMajor == null
+				&& this.internshipLevel == null
+				&& this.internshipStatus == null
+				&& this.applicationOpenFrom == null
+				&& this.applicationCloseTo == null;
 	}
 }

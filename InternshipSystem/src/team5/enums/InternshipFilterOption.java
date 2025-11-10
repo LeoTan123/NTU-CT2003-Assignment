@@ -7,5 +7,15 @@ public enum InternshipFilterOption {
 	INTERNSHIP_LEVEL,
 	INTERNSHIP_STATUS,
 	APPLICATION_OPEN_FROM,
-	APPLICATION_CLOSE_TO
+	APPLICATION_CLOSE_TO;
+	
+	public static InternshipFilterOption fromString(String value) {
+	    for (InternshipFilterOption s : InternshipFilterOption.values()) {
+	        if (s.name().equalsIgnoreCase(value.trim())) {
+	            return s;
+	        }
+	    }
+	    System.out.println("Warning: Unknown status '" + value + "', defaulting to PREFERRED_MAJOR");
+	    return InternshipFilterOption.PREFERRED_MAJOR;
+	}
 }

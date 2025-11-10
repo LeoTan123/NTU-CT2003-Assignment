@@ -13,8 +13,6 @@ import team5.enums.UserAccountStatus;
 
 public class ReviewCompanyRegistrationsAction implements StaffAction {
 
-	private static final int PAGE_SIZE = 5;
-
 	@Override
 	public void run(CareerCenterStaff staff) {
 		ConsoleBoundary.printSectionTitle("Pending Company Registrations");
@@ -33,8 +31,8 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 		int pageIndex = 0;
 
 		while (reviewing) {
-			int start = pageIndex * PAGE_SIZE;
-			int end = Math.min(start + PAGE_SIZE, pending.size());
+			int start = pageIndex * ConsoleBoundary.PAGE_SIZE;
+			int end = Math.min(start + ConsoleBoundary.PAGE_SIZE, pending.size());
 
 			if (start >= pending.size()) {
 				System.out.println("No more records to display.");
@@ -59,10 +57,11 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 			boolean hasPrev = pageIndex > 0;
 			printNavigationPrompt(hasPrev, hasNext);
 
-			String input = App.sc.nextLine().trim();
+			String input = ConsoleBoundary.promptUserInput();
 
 			if ("0".equals(input)) {
 				reviewing = false;
+				break;
 			} 
 			else if (hasNext && "n".equalsIgnoreCase(input)) {
 				pageIndex++;
@@ -89,7 +88,8 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 					if (pending.isEmpty()) {
 						System.out.println("No pending registrations remaining.");
 						reviewing = false;
-					} else {
+					} 
+					else {
 						pageIndex = 0;
 					}
 				} 
@@ -135,7 +135,7 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 			System.out.println("2. Reject registration");
 			System.out.println("0. Back to list");
 
-			String decision = App.sc.nextLine().trim();
+			String decision = ConsoleBoundary.promptUserInput(true);
 			switch (decision) {
 				case "1":
 					registration.setAccountStatus(UserAccountStatus.APPROVED);
@@ -177,7 +177,7 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 	private void waitForReturn() {
 		while (true) {
 			System.out.println("Enter 0 to return to the staff menu:");
-			if ("0".equals(App.sc.nextLine().trim())) {
+			if ("0".equals(ConsoleBoundary.promptUserInput())) {
 				return;
 			}
 			System.out.println("No pending registration. Please enter 0 to go back.");

@@ -8,6 +8,7 @@ import team5.App;
 
 public abstract class ConsoleBoundary {
 
+	public static final int PAGE_SIZE = 5;
 	public static void clearScreen() {
     	System.out.print("\033[H\033[2J");
         System.out.flush();
@@ -47,7 +48,14 @@ public abstract class ConsoleBoundary {
 	
 	/**** Prompt ****/
 	public static String promptUserInput() {
-		return App.sc.nextLine();
+		return App.sc.nextLine().trim();
+	}
+	
+	public static String promptUserInput(boolean withHeader) {
+		if(withHeader) {
+			System.out.println("Enter your choice:");
+		}
+		return App.sc.nextLine().trim();
 	}
 	
 	public static LocalDate promptDate(String prompt) {

@@ -89,7 +89,7 @@ public class App {
 				System.out.println("4: Register Company Representative");
 				System.out.println("0: Exit");
 				
-				int choice = Integer.parseInt(App.sc.nextLine()); // consume the newline
+				int choice = Integer.parseInt(ConsoleBoundary.promptUserInput()); // consume the newline
 				if(choice == 0){
 					System.out.println("Exitting system...");
 					exitProgram = true;
@@ -107,10 +107,10 @@ public class App {
 				}
 				
 				System.out.println("Please enter your user ID:");	
-				String userID = App.sc.nextLine();
+				String userID = ConsoleBoundary.promptUserInput();
 				
 				System.out.println("Please enter your password:");	
-				String password = App.sc.nextLine();
+				String password = ConsoleBoundary.promptUserInput();
 				
 				boolean foundUser = false;
 				
@@ -141,10 +141,12 @@ public class App {
 				if (userType == UserType.STUDENT && currentUser instanceof Student) {
 					StudentController studentController = new StudentController();
 					studentController.showMenu((Student)currentUser);
-				} else if (userType == UserType.CCSTAFF && currentUser instanceof CareerCenterStaff) {
+				} 
+				else if (userType == UserType.CCSTAFF && currentUser instanceof CareerCenterStaff) {
 					CareerCenterStaffController staffController = new CareerCenterStaffController();
 					staffController.showMenu((CareerCenterStaff)currentUser);
-				} else if (userType == UserType.COMREP && currentUser instanceof CompanyRep) {
+				} 
+				else if (userType == UserType.COMREP && currentUser instanceof CompanyRep) {
 					CompanyRepController companyRepController = new CompanyRepController();
 					companyRepController.showMenu((CompanyRep)currentUser);
 				}
@@ -232,7 +234,7 @@ public class App {
 	        else {
 	            if (attempt < maxAttempts) {
 	                System.out.println("Password wrong, please enter again:");
-	                password = App.sc.nextLine().trim(); // update password for next attempt
+	                password = ConsoleBoundary.promptUserInput(); // update password for next attempt
 	            } 
 	            else {
 	                System.out.println("Wrong password 3 times. Login Failed.");

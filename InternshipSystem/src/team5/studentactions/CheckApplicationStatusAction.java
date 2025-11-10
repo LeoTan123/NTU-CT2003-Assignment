@@ -11,7 +11,6 @@ import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipStatus;
 
 public class CheckApplicationStatusAction implements StudentAction {
-	//private final static String ErrorMessage = "Invalid input. Try again.";
 	@Override
 	public void run(Student student) {
 		ConsoleBoundary.printSectionTitle("Your Internship Applications");
@@ -38,13 +37,12 @@ public class CheckApplicationStatusAction implements StudentAction {
 				reviewing = false;
 				break;
 		    }
-			System.out.println("Choose internship number or 0 to return:");
-	        String inputStr = App.sc.nextLine();
+			
+			String inputStr = ConsoleBoundary.promptUserInput(true);
 	        int input = 0;
-
 	        try 
 	        {
-	            input = Integer.parseInt(inputStr.trim());
+	            input = Integer.parseInt(inputStr);
 
 	            if (input == 0) {
 	            	reviewing = false;
@@ -66,10 +64,10 @@ public class CheckApplicationStatusAction implements StudentAction {
 	                System.out.println("2. Accept this internship offer");
 	                System.out.println("0. Return to internship list");
 
-	                String actionStr = App.sc.nextLine();
+	                String actionStr = ConsoleBoundary.promptUserInput(true);
 	                int action = -1;
 	                try {
-	                    action = Integer.parseInt(actionStr.trim());
+	                    action = Integer.parseInt(actionStr);
 	                } 
 	                catch (NumberFormatException ex) {
 	                	ConsoleBoundary.printInvalidInput();
@@ -90,7 +88,6 @@ public class CheckApplicationStatusAction implements StudentAction {
 	                    	ConsoleBoundary.printInvalidInput();
 	                }
 	            }
-
 	        } 
 	        catch (NumberFormatException ex) {
 	        	ConsoleBoundary.printInvalidInput();
@@ -110,8 +107,7 @@ public class CheckApplicationStatusAction implements StudentAction {
 		
 		while (true) {
 	        System.out.println("Enter 0 to return to the internship action list:");
-	        String input = App.sc.nextLine().trim();
-
+	        String input = ConsoleBoundary.promptUserInput();
 	        if (input.equals("0")) {
 	            return;
 	        } else {
@@ -141,10 +137,8 @@ public class CheckApplicationStatusAction implements StudentAction {
 			return;
 		}
 		
-		System.out.println("You have accepted offer for internship " 
-		+ chosen.getInternshipInfo().getTitle() + ". Please contact " 
-		+ chosen.getInternshipInfo().getCompanyRep() + " or " 
-		+ chosen.getInternshipInfo().getCompanyName() + " for more details.");
+		System.out.println("You have accepted offer for internship " + chosen.getInternshipInfo().getTitle() + ".");
+		System.out.println("Please email to " + chosen.getInternshipInfo().getCompanyRep() + " or visit " + chosen.getInternshipInfo().getCompanyName() + " for more details.");
 		
 		student.setEmployedStatus(true); // Set Student as employed
 		student.clearInternshipApplications(); // Clear application list after accepted offer
@@ -158,6 +152,5 @@ public class CheckApplicationStatusAction implements StudentAction {
 		    	internshipInfo.setInternshipStatus(InternshipStatus.FILLED);
 		    }
 		}
-		return;
 	}
 }

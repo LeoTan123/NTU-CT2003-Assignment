@@ -86,7 +86,7 @@ public class CreateInternshipAction implements CompanyRepAction {
 				System.out.println("2. Start over");
 				System.out.println("0. Cancel");
 
-				String choice = App.sc.nextLine();
+				String choice = ConsoleBoundary.promptUserInput(true);
 				switch (choice) {
 					case "1":
 						// Generate new id
@@ -125,8 +125,9 @@ public class CreateInternshipAction implements CompanyRepAction {
 						awaitingDecision = false;
 						break;
 					case "0":
-						System.out.println("Cancelled. Back to list.");
-						return;
+						awaitingDecision = false;
+						continueCreate = false;
+						break;
 					default:
 						ConsoleBoundary.printInvalidSelection();
 				}

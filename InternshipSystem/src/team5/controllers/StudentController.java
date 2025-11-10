@@ -1,6 +1,5 @@
 package team5.controllers;
 
-import team5.App;
 import team5.Student;
 import team5.boundaries.ConsoleBoundary;
 import team5.studentactions.CheckApplicationStatusAction;
@@ -25,9 +24,7 @@ public class StudentController {
             System.out.println("2. Check Internship Application Status");
             System.out.println("3. Update Password");
             System.out.println("4. Logout");
-            System.out.println("Please choose an option:");
-
-            String input = App.sc.nextLine();
+            String input = ConsoleBoundary.promptUserInput(true);
             switch (input) {
                 case "1":
                     viewInternshipsAction.run(student);

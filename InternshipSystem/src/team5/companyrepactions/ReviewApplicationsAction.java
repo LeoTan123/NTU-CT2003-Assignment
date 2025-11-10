@@ -55,7 +55,7 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 			displayInternshipsWithApplications(applicationsByInternship);
 
 			System.out.println("Select internship number to review applications (or 0 to return):");
-			String input = App.sc.nextLine().trim();
+			String input = ConsoleBoundary.promptUserInput();
 
 			if ("0".equals(input)) {
 				reviewing = false;
@@ -90,8 +90,7 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 	 * @param internships List of internships to find applications for
 	 * @return Map of internship to list of applications
 	 */
-	private Map<Internship, List<InternshipApplication>> findApplicationsForInternships(
-			ArrayList<Internship> internships) {
+	private Map<Internship, List<InternshipApplication>> findApplicationsForInternships(ArrayList<Internship> internships) {
 
 		Map<Internship, List<InternshipApplication>> applicationMap = new HashMap<>();
 
@@ -143,8 +142,7 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 	 *
 	 * @param applicationMap Map of internships to applications
 	 */
-	private void displayInternshipsWithApplications(
-			Map<Internship, List<InternshipApplication>> applicationMap) {
+	private void displayInternshipsWithApplications(Map<Internship, List<InternshipApplication>> applicationMap) {
 
 		//System.out.println("\nYour Internships with Applications:");
 		//System.out.println("=" .repeat(80));
@@ -181,11 +179,9 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 	 * @param internship The internship to review applications for
 	 * @param applications List of applications for this internship
 	 */
-	private void reviewApplicationsForInternship(Internship internship,
-			List<InternshipApplication> applications) {
+	private void reviewApplicationsForInternship(Internship internship, List<InternshipApplication> applications) {
 
 		boolean reviewing = true;
-
 		while (reviewing) {
 			ConsoleBoundary.printSectionTitle("Applications for: " + ConsoleBoundary.safeValue(internship.getTitle()));
 
@@ -198,7 +194,7 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 			displayApplicationList(applications);
 
 			System.out.println("Select application number to review (or 0 to return):");
-			String input = App.sc.nextLine().trim();
+			String input = ConsoleBoundary.promptUserInput();
 
 			if ("0".equals(input)) {
 				reviewing = false;
@@ -218,7 +214,8 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 				// Show application details and allow approve/reject
 				processApplication(selectedApplication);
 
-			} catch (NumberFormatException e) {
+			} 
+			catch (NumberFormatException e) {
 				ConsoleBoundary.printInvalidInput();
 			}
 		}
@@ -286,9 +283,7 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 			System.out.println("1. Approve Application");
 			System.out.println("2. Reject Application");
 			System.out.println("0. Return to application list");
-			System.out.println("Enter your choice: ");
-
-			String choice = App.sc.nextLine().trim();
+			String choice = ConsoleBoundary.promptUserInput(true);
 
 			switch (choice) {
 				case "1":
@@ -315,9 +310,9 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 	 * @param student The student who submitted the application
 	 */
 	private void approveApplication(InternshipApplication application, Student student) {
-		System.out.println("\nDo you want to APPROVE this application?");
+		System.out.println("Do you want to APPROVE this application?");
 		System.out.println("Enter 'yes' to confirm (or 0 to cancel): ");
-		String confirmation = App.sc.nextLine().trim();
+		String confirmation = ConsoleBoundary.promptUserInput();
 
 		// Cancel process
 		if(confirmation.equals("0") || !confirmation.equalsIgnoreCase("yes")) {
@@ -346,7 +341,7 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 
 		// Pause to show success message
 		System.out.println("Press Enter to return to application list.");
-		App.sc.nextLine();
+		ConsoleBoundary.promptUserInput();
 	}
 
 	/**
@@ -356,9 +351,9 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 	 * @param student The student who submitted the application
 	 */
 	private void rejectApplication(InternshipApplication application, Student student) {
-		System.out.println("\nDo you want to REJECT this application?");
+		System.out.println("Do you want to REJECT this application?");
 		System.out.println("Enter 'yes' to confirm (or 0 to cancel): ");
-		String confirmation = App.sc.nextLine().trim();
+		String confirmation = ConsoleBoundary.promptUserInput();
 
 		// Cancel process
 		if(confirmation.equals("0") || !confirmation.equalsIgnoreCase("yes")) {
@@ -381,6 +376,6 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 
 		// Pause to show message
 		System.out.println("Press Enter to return to application list.");
-		App.sc.nextLine();
+		ConsoleBoundary.promptUserInput();
 	}
 }

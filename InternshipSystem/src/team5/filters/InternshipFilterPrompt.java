@@ -3,7 +3,6 @@ package team5.filters;
 import java.time.LocalDate;
 import java.util.List;
 
-import team5.App;
 import team5.boundaries.ConsoleBoundary;
 import team5.enums.InternshipFilterOption;
 import team5.enums.InternshipLevel;
@@ -27,9 +26,7 @@ public final class InternshipFilterPrompt {
 			}
 			System.out.println((options.size() + 1) + ". Show all internships");
 			System.out.println("0. Return to menu");
-			System.out.println("Enter your choice:");
-
-			String input = ConsoleBoundary.promptUserInput().trim();
+			String input = ConsoleBoundary.promptUserInput(true);
 			if ("0".equals(input)) {
 				return null;
 			}
@@ -37,7 +34,8 @@ public final class InternshipFilterPrompt {
 			int option;
 			try {
 				option = Integer.parseInt(input);
-			} catch (NumberFormatException ex) {
+			} 
+			catch (NumberFormatException ex) {
 				ConsoleBoundary.printInvalidSelection();
 				continue;
 			}
@@ -113,13 +111,14 @@ public final class InternshipFilterPrompt {
 
 	private static StudentMajor promptMajor() {
 		StudentMajor[] majors = StudentMajor.values();
-		while (true) {
+		while (true) 
+		{
 			System.out.println("Select preferred major:");
 			for (int i = 0; i < majors.length; i++) {
 				System.out.println((i + 1) + ". " + majors[i].getFullName());
 			}
 			System.out.println("0. Cancel");
-			String input = ConsoleBoundary.promptUserInput().trim();
+			String input = ConsoleBoundary.promptUserInput(true);
 			if ("0".equals(input)) {
 				return null;
 			}
@@ -128,7 +127,9 @@ public final class InternshipFilterPrompt {
 				if (index >= 0 && index < majors.length) {
 					return majors[index];
 				}
-			} catch (NumberFormatException ignored) {
+			} 
+			catch (NumberFormatException ignored) {
+				ConsoleBoundary.printInvalidInput();
 			}
 			ConsoleBoundary.printInvalidSelection();
 		}
@@ -141,7 +142,7 @@ public final class InternshipFilterPrompt {
 			System.out.println("2. INTERMEDIATE");
 			System.out.println("3. ADVANCED");
 			System.out.println("0. Cancel");
-			String input = ConsoleBoundary.promptUserInput().trim();
+			String input = ConsoleBoundary.promptUserInput(true);
 			switch (input) {
 				case "0":
 					return null;
@@ -164,7 +165,7 @@ public final class InternshipFilterPrompt {
 			System.out.println("2. APPROVED");
 			System.out.println("3. REJECTED");
 			System.out.println("0. Cancel");
-			String input = ConsoleBoundary.promptUserInput().trim();
+			String input = ConsoleBoundary.promptUserInput(true);
 			switch (input) {
 				case "0":
 					return null;
@@ -183,14 +184,15 @@ public final class InternshipFilterPrompt {
 	private static LocalDate promptDate(String label) {
 		while (true) {
 			System.out.println(label + " or 0 to cancel:");
-			String input = ConsoleBoundary.promptUserInput().trim();
+			String input = ConsoleBoundary.promptUserInput();
 			if ("0".equals(input)) {
 				return null;
 			}
 			try {
 				return ConsoleBoundary.parseDate(input);
-			} catch (IllegalArgumentException ex) {
-				ConsoleBoundary.printInvalidSelection();
+			} 
+			catch (IllegalArgumentException ex) {
+				ConsoleBoundary.printInvalidInput();
 			}
 		}
 	}

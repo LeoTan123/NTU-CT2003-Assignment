@@ -15,7 +15,6 @@ import team5.filters.InternshipFilterPrompt;
 
 public class ViewInternshipsAction implements StaffAction {
 
-	private static final int PAGE_SIZE = 5;
 	private static final List<InternshipFilterOption> FILTER_OPTIONS = List.of(
 			InternshipFilterOption.PREFERRED_MAJOR,
 			InternshipFilterOption.INTERNSHIP_LEVEL,
@@ -39,7 +38,7 @@ public class ViewInternshipsAction implements StaffAction {
 			if (workingList.isEmpty()) {
 				System.out.println("No internships match your current filter.");
 				System.out.println("Enter 'a' to show all internships or 0 to return.");
-				String emptyInput = App.sc.nextLine().trim();
+				String emptyInput = ConsoleBoundary.promptUserInput();
 				if ("0".equals(emptyInput)) {
 					return;
 				}
@@ -48,11 +47,11 @@ public class ViewInternshipsAction implements StaffAction {
 					pageIndex = 0;
 					continue;
 				}
-				System.out.println("Invalid option.");
+				ConsoleBoundary.printInvalidInput();
 				continue;
 			}
-			int start = pageIndex * PAGE_SIZE;
-			int end = Math.min(start + PAGE_SIZE, workingList.size());
+			int start = pageIndex * ConsoleBoundary.PAGE_SIZE;
+			int end = Math.min(start + ConsoleBoundary.PAGE_SIZE, workingList.size());
 
 			for (int i = start; i < end; i++) {
 				Internship internship = workingList.get(i);
@@ -63,7 +62,7 @@ public class ViewInternshipsAction implements StaffAction {
 			boolean hasPrev = pageIndex > 0;
 			printNavigationPrompt(hasPrev, hasNext);
 
-			String input = App.sc.nextLine().trim();
+			String input = ConsoleBoundary.promptUserInput();
 			if ("0".equals(input)) {
 				return;
 			} 
@@ -116,7 +115,7 @@ public class ViewInternshipsAction implements StaffAction {
 		System.out.println("Status: " + ConsoleBoundary.valueOrNA(internship.getInternshipStatus()));
 		System.out.println("Number of Slots: " + internship.getNumOfSlots());
 		System.out.println("Press Enter to return to the internship list.");
-		App.sc.nextLine();
+		ConsoleBoundary.promptUserInput();
 	}
 
 	private void printNavigationPrompt(boolean hasPrev, boolean hasNext) {

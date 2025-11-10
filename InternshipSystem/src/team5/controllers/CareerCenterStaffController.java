@@ -1,6 +1,5 @@
 package team5.controllers;
 
-import team5.App;
 import team5.CareerCenterStaff;
 import team5.boundaries.ConsoleBoundary;
 import team5.staffactions.ReviewCompanyRegistrationsAction;
@@ -23,16 +22,14 @@ public class CareerCenterStaffController {
 	public void showMenu(CareerCenterStaff staff) {
 		boolean exit = false;
 		while (!exit) {
-			System.out.println();
-			ConsoleBoundary.printSectionTitle("Career Center Staff Menu");
+			ConsoleBoundary.printSectionTitle("Career Center Staff Menu", true);
 			System.out.println("1. Review Company Representative Registrations");
 			System.out.println("2. Review Internship Submissions");
 			System.out.println("3. View Internship Opportunities");
 			System.out.println("4. Update Password");
 			System.out.println("5. Logout");
-			System.out.println("Please choose an option:");
-
-			String input = App.sc.nextLine();
+			String input = ConsoleBoundary.promptUserInput(true);
+			
 			switch (input) {
 			case "1":
 				reviewCompanyAction.run(staff);

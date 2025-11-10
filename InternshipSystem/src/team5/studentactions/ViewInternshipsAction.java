@@ -23,8 +23,6 @@ import team5.filters.InternshipFilterCriteria;
 import team5.filters.InternshipFilterPrompt;
 
 public class ViewInternshipsAction implements StudentAction {
-
-	private static final int PAGE_SIZE = 5;
 	private static final List<InternshipFilterOption> FILTER_OPTIONS = List.of(
 			InternshipFilterOption.PREFERRED_MAJOR,
 			InternshipFilterOption.INTERNSHIP_LEVEL,
@@ -48,7 +46,7 @@ public class ViewInternshipsAction implements StudentAction {
 			if (workingList.isEmpty()) {
 				System.out.println("No internships match your current filter.");
 				System.out.println("Enter 'a' to show all internships or 0 to return.");
-				String emptyInput = App.sc.nextLine().trim();
+				String emptyInput = ConsoleBoundary.promptUserInput();
 				if ("0".equals(emptyInput)) {
 					return;
 				}
@@ -61,8 +59,8 @@ public class ViewInternshipsAction implements StudentAction {
 				ConsoleBoundary.printInvalidInput();
 				continue;
 			}
-			int start = pageIndex * PAGE_SIZE;
-			int end = Math.min(start + PAGE_SIZE, workingList.size());
+			int start = pageIndex * ConsoleBoundary.PAGE_SIZE;
+			int end = Math.min(start + ConsoleBoundary.PAGE_SIZE, workingList.size());
 			if (start >= workingList.size()) {
 				pageIndex = 0;
 				continue;
@@ -77,11 +75,12 @@ public class ViewInternshipsAction implements StudentAction {
 			}
 
 			printNavigationPrompt(pageIndex > 0, end < workingList.size());
-			String input = App.sc.nextLine().trim();
+			String input = ConsoleBoundary.promptUserInput();
 
 			if ("0".equals(input)) {
 				return;
-			} else if ("f".equalsIgnoreCase(input)) {
+			} 
+			else if ("f".equalsIgnoreCase(input)) {
 				baseList = getApprovedInternships();
 				InternshipFilterCriteria criteria = InternshipFilterPrompt.prompt(FILTER_OPTIONS);
 				if (criteria == null) {
@@ -89,23 +88,29 @@ public class ViewInternshipsAction implements StudentAction {
 				}
 				workingList = InternshipFilter.apply(baseList, criteria);
 				pageIndex = 0;
-			} else if ("a".equalsIgnoreCase(input)) {
+			} 
+			else if ("a".equalsIgnoreCase(input)) {
 				baseList = getApprovedInternships();
 				workingList = new ArrayList<>(baseList);
 				pageIndex = 0;
-			} else if ("n".equalsIgnoreCase(input)) {
+			} 
+			else if ("n".equalsIgnoreCase(input)) {
 				if (end < workingList.size()) {
 					pageIndex++;
-				} else {
+				} 
+				else {
 					ConsoleBoundary.printInvalidInput();
 				}
-			} else if ("p".equalsIgnoreCase(input)) {
+			} 
+			else if ("p".equalsIgnoreCase(input)) {
 				if (pageIndex > 0) {
 					pageIndex--;
-				} else {
+				} 
+				else {
 					ConsoleBoundary.printInvalidInput();
 				}
-			} else {
+			} 
+			else {
 				try {
 					int selection = Integer.parseInt(input);
 					if (selection < 1 || selection > displayedInternships.size()) {
@@ -115,7 +120,8 @@ public class ViewInternshipsAction implements StudentAction {
 
 					Internship chosen = displayedInternships.get(selection - 1);
 					handleInternshipActions(student, chosen);
-				} catch (NumberFormatException ex) {
+				} 
+				catch (NumberFormatException ex) {
 					ConsoleBoundary.printInvalidInput();
 				}
 			}
@@ -187,7 +193,7 @@ public class ViewInternshipsAction implements StudentAction {
 
 	    while (true) {
 	        System.out.println("Enter 0 to return to the internship action list:");
-	        String input = App.sc.nextLine().trim();
+	        String input = ConsoleBoundary.promptUserInput();
 
 	        if (input.equals("0")) {
 	            return;

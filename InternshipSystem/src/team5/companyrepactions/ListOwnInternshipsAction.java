@@ -21,13 +21,12 @@ import team5.filters.InternshipFilterPrompt;
 import team5.interfaces.FileBoundary;
 
 public class ListOwnInternshipsAction implements CompanyRepAction {
-	
-	private static final int PAGE_SIZE = 5;
 	private static final List<InternshipFilterOption> FILTER_OPTIONS = List.of(
 			InternshipFilterOption.PREFERRED_MAJOR,
 			InternshipFilterOption.INTERNSHIP_LEVEL,
 			InternshipFilterOption.INTERNSHIP_STATUS,
 			InternshipFilterOption.APPLICATION_CLOSE_TO);
+	
     private final FileBoundary fileBoundary = new CsvFileBoundary();
 
 	@Override
@@ -47,7 +46,7 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 			if (workingList.isEmpty()) {
 				System.out.println("No internships match your current filter.");
 				System.out.println("Enter 'a' to show all internships or 0 to return.");
-				String emptyInput = ConsoleBoundary.promptUserInput().trim();
+				String emptyInput = ConsoleBoundary.promptUserInput();
 				if ("0".equals(emptyInput)) {
 					return;
 				}
@@ -60,8 +59,8 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 				ConsoleBoundary.printInvalidSelection();
 				continue;
 			}
-			int start = pageIndex * PAGE_SIZE;
-			int end = Math.min(start + PAGE_SIZE, workingList.size());
+			int start = pageIndex * ConsoleBoundary.PAGE_SIZE;
+			int end = Math.min(start + ConsoleBoundary.PAGE_SIZE, workingList.size());
 
 			if (start >= workingList.size()) {
 				pageIndex = 0;
@@ -74,7 +73,7 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 			}
 
 			printNavigationPrompt(pageIndex > 0, end < workingList.size());
-			String input = ConsoleBoundary.promptUserInput().trim();
+			String input = ConsoleBoundary.promptUserInput();
 
 			if ("0".equals(input)) {
 				return;
