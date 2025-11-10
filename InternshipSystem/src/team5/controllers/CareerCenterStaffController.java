@@ -47,7 +47,7 @@ public class CareerCenterStaffController {
 				boolean updated = staff.changePassword();
 				if (updated) {
 					staff.logout();
-					System.out.println("You have been logged out. Please log in again with your new password.");
+					System.out.println("Please log in again with your new password.");
 					exit = true;
 				}
 				break;
@@ -56,7 +56,7 @@ public class CareerCenterStaffController {
 				exit = true;
 				break;
 			default:
-				System.out.println("Invalid option. Please try again.");
+				ConsoleBoundary.printInvalidSelection();
 			}
 		}
 	}

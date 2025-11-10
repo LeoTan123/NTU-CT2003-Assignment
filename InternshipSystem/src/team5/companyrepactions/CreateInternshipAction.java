@@ -104,8 +104,7 @@ public class CreateInternshipAction implements CompanyRepAction {
 							// only add to list after saving successfully to CSV
 							boolean isSuccess = rep.addInternship(internship);
 							// If full do not add again
-							if(!isSuccess)
-							{
+							if(!isSuccess){
 								System.out.println(MAXIMUM_MESSAGE);
 								awaitingDecision = false;
 								continueCreate = false;
@@ -126,16 +125,12 @@ public class CreateInternshipAction implements CompanyRepAction {
 						awaitingDecision = false;
 						break;
 					case "0":
-						System.out.println("Cancelled.");
+						System.out.println("Cancelled. Back to list.");
 						return;
 					default:
-						System.out.println("Invalid option. Please choose 1, 2, or 0.");
+						ConsoleBoundary.printInvalidSelection();
 				}
 			}
 		}
-		
-
 	}
-
-	
 }

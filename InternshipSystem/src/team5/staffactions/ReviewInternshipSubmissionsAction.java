@@ -52,10 +52,10 @@ public class ReviewInternshipSubmissionsAction implements StaffAction {
 				Internship internship = pending.get(i);
 				System.out.printf("%d. Internship ID: %s | Title: %s | Level: %s | Status: %s%n",
 						i + 1,
-						internship.getInternshipId(),
-						safeValue(internship.getTitle()),
-						valueOrNA(internship.getInternshipLevel()),
-						valueOrNA(internship.getInternshipStatus()));
+						ConsoleBoundary.safeValue(internship.getInternshipId()),
+						ConsoleBoundary.safeValue(internship.getTitle()),
+						ConsoleBoundary.valueOrNA(internship.getInternshipLevel()),
+						ConsoleBoundary.valueOrNA(internship.getInternshipStatus()));
 			}
 
 			boolean hasNext = end < pending.size();
@@ -73,7 +73,7 @@ public class ReviewInternshipSubmissionsAction implements StaffAction {
 				try {
 					int selection = Integer.parseInt(input);
 					if (selection < 1 || selection > pending.size()) {
-						System.out.println("Invalid selection. Please try again.");
+						ConsoleBoundary.printInvalidSelection();
 						continue;
 					}
 
@@ -92,7 +92,7 @@ public class ReviewInternshipSubmissionsAction implements StaffAction {
 						pageIndex = 0;
 					}
 				} catch (NumberFormatException ex) {
-					System.out.println("Please enter a valid number, 'n', 'p', or 0.");
+					ConsoleBoundary.printInvalidInput();
 				}
 			}
 		}
@@ -100,23 +100,23 @@ public class ReviewInternshipSubmissionsAction implements StaffAction {
 
 	private void handleReview(Internship internship) {
 		ConsoleBoundary.printSectionTitle("Review Internship Submission", true);
-		System.out.println("Internship ID: " + internship.getInternshipId());
-		System.out.println("Title: " + safeValue(internship.getTitle()));
-		System.out.println("Description: " + safeValue(internship.getDescription()));
-		System.out.println("Level: " + valueOrNA(internship.getInternshipLevel()));
-		System.out.println("Preferred Major: " + safeValue(internship.getPreferredMajor()));
-		System.out.println("Application Open Date: " + formatDate(internship.getApplicationOpenDate()));
-		System.out.println("Application Close Date: " + formatDate(internship.getApplicationCloseDate()));
-		System.out.println("Status: " + valueOrNA(internship.getInternshipStatus()));
+		System.out.println("Internship ID: " +  ConsoleBoundary.safeValue(internship.getInternshipId()));
+		System.out.println("Title: " +  ConsoleBoundary.safeValue(internship.getTitle()));
+		System.out.println("Description: " +  ConsoleBoundary.safeValue(internship.getDescription()));
+		System.out.println("Level: " +  ConsoleBoundary.valueOrNA(internship.getInternshipLevel()));
+		System.out.println("Preferred Major: " +  ConsoleBoundary.safeValue(internship.getPreferredMajor()));
+		System.out.println("Application Open Date: " + ConsoleBoundary.safeValue(internship.getApplicationOpenDate().format(App.DATE_DISPLAY_FORMATTER)));
+		System.out.println("Application Close Date: " + ConsoleBoundary.safeValue(internship.getApplicationCloseDate().format(App.DATE_DISPLAY_FORMATTER)));
+		System.out.println("Status: " +  ConsoleBoundary.valueOrNA(internship.getInternshipStatus()));
 		System.out.println("Number of Slots: " + internship.getNumOfSlots());
-		System.out.println("Company Rep: " + safeValue(internship.getCompanyRep()));
-		System.out.println("Company Name: " + safeValue(resolveCompanyName(internship)));
+		System.out.println("Company Rep: " +  ConsoleBoundary.safeValue(internship.getCompanyRep()));
+		System.out.println("Company Name: " + ConsoleBoundary.safeValue(resolveCompanyName(internship)));
 
 		boolean deciding = true;
 		while (deciding) {
 			System.out.println("Choose an action:");
-			System.out.println("1. Approve");
-			System.out.println("2. Reject");
+			System.out.println("1. Approve internship");
+			System.out.println("2. Reject internship");
 			System.out.println("0. Back to list");
 
 			String input = App.sc.nextLine().trim();
@@ -135,7 +135,7 @@ public class ReviewInternshipSubmissionsAction implements StaffAction {
 					deciding = false;
 					break;
 				default:
-					System.out.println("Invalid option. Please choose 1, 2, or 0.");
+					ConsoleBoundary.printInvalidSelection();
 			}
 		}
 	}
@@ -175,44 +175,20 @@ public class ReviewInternshipSubmissionsAction implements StaffAction {
 				writer.append(csvValue(internship.getInternshipId())).append(",")
 						.append(csvValue(internship.getTitle())).append(",")
 						.append(csvValue(internship.getDescription())).append(",")
-						.append(csvValue(enumValue(internship.getInternshipLevel()))).append(",")
-						.append(csvValue(enumValue(internship.getPreferredMajor()))).append(",")
-						.append(csvValue(formatDateForCsv(internship.getApplicationOpenDate()))).append(",")
-						.append(csvValue(formatDateForCsv(internship.getApplicationCloseDate()))).append(",")
-						.append(csvValue(enumValue(internship.getInternshipStatus()))).append(",")
+						.append(csvValue(ConsoleBoundary.valueOrNA(internship.getInternshipLevel()))).append(",")
+						.append(csvValue(ConsoleBoundary.valueOrNA(internship.getPreferredMajor()))).append(",")
+						.append(csvValue(internship.getApplicationOpenDate().format(App.DATE_DB_FORMATTER))).append(",")
+						.append(csvValue(internship.getApplicationCloseDate().format(App.DATE_DB_FORMATTER))).append(",")
+						.append(csvValue(ConsoleBoundary.valueOrNA(internship.getInternshipStatus()))).append(",")
 						.append(csvValue(resolveCompanyName(internship))).append(",")
 						.append(csvValue(internship.getCompanyRep())).append(",")
 						.append(String.valueOf(internship.getNumOfSlots())).append("\n");
 			}
 			writer.flush();
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			System.out.println("Failed to update internship file: " + e.getMessage());
 		}
-	}
-
-	private String safeValue(Object value) {
-		if (value == null) {
-			return "N/A";
-		}
-		if (value instanceof String) {
-			String str = (String) value;
-			return str.isEmpty() ? "N/A" : str;
-		}
-		if (value instanceof StudentMajor) {
-			return ((StudentMajor) value).getFullName();
-		}
-		if (value instanceof LocalDate) {
-			return ((LocalDate) value).format(App.DATE_DISPLAY_FORMATTER);
-		}
-		return value.toString();
-	}
-
-	private String valueOrNA(Enum<?> value) {
-		return value != null ? value.name() : "N/A";
-	}
-
-	private String formatDate(LocalDate date) {
-		return date != null ? date.format(App.DATE_DISPLAY_FORMATTER) : "N/A";
 	}
 
 	private String csvValue(Object value) {
@@ -226,13 +202,5 @@ public class ReviewInternshipSubmissionsAction implements StaffAction {
 				.map(CompanyRep::getCompanyName)
 				.findFirst()
 				.orElse("");
-	}
-
-	private String enumValue(Enum<?> value) {
-		return value != null ? value.name() : "";
-	}
-
-	private String formatDateForCsv(LocalDate date) {
-		return date != null ? date.format(App.DATE_DB_FORMATTER) : "";
 	}
 }

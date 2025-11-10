@@ -32,9 +32,9 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 
 	@Override
 	public void run(CompanyRep rep) {
+		ConsoleBoundary.printSectionTitle("My Created Internships", true);
 		ArrayList<Internship> ownInternships = rep.getInternships();
 		if (ownInternships.isEmpty()) {
-			ConsoleBoundary.printSectionTitle("My Created Internships", true);
 			InternshipBoundary.printNoInternshipCreated();
 			return;
 		}
@@ -60,8 +60,6 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 				ConsoleBoundary.printInvalidSelection();
 				continue;
 			}
-
-			ConsoleBoundary.printSectionTitle("My Created Internships", true);
 			int start = pageIndex * PAGE_SIZE;
 			int end = Math.min(start + PAGE_SIZE, workingList.size());
 
@@ -80,7 +78,8 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 
 			if ("0".equals(input)) {
 				return;
-			} else if ("f".equalsIgnoreCase(input)) {
+			} 
+			else if ("f".equalsIgnoreCase(input)) {
 				baseList = new ArrayList<>(rep.getInternships());
 				InternshipFilterCriteria criteria = InternshipFilterPrompt.prompt(FILTER_OPTIONS);
 				if (criteria == null) {
@@ -88,23 +87,29 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 				}
 				workingList = InternshipFilter.apply(baseList, criteria);
 				pageIndex = 0;
-			} else if ("a".equalsIgnoreCase(input)) {
+			} 
+			else if ("a".equalsIgnoreCase(input)) {
 				baseList = new ArrayList<>(rep.getInternships());
 				workingList = new ArrayList<>(baseList);
 				pageIndex = 0;
-			} else if ("n".equalsIgnoreCase(input)) {
+			} 
+			else if ("n".equalsIgnoreCase(input)) {
 				if (end < workingList.size()) {
 					pageIndex++;
-				} else {
+				} 
+				else {
 					ConsoleBoundary.printInvalidSelection();
 				}
-			} else if ("p".equalsIgnoreCase(input)) {
+			} 
+			else if ("p".equalsIgnoreCase(input)) {
 				if (pageIndex > 0) {
 					pageIndex--;
-				} else {
+				} 
+				else {
 					ConsoleBoundary.printInvalidSelection();
 				}
-			} else {
+			} 
+			else {
 				try {
 					int selection = Integer.parseInt(input);
 					if (selection < 1 || selection > workingList.size()) {
@@ -119,8 +124,9 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 					baseList = new ArrayList<>(rep.getInternships());
 					workingList = new ArrayList<>(baseList);
 					pageIndex = 0;
-				} catch (NumberFormatException ex) {
-					ConsoleBoundary.printInvalidSelection();
+				} 
+				catch (NumberFormatException ex) {
+					ConsoleBoundary.printInvalidInput();
 				}
 			}
 		}
@@ -132,17 +138,22 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 			int selectedOption = InternshipBoundary.displaySubMenu(showUpdateOption);
 			if (selectedOption == 0) {
 				return;
-			} else if (selectedOption == 1) {
+			} 
+			else if (selectedOption == 1) {
 				ConsoleBoundary.printWIP();
-			} else if (selectedOption == 2) {
+			} 
+			else if (selectedOption == 2) {
 				if (showUpdateOption) {
 					updateInternship(chosen, rep, 0);
-				} else {
+				} 
+				else {
 					deleteInternship();
 				}
-			} else if (showUpdateOption && selectedOption == 3) {
+			} 
+			else if (showUpdateOption && selectedOption == 3) {
 				deleteInternship();
-			} else {
+			} 
+			else {
 				ConsoleBoundary.printInvalidSelection();
 			}
 		}
@@ -311,6 +322,4 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 		}
 		System.out.println(", 'f' to filter, 'a' to show all, or 0 to return:");
 	}
-	
-	
 }

@@ -33,6 +33,7 @@ public class ViewInternshipsAction implements StudentAction {
 
 	@Override
 	public void run(Student student) {
+		ConsoleBoundary.printSectionTitle("Available Internship Opportunities");
 		List<Internship> baseList = getApprovedInternships();
 		if (baseList.isEmpty()) {
 			System.out.println("No internships available at the moment.");
@@ -60,8 +61,6 @@ public class ViewInternshipsAction implements StudentAction {
 				ConsoleBoundary.printInvalidInput();
 				continue;
 			}
-
-			ConsoleBoundary.printSectionTitle("Available Internship Opportunities");
 			int start = pageIndex * PAGE_SIZE;
 			int end = Math.min(start + PAGE_SIZE, workingList.size());
 			if (start >= workingList.size()) {

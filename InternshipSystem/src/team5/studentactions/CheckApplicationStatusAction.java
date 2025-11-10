@@ -14,14 +14,14 @@ public class CheckApplicationStatusAction implements StudentAction {
 	//private final static String ErrorMessage = "Invalid input. Try again.";
 	@Override
 	public void run(Student student) {
+		ConsoleBoundary.printSectionTitle("Your Internship Applications");
         List<InternshipApplication> applications = student.getInternshipApplications();
         boolean reviewing = true;
         while (reviewing) {
             if (applications.isEmpty()) {
                 System.out.println("No internship applications found.");
                 return;
-            } 
-        	ConsoleBoundary.printSectionTitle("Your Internship Applications");
+            }
         	boolean hasInternship = false;
 			for (int i = 0; i < applications.size(); i++) {
 				InternshipApplication internship = applications.get(i);

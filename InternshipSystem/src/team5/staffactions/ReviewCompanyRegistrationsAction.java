@@ -49,10 +49,10 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 				CompanyRep reg = pending.get(i);
 				System.out.printf("%d. Rep ID: %s | Name: %s | Company: %s | Status: %s%n",
 						i + 1,
-						reg.getUserID(),
-						reg.getName(),
-						reg.getCompanyName(),
-						reg.getAccountStatus());
+						ConsoleBoundary.safeValue(reg.getUserID()),
+						ConsoleBoundary.safeValue(reg.getName()),
+						ConsoleBoundary.safeValue(reg.getCompanyName()),
+						ConsoleBoundary.safeValue(reg.getAccountStatus()));
 			}
 
 			boolean hasNext = end < pending.size();
@@ -63,15 +63,18 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 
 			if ("0".equals(input)) {
 				reviewing = false;
-			} else if (hasNext && "n".equalsIgnoreCase(input)) {
+			} 
+			else if (hasNext && "n".equalsIgnoreCase(input)) {
 				pageIndex++;
-			} else if (hasPrev && "p".equalsIgnoreCase(input)) {
+			} 
+			else if (hasPrev && "p".equalsIgnoreCase(input)) {
 				pageIndex = Math.max(pageIndex - 1, 0);
-			} else {
+			} 
+			else {
 				try {
 					int selection = Integer.parseInt(input);
 					if (selection < 1 || selection > pending.size()) {
-						System.out.println("Invalid selection. Please try again.");
+						ConsoleBoundary.printInvalidSelection();
 						continue;
 					}
 
@@ -89,8 +92,9 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 					} else {
 						pageIndex = 0;
 					}
-				} catch (NumberFormatException ex) {
-					System.out.println("Please enter a valid number, 'n', 'p', or 0.");
+				} 
+				catch (NumberFormatException ex) {
+					ConsoleBoundary.printInvalidInput();
 				}
 			}
 		}
@@ -115,20 +119,20 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 	}
 
 	private void handleReview(CompanyRep registration) {
-		System.out.println("===== Review Registration =====");
-		System.out.println("Representative ID: " + registration.getUserID());
-		System.out.println("Name: " + registration.getName());
-		System.out.println("Company: " + registration.getCompanyName());
-		System.out.println("Department: " + registration.getDepartment());
-		System.out.println("Position: " + registration.getPosition());
-		System.out.println("Email: " + registration.getEmail());
-		System.out.println("Status: " + registration.getAccountStatus());
+		ConsoleBoundary.printSectionTitle("Review Registration");
+		System.out.println("Representative ID: " + ConsoleBoundary.safeValue(registration.getUserID()));
+		System.out.println("Name: " + ConsoleBoundary.safeValue(registration.getName()));
+		System.out.println("Company: " + ConsoleBoundary.safeValue(registration.getCompanyName()));
+		System.out.println("Department: " + ConsoleBoundary.safeValue(registration.getDepartment()));
+		System.out.println("Position: " + ConsoleBoundary.safeValue(registration.getPosition()));
+		System.out.println("Email: " + ConsoleBoundary.safeValue(registration.getEmail()));
+		System.out.println("Status: " + ConsoleBoundary.valueOrNA(registration.getAccountStatus()));
 
 		boolean deciding = true;
 		while (deciding) {
 			System.out.println("Choose an action:");
-			System.out.println("1. Approve");
-			System.out.println("2. Reject");
+			System.out.println("1. Approve registration");
+			System.out.println("2. Reject registration");
 			System.out.println("0. Back to list");
 
 			String decision = App.sc.nextLine().trim();
@@ -147,7 +151,7 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 					deciding = false;
 					break;
 				default:
-					System.out.println("Invalid option. Please choose 1, 2, or 0.");
+					ConsoleBoundary.printInvalidSelection();
 			}
 		}
 	}

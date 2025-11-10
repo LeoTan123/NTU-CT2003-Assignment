@@ -46,7 +46,7 @@ public class CompanyRepController {
 					boolean updated = companyRep.changePassword();
 					if (updated) {
 						companyRep.logout();
-						System.out.println("You have been logged out. Please log in again with your new password.");
+						System.out.println("Please log in again with your new password.");
 						exit = true;
 					}
 					break;
@@ -55,7 +55,7 @@ public class CompanyRepController {
 					exit = true;
 					break;
 				default:
-					System.out.println("Invalid option. Please try again.");
+					ConsoleBoundary.printInvalidSelection();
 			}
 		}
 	}
