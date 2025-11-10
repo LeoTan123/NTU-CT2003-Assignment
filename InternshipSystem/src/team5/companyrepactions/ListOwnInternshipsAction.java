@@ -4,10 +4,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import team5.App;
 import team5.CompanyRep;
 import team5.Internship;
+import team5.InternshipApplication;
 import team5.boundaries.ConsoleBoundary;
 import team5.boundaries.CsvFileBoundary;
 import team5.boundaries.InternshipBoundary;
@@ -138,19 +140,13 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 			if (selectedOption == 0) {
 				return;
 			} 
-			else if (selectedOption == 1) {
-				ConsoleBoundary.printWIP();
+			else if (selectedOption == 1 && showUpdateOption) {
+				updateInternship(chosen, rep, 0);
+				return;
 			} 
-			else if (selectedOption == 2) {
-				if (showUpdateOption) {
-					updateInternship(chosen, rep, 0);
-				} 
-				else {
-					deleteInternship();
-				}
-			} 
-			else if (showUpdateOption && selectedOption == 3) {
-				deleteInternship();
+			else if ((selectedOption == 1 && !showUpdateOption) || (selectedOption == 2 && showUpdateOption)) {
+				boolean isDeleted = deleteInternship(chosen, rep);
+				if (isDeleted) return;
 			} 
 			else {
 				ConsoleBoundary.printInvalidSelection();
@@ -244,35 +240,36 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 		}
 		
 		// update global internshipList
-		Internship globalInternship = findCurrentInternshipInList(chosenInternship, App.internshipList, rep);
-		if (globalInternship == null) {
+		ArrayList<Internship> newGlobalInternships = App.internshipList.stream()
+     		    .collect(Collectors.toCollection(ArrayList::new));
+		
+		Internship updatedGlobalInternship = findCurrentInternshipInList(chosenInternship, newGlobalInternships, rep);
+		if (updatedGlobalInternship == null) {
 			ConsoleBoundary.printText("Cannot find internship in global internship list.");
 			return;
 		}
-		globalInternship.setTitle(updatedInternship.getTitle());
-		globalInternship.setDescription(updatedInternship.getDescription());
-		globalInternship.setInternshipLevel(updatedInternship.getInternshipLevel()); 
-		globalInternship.setPreferredMajor(updatedInternship.getPreferredMajor());
-		globalInternship.setApplicationOpenDate(updatedInternship.getApplicationOpenDate());
-		globalInternship.setApplicationCloseDate(updatedInternship.getApplicationCloseDate());
-		globalInternship.setNumOfSlots(updatedInternship.getNumOfSlots());
+		
+		updatedGlobalInternship.setTitle(updatedInternship.getTitle());
+		updatedGlobalInternship.setDescription(updatedInternship.getDescription());
+		updatedGlobalInternship.setInternshipLevel(updatedInternship.getInternshipLevel()); 
+		updatedGlobalInternship.setPreferredMajor(updatedInternship.getPreferredMajor());
+		updatedGlobalInternship.setApplicationOpenDate(updatedInternship.getApplicationOpenDate());
+		updatedGlobalInternship.setApplicationCloseDate(updatedInternship.getApplicationCloseDate());
+		updatedGlobalInternship.setNumOfSlots(updatedInternship.getNumOfSlots());
 		
 		boolean tryAgain = false;
 		
 		do {
 			// Save to file
-			boolean success = fileBoundary.writeInternship(App.internshipList);
+			boolean success = fileBoundary.writeInternship(newGlobalInternships);
 			if (success) {
-				// update company rep createdInternships
-				chosenInternship.setTitle(updatedInternship.getTitle());
-				chosenInternship.setDescription(updatedInternship.getDescription());
-				chosenInternship.setInternshipLevel(updatedInternship.getInternshipLevel()); 
-				chosenInternship.setPreferredMajor(updatedInternship.getPreferredMajor());
-				chosenInternship.setApplicationOpenDate(updatedInternship.getApplicationOpenDate());
-				chosenInternship.setApplicationCloseDate(updatedInternship.getApplicationCloseDate());
-				chosenInternship.setNumOfSlots(updatedInternship.getNumOfSlots());
+				// update global internship
+				App.internshipList = newGlobalInternships;
 				
-				System.out.println("Update successful.");
+				// update company rep createdInternships
+				rep.updateInternship(chosenInternship);
+				
+				ConsoleBoundary.printText("Update successful.");
 				return;
 			}
 			else {
@@ -280,19 +277,63 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 				tryAgain = ConsoleBoundary.promptTryAgain();
 			}
 		} while (tryAgain);
-		
-		// revert back if error
-		globalInternship.setTitle(chosenInternship.getTitle());
-		globalInternship.setDescription(chosenInternship.getDescription());
-		globalInternship.setInternshipLevel(chosenInternship.getInternshipLevel()); 
-		globalInternship.setPreferredMajor(chosenInternship.getPreferredMajor());
-		globalInternship.setApplicationOpenDate(chosenInternship.getApplicationOpenDate());
-		globalInternship.setApplicationCloseDate(chosenInternship.getApplicationCloseDate());
-		globalInternship.setNumOfSlots(chosenInternship.getNumOfSlots());
 	}
 	
-	private void deleteInternship() {
-		ConsoleBoundary.printWIP();
+	private boolean deleteInternship(Internship chosenInternship, CompanyRep rep) {
+		boolean confirmDelete = ConsoleBoundary.promptConfirmation();
+		if (confirmDelete) {
+			// find global internship
+			Internship globalInternship = findCurrentInternshipInList(chosenInternship, App.internshipList, rep);
+			if (globalInternship == null) {
+				ConsoleBoundary.printText("Cannot find internship in global internship list.");
+				return false;
+			}
+			
+			ArrayList<Internship> newGlobalInternships = App.internshipList.stream()
+					.filter(i -> !(i.getInternshipId().equals(chosenInternship.getInternshipId())))
+         		    .collect(Collectors.toCollection(ArrayList::new));
+			
+			// find student applications for this internship
+			ArrayList<InternshipApplication> newGlobalInternshipApplications = App.internshipApplicationList.stream().filter(i -> 
+				!(i.getInternshipInfo().getInternshipId().equalsIgnoreCase(chosenInternship.getInternshipId()))
+			).collect(Collectors.toCollection(ArrayList::new));
+						
+			boolean tryAgainForInternship = false;
+			do {
+				// Save to internship file
+				boolean internshipSuccess = fileBoundary.writeInternship(newGlobalInternships);
+				if (internshipSuccess == false) {
+					// check if user want to try again
+					tryAgainForInternship = ConsoleBoundary.promptTryAgain();
+					continue;
+				}
+				
+				// update global internship arraylist
+				App.internshipList = newGlobalInternships;
+				
+				// update company rep createdInternships
+				rep.removeInternship(chosenInternship);
+				
+				boolean tryAgainForApplication = false;
+				do {
+					// Save to internship applications file
+					boolean applicationSuccess = fileBoundary.writeInternshipApplications(newGlobalInternshipApplications);
+					if (applicationSuccess == false) {
+						// check if user want to try again
+						tryAgainForApplication = ConsoleBoundary.promptTryAgain();
+						continue;
+					}
+					
+					// update global internship applciation arraylist
+					App.internshipApplicationList = newGlobalInternshipApplications;
+					
+				} while (tryAgainForApplication);
+				
+				ConsoleBoundary.printText("Delete successful.");
+				return true;
+			} while (tryAgainForInternship);
+		}
+		return false;
 	}
 	
 	private Internship findCurrentInternshipInList(Internship currentInternship, ArrayList<Internship> internshipList, CompanyRep rep) {

@@ -60,24 +60,24 @@ public class App {
 		// Initialize stuff
 		loadEnvironmentVariables();
 		
-		// Read from CSV files
-		studentList.clear();
-		staffList.clear();
-		compRepList.clear();
-		internshipList.clear();
-		internshipApplicationList.clear();
-		
-		// Load internship before CompanyRep so that CompanyRep can use the data
-		ReadFromCSV(envFilePathInternship, CSVType.Internship); 
-		ReadFromCSV(envFilePathStudent, CSVType.Student);
-		ReadFromCSV(envFilePathStaff, CSVType.CCStaff);
-		ReadFromCSV(envFilePathRep, CSVType.CompanyRep);
-		ReadFromCSV(envFilePathInternshipApplication, CSVType.InternshipApplication);
-		
 		ConsoleBoundary.printSectionTitle("Welcome to Internship System");
         
         boolean exitProgram = false;
         while (!exitProgram) {
+        	// Read from CSV files
+    		studentList.clear();
+    		staffList.clear();
+    		compRepList.clear();
+    		internshipList.clear();
+    		internshipApplicationList.clear();
+    		
+    		// Load internship before CompanyRep so that CompanyRep can use the data
+    		ReadFromCSV(envFilePathInternship, CSVType.Internship); 
+    		ReadFromCSV(envFilePathStudent, CSVType.Student);
+    		ReadFromCSV(envFilePathStaff, CSVType.CCStaff);
+    		ReadFromCSV(envFilePathRep, CSVType.CompanyRep);
+    		ReadFromCSV(envFilePathInternshipApplication, CSVType.InternshipApplication);
+    		
         	ConsoleBoundary.printSectionTitle("Login", true);
 	        try 
 	        {

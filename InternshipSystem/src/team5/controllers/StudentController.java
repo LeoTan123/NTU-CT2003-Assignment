@@ -20,7 +20,7 @@ public class StudentController {
         boolean exit = false;
         while (!exit) {
         	ConsoleBoundary.printSectionTitle("Student Menu", true);
-            System.out.println("1. View Internship");
+            System.out.println("1. View Internships");
             System.out.println("2. Check Internship Application Status");
             System.out.println("3. Update Password");
             System.out.println("4. Logout");

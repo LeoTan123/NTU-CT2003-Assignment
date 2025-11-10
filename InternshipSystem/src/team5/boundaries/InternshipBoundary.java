@@ -93,15 +93,14 @@ public class InternshipBoundary extends ConsoleBoundary {
 		while (true) {
 			System.out.println();
 			System.out.println("Choose option: (or 0 to return)");
-			System.out.println("1. View student applications");
 			if (showUpdateOption == true) 
 			{
-				System.out.println("2. Update internship");
-				System.out.println("3. Delete internship");
+				System.out.println("1. Update internship");
+				System.out.println("2. Delete internship");
 			}
 			else
 			{
-				System.out.println("2. Delete internship");
+				System.out.println("1. Delete internship");
 			}
 			String input = App.sc.nextLine().trim();
 			try {
