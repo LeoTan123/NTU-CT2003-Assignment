@@ -3,45 +3,46 @@ package team5.studentactions;
 import java.util.List;
 
 import team5.App;
+import team5.Internship;
 import team5.InternshipApplication;
 import team5.Student;
+import team5.boundaries.ConsoleBoundary;
 import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipStatus;
 
 public class CheckApplicationStatusAction implements StudentAction {
-	private final static String ErrorMessage = "Invalid input. Try again.";
 	@Override
 	public void run(Student student) {
+		ConsoleBoundary.printSectionTitle("Your Internship Applications");
         List<InternshipApplication> applications = student.getInternshipApplications();
         boolean reviewing = true;
         while (reviewing) {
             if (applications.isEmpty()) {
                 System.out.println("No internship applications found.");
                 return;
-            } 
-        	App.printSectionTitle("Your Internship Applications");
+            }
         	boolean hasInternship = false;
 			for (int i = 0; i < applications.size(); i++) {
 				InternshipApplication internship = applications.get(i);
 				hasInternship = true;
-				System.out.printf("%d. Title: %s | Application Date: %s | Application Status: %s%n",
+				System.out.printf("%d. Application ID %s | Title: %s | Application Date: %s | Status: %s%n",
 						i + 1,
-						safeValue(internship.getInternshipInfo().getTitle()),
-						safeValue(internship.getAppliedDate().format(App.DATE_DISPLAY_FORMATTER)),
-						valueOrNA(internship.getStatus()));
+						ConsoleBoundary.safeValue(internship.getApplicationId()),
+						ConsoleBoundary.safeValue(internship.getInternshipInfo().getTitle()),
+						ConsoleBoundary.safeValue(internship.getAppliedDate().format(App.DATE_DISPLAY_FORMATTER)),
+						ConsoleBoundary.valueOrNA(internship.getStatus()));
 			}
 			if (!hasInternship) {
 				System.out.println("No internships available at the moment.");
 				reviewing = false;
 				break;
 		    }
-			System.out.println("Select internship number (or 0 to return):");
-	        String inputStr = App.sc.nextLine();
+			
+			String inputStr = ConsoleBoundary.promptUserInput(true);
 	        int input = 0;
-
 	        try 
 	        {
-	            input = Integer.parseInt(inputStr.trim());
+	            input = Integer.parseInt(inputStr);
 
 	            if (input == 0) {
 	            	reviewing = false;
@@ -49,7 +50,7 @@ public class CheckApplicationStatusAction implements StudentAction {
 	            }
 
 	            if (input < 1 || input > applications.size()) {
-	                System.out.println(ErrorMessage);
+	            	ConsoleBoundary.printInvalidInput();
 	                continue;
 	            }
 	            
@@ -58,18 +59,18 @@ public class CheckApplicationStatusAction implements StudentAction {
 	            // Show action options for the chosen internship
 	            boolean choosingAction = true;
 	            while (choosingAction) {
-	            	System.out.println("You have chosen Application ID: " + chosen.getApplicationId() + " Title: " + safeValue(chosen.getInternshipInfo().getTitle()));
-	                System.out.println("1. View Application Details");
-	                System.out.println("2. Accept this offer");
-	                System.out.println("0. Return to list");
+	            	System.out.println("You have chosen Application ID: " + ConsoleBoundary.safeValue(chosen.getApplicationId()) + " Title: " + ConsoleBoundary.safeValue(chosen.getInternshipInfo().getTitle()));
+	                System.out.println("1. View application details");
+	                System.out.println("2. Accept this internship offer");
+	                System.out.println("0. Return to internship list");
 
-	                String actionStr = App.sc.nextLine();
+	                String actionStr = ConsoleBoundary.promptUserInput(true);
 	                int action = -1;
 	                try {
-	                    action = Integer.parseInt(actionStr.trim());
+	                    action = Integer.parseInt(actionStr);
 	                } 
 	                catch (NumberFormatException ex) {
-	                	System.out.println(ErrorMessage);
+	                	ConsoleBoundary.printInvalidInput();
 	                    continue;
 	                }
 
@@ -84,29 +85,29 @@ public class CheckApplicationStatusAction implements StudentAction {
 	                        acceptOffer(student, chosen);
 	                        break;
 	                    default:
-	                    	System.out.println(ErrorMessage);
+	                    	ConsoleBoundary.printInvalidInput();
 	                }
 	            }
-
 	        } 
 	        catch (NumberFormatException ex) {
-	        	System.out.println(ErrorMessage);
+	        	ConsoleBoundary.printInvalidInput();
 	        }
         }
 	}
 	
 	private void displayApplicationDetails(InternshipApplication chosen) {
-		App.printSectionTitle("Application Details");		
-		System.out.println("Application ID: " + chosen.getApplicationId());
-		System.out.println("Title: " + safeValue(chosen.getInternshipInfo().getTitle()));
-		System.out.println("Description: " + safeValue(chosen.getInternshipInfo().getDescription()));
+		ConsoleBoundary.printSectionTitle("Application Details");		
+		System.out.println("Application ID: " + ConsoleBoundary.safeValue(chosen.getApplicationId()));
+		System.out.println("Internship ID: " + ConsoleBoundary.safeValue(chosen.getInternshipInfo().getInternshipId()));
+		System.out.println("Company Name: " + ConsoleBoundary.safeValue(chosen.getInternshipInfo().getCompanyName()));
+		System.out.println("Title: " + ConsoleBoundary.safeValue(chosen.getInternshipInfo().getTitle()));
+		System.out.println("Description: " + ConsoleBoundary.safeValue(chosen.getInternshipInfo().getDescription()));
 		System.out.println("Application Date: " + chosen.getAppliedDate().format(App.DATE_DISPLAY_FORMATTER));
-		System.out.println("Application Status: " + valueOrNA(chosen.getStatus()));
+		System.out.println("Status: " + ConsoleBoundary.valueOrNA(chosen.getStatus()));
 		
 		while (true) {
 	        System.out.println("Enter 0 to return to the internship action list:");
-	        String input = App.sc.nextLine().trim();
-
+	        String input = ConsoleBoundary.promptUserInput();
 	        if (input.equals("0")) {
 	            return;
 	        } else {
@@ -119,48 +120,37 @@ public class CheckApplicationStatusAction implements StudentAction {
 	{
 		// If internship is fully booked
 		if(chosen.getInternshipInfo().getInternshipStatus() == InternshipStatus.FILLED 
-		|| chosen.getInternshipInfo().getNumOfSlots() == 0)
-		{
+		|| chosen.getInternshipInfo().getNumOfSlots() == 0){
 			System.out.println("Internship is fully booked.");
 			return;
 		}
 		
 		// If internship application is not successful
-		if(chosen.getStatus() != InternshipApplicationStatus.SUCCESSFUL)
-		{
+		if(chosen.getStatus() != InternshipApplicationStatus.SUCCESSFUL){
 			System.out.println("Internship application status is " + chosen.getStatus().toString()+ ". Please wait for approval.");
 			return;
 		}
 
 		// If student is employed already
-		if(student.getEmployedStatus())
-		{
-			System.out.println("You have already accepted another internship. You are not allowed to accept this internship.");
+		if(student.getEmployedStatus()){
+			System.out.println("You have already accepted another internship opportunity. You are not allowed to accept this internship.");
 			return;
 		}
 		
-		System.out.println("You have accepted offer for internship " 
-		+ chosen.getInternshipInfo().getTitle() + ". Please contact " 
-		+ chosen.getInternshipInfo().getCompanyRep() + " for more details.");
+		System.out.println("You have accepted offer for internship " + chosen.getInternshipInfo().getTitle() + ".");
+		System.out.println("Please email to " + chosen.getInternshipInfo().getCompanyRep() + " or visit " + chosen.getInternshipInfo().getCompanyName() + " for more details.");
 		
-		student.setEmployedStatus(true);
-		student.getInternshipApplications().clear();// Clear student application list
-		chosen.setHasStudentAccepted(true);
-		return;
-	}
-
-	private String safeValue(Object value) {
-		if (value == null) {
-			return "N/A";
+		student.setEmployedStatus(true); // Set Student as employed
+		student.clearInternshipApplications(); // Clear application list after accepted offer
+		
+		// Update the NumOfSlots of the specific internship
+		Internship internshipInfo = chosen.getInternshipInfo();
+		int remainingSlots = internshipInfo.getNumOfSlots();
+		if (remainingSlots > 0) {
+			internshipInfo.setNumOfSlots(remainingSlots - 1);
+		    if (internshipInfo.getNumOfSlots() == 0) {
+		    	internshipInfo.setInternshipStatus(InternshipStatus.FILLED);
+		    }
 		}
-		if (value instanceof String) {
-			String str = (String) value;
-			return str.isEmpty() ? "N/A" : str;
-		}
-		return value.toString();
-	}
-
-	private String valueOrNA(Enum<?> value) {
-		return value != null ? value.name() : "N/A";
 	}
 }

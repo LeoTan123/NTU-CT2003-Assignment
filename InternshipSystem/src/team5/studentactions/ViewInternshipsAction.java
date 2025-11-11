@@ -1,143 +1,206 @@
 package team5.studentactions;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import team5.App;
 import team5.Internship;
 import team5.InternshipApplication;
 import team5.Student;
+import team5.boundaries.ConsoleBoundary;
+import team5.boundaries.InternshipBoundary;
+import team5.enums.InternshipApplicationStatus;
+import team5.enums.InternshipFilterOption;
 import team5.enums.InternshipLevel;
 import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
+import team5.filters.InternshipFilter;
+import team5.filters.InternshipFilterCriteria;
+import team5.filters.InternshipFilterPrompt;
 
 public class ViewInternshipsAction implements StudentAction {
-	private final static String ErrorMessage = "Invalid input. Try again.";
+	private static final List<InternshipFilterOption> FILTER_OPTIONS = List.of(
+			InternshipFilterOption.PREFERRED_MAJOR,
+			InternshipFilterOption.INTERNSHIP_LEVEL,
+			InternshipFilterOption.APPLICATION_OPEN_FROM,
+			InternshipFilterOption.APPLICATION_CLOSE_TO);
+
 	@Override
 	public void run(Student student) {
+		ConsoleBoundary.printSectionTitle("Available Internship Opportunities");
+		List<Internship> baseList = getEligibleInternships(student);
+		if (baseList.isEmpty()) {
+			System.out.println("No internships available at the moment.");
+			return;
+		}
+
+		List<Internship> workingList = new ArrayList<>(baseList);
+		int pageIndex = 0;
 		boolean browsing = true;
+
 		while (browsing) {
-			if (App.internshipList.isEmpty()) {
-				System.out.println("No internships available at the moment.");
+			if (workingList.isEmpty()) {
+				System.out.println("No internships match your current filter.");
+				System.out.println("Enter 'a' to show all internships or 0 to return.");
+				String emptyInput = ConsoleBoundary.promptUserInput();
+				if ("0".equals(emptyInput)) {
+					return;
+				}
+				if ("a".equalsIgnoreCase(emptyInput)) {
+					baseList = getEligibleInternships(student);
+					workingList = new ArrayList<>(baseList);
+					pageIndex = 0;
+					continue;
+				}
+				ConsoleBoundary.printInvalidInput();
+				continue;
+			}
+			int start = pageIndex * ConsoleBoundary.PAGE_SIZE;
+			int end = Math.min(start + ConsoleBoundary.PAGE_SIZE, workingList.size());
+			if (start >= workingList.size()) {
+				pageIndex = 0;
+				continue;
+			}
+
+			List<Internship> displayedInternships = new ArrayList<>();
+			for (int i = start; i < end; i++) {
+				Internship internship = workingList.get(i);
+				displayedInternships.add(internship);
+				int displayIndex = (i - start) + 1;
+				System.out.printf("%d. %s%n", displayIndex, InternshipBoundary.buildSummaryLine(internship, false));
+			}
+
+			printNavigationPrompt(pageIndex > 0, end < workingList.size());
+			String input = ConsoleBoundary.promptUserInput();
+
+			if ("0".equals(input)) {
 				return;
 			} 
-			
-			// Filter option
-			List<Internship> filteredInternships = filterInternships(App.internshipList);
-			if (filteredInternships == null)
-				return;
-			
-			// To store after filtered internships (only APPROVED internship)
-			List<Internship> displayedInternships = new ArrayList<>();
-			
-			while(true)
-			{
-				App.printSectionTitle("Available Internship Opportunities");
-				
-				boolean hasInternship = false;
-				int internshipIndex = 1;
-				displayedInternships.clear();
-				for(Internship internship: filteredInternships)
-				{
-					if(internship.getInternshipStatus() == InternshipStatus.APPROVED) // TODO: to only show based on student's major
-					{
-						hasInternship = true;
-						displayedInternships.add(internship);
-						System.out.printf("%d. Internship ID: %s | Title: %s | Level: %s | Preferred Major: %s | "
-								+ "Application Opening Date: %s | Application Closing Date: %s%n",
-								internshipIndex,
-								internship.getInternshipId(),
-								safeValue(internship.getTitle()),
-								valueOrNA(internship.getInternshipLevel()),
-								safeValue(internship.getPreferredMajor().getFullName()),
-								safeValue(internship.getApplicationOpenDate().format(App.DATE_DISPLAY_FORMATTER)),
-								safeValue(internship.getApplicationCloseDate().format(App.DATE_DISPLAY_FORMATTER))
-								);
-						
-						internshipIndex++;
-					}
+			else if ("f".equalsIgnoreCase(input)) {
+				baseList = getEligibleInternships(student);
+				InternshipFilterCriteria criteria = InternshipFilterPrompt.prompt(FILTER_OPTIONS);
+				if (criteria == null) {
+					return;
 				}
-				if (!hasInternship) {
-					System.out.println("No internships available at the moment.");
-					browsing = false;
+				workingList = InternshipFilter.apply(baseList, criteria);
+				pageIndex = 0;
+			} 
+			else if ("a".equalsIgnoreCase(input)) {
+				baseList = getEligibleInternships(student);
+				workingList = new ArrayList<>(baseList);
+				pageIndex = 0;
+			} 
+			else if ("n".equalsIgnoreCase(input)) {
+				if (end < workingList.size()) {
+					pageIndex++;
+				} 
+				else {
+					ConsoleBoundary.printInvalidInput();
+				}
+			} 
+			else if ("p".equalsIgnoreCase(input)) {
+				if (pageIndex > 0) {
+					pageIndex--;
+				} 
+				else {
+					ConsoleBoundary.printInvalidInput();
+				}
+			} 
+			else {
+				try {
+					int selection = Integer.parseInt(input);
+					if (selection < 1 || selection > displayedInternships.size()) {
+						ConsoleBoundary.printInvalidInput();
+						continue;
+					}
+
+					Internship chosen = displayedInternships.get(selection - 1);
+					handleInternshipActions(student, chosen);
+				} 
+				catch (NumberFormatException ex) {
+					ConsoleBoundary.printInvalidInput();
+				}
+			}
+		}
+	}
+	
+	private List<Internship> getEligibleInternships(Student student) {
+		return App.internshipList.stream()
+				.filter(i -> i.getInternshipStatus() == InternshipStatus.APPROVED) // filter to show only approved
+				.filter(i -> i.getPreferredMajor() == student.getMajor()) // filter to show only student's major
+				.filter(i -> {
+					if (student.getYear() == 1 || student.getYear() == 2) { // if student is year 1 or 2, 
+						return i.getInternshipLevel() == InternshipLevel.BASIC; // filter to show only basic
+					}
+					return true;
+				})
+				.collect(Collectors.toList());
+	}
+	
+	private void printNavigationPrompt(boolean hasPrev, boolean hasNext) {
+		System.out.print("Enter a number to view/apply");
+		if (hasPrev) {
+			System.out.print(", 'p' for previous page");
+		}
+		if (hasNext) {
+			System.out.print(", 'n' for next page");
+		}
+		System.out.println(", 'f' to filter, 'a' to show all, or 0 to return:");
+	}
+	
+	private void handleInternshipActions(Student student, Internship chosen) {
+		boolean choosingAction = true;
+		while (choosingAction) {
+			System.out.println("You have chosen Internship ID: " + ConsoleBoundary.safeValue(chosen.getInternshipId())
+					+ " Title: " + ConsoleBoundary.safeValue(chosen.getTitle()));
+			System.out.println("1. View Internship Details");
+			System.out.println("2. Apply for this Internship");
+			System.out.println("0. Return to internship list");
+
+			String actionStr = App.sc.nextLine();
+			int action;
+			try {
+				action = Integer.parseInt(actionStr.trim());
+			} catch (NumberFormatException ex) {
+				ConsoleBoundary.printInvalidInput();
+				continue;
+			}
+
+			switch (action) {
+				case 0:
+					choosingAction = false;
 					break;
-			    }
-				
-				System.out.println("Select internship number (or 0 to return):");
-		        String inputStr = App.sc.nextLine();
-		        int input = 0;
-
-		        try 
-		        {
-		            input = Integer.parseInt(inputStr.trim());
-
-		            if (input == 0) {
-		            	browsing = false;
-		                break;
-		            }
-
-		            if (input < 1 || input > displayedInternships.size()) {
-		                System.out.println(ErrorMessage);
-		                continue;
-		            }
-		            
-		            Internship chosen = displayedInternships.get(input - 1);
-		         
-		            // Show action options for the chosen internship
-		            boolean choosingAction = true;
-		            while (choosingAction) {
-		            	System.out.println("You have chosen Internship ID: " + chosen.getInternshipId() + " Title: " + safeValue(chosen.getTitle()));
-		                System.out.println("1. View Internship Details");
-		                System.out.println("2. Apply for this Internship");
-		                System.out.println("0. Return to internship list");
-
-		                String actionStr = App.sc.nextLine();
-		                int action = -1;
-		                try {
-		                    action = Integer.parseInt(actionStr.trim());
-		                } 
-		                catch (NumberFormatException ex) {
-		                    System.out.println(ErrorMessage);
-		                    continue;
-		                }
-
-		                switch (action) {
-		                    case 0:
-		                        choosingAction = false; // exit this internship's actions
-		                        break;
-		                    case 1:
-		                        displayInternshipDetails(chosen);
-		                        break;
-		                    case 2:
-		                        applyForInternship(student, chosen);
-		                        break;
-		                    default:
-		                        System.out.println(ErrorMessage);
-		                }
-		            }
-		        } 
-		        catch (NumberFormatException ex) {
-		            System.out.println(ErrorMessage);
-		        }
+				case 1:
+					displayInternshipDetails(chosen);
+					break;
+				case 2:
+					applyForInternship(student, chosen);
+					break;
+				default:
+					ConsoleBoundary.printInvalidInput();
 			}
 		}
 	}
 
 	private void displayInternshipDetails(Internship internship) {
-		App.printSectionTitle("Internship Details");		
-		System.out.println("Internship ID: " + internship.getInternshipId());
-		System.out.println("Title: " + safeValue(internship.getTitle()));
-		System.out.println("Description: " + safeValue(internship.getDescription()));
-		System.out.println("Level: " + valueOrNA(internship.getInternshipLevel()));
-		System.out.println("Preferred Majors: " + safeValue(internship.getPreferredMajor().getFullName()));
-		System.out.println("Application Open Date: " + safeValue(internship.getApplicationOpenDate().format(App.DATE_DISPLAY_FORMATTER)));
-		System.out.println("Application Close Date: " + safeValue(internship.getApplicationCloseDate().format(App.DATE_DISPLAY_FORMATTER)));
+		ConsoleBoundary.printSectionTitle("Internship Details");		
+		System.out.println("Internship ID: " + ConsoleBoundary.safeValue(internship.getInternshipId()));
+		System.out.println("Company Name: " + ConsoleBoundary.safeValue(internship.getCompanyName()));
+		System.out.println("Title: " + ConsoleBoundary.safeValue(internship.getTitle()));
+		System.out.println("Description: " + ConsoleBoundary.safeValue(internship.getDescription()));
+		System.out.println("Level: " + ConsoleBoundary.valueOrNA(internship.getInternshipLevel()));
+		System.out.println("Preferred Majors: " + ConsoleBoundary.safeValue(internship.getPreferredMajor().getFullName()));
+		System.out.println("Application Open Date: " + ConsoleBoundary.safeValue(internship.getApplicationOpenDate().format(App.DATE_DISPLAY_FORMATTER)));
+		System.out.println("Application Close Date: " + ConsoleBoundary.safeValue(internship.getApplicationCloseDate().format(App.DATE_DISPLAY_FORMATTER)));
 		System.out.println("Number of Slots: " + internship.getNumOfSlots());
 
 	    while (true) {
 	        System.out.println("Enter 0 to return to the internship action list:");
-	        String input = App.sc.nextLine().trim();
+	        String input = ConsoleBoundary.promptUserInput();
 
 	        if (input.equals("0")) {
 	            return;
@@ -197,190 +260,42 @@ public class ViewInternshipsAction implements StudentAction {
 	        return;
 	    }
 	    
-	    InternshipApplication internApp = new InternshipApplication(student.getInternshipApplications().size() + 1,
-	    		chosen, student, LocalDate.now());
+	    // Generate new random application ID
+		String[] idsArray = App.internshipApplicationList.stream().map(i -> i.getApplicationId()).toArray(String[]::new);
+		String generatedId = App.generateUniqueId("A", idsArray);
+		
+	    InternshipApplication internApp = new InternshipApplication(generatedId, chosen, student, today, InternshipApplicationStatus.PENDING);
 
+	    // Add to student's own internship application list
 	    student.addInternshipApplications(internApp);
-	    chosen.setNumOfSlots(chosen.getNumOfSlots() - 1);
-	    
+	    // Add to the global list for database saving
+	    App.internshipApplicationList.add(internApp);
+	    appendInternshipApplicationToCsv(internApp);
 	    System.out.println("Successfully applied for internship: " + chosen.getTitle());
 	}
 
-	
-	// Filter
-	private List<Internship> filterInternships(List<Internship> internships) {
-		
-		List<Internship> filteredList = new ArrayList<>(internships);
-		boolean validInput = false;
-		
-		boolean majorValidInput = false;
-		boolean levelValidInput = false;
-		
-		while (!validInput) {
-		    System.out.println("Would you like to filter internships?");
-		    System.out.println("1. Filter by Preferred Major"); // TODO: student should not have this option
-		    System.out.println("2. Filter by Internship Level"); // TODO: only year 3 and year 4 should have this option as year 1 and 2 can only view basic level internships
-		    System.out.println("3. Filter by Application Open Date");
-		    System.out.println("4. Filter by Application Close Date");
-		    System.out.println("5. Show all internships");
-		    System.out.println("0. Return to menu");
-	
-		    System.out.println("Enter your choice: ");
-		    String filterInput = App.sc.nextLine().trim();
-		    
-		    if ("0".equals(filterInput)) {
-	            return null;
-	        }
-		    
-		    switch (filterInput) {
-		        case "1":
-		        	validInput = true;
-		        	
-		        	StudentMajor selectedMajor = null;
-		        	while(!majorValidInput)
-		        	{
-		        		System.out.println("Select preferred major:");
-			            System.out.println("1. Computer Science");
-			            System.out.println("2. Data Science & AI");
-			            System.out.println("3. Computer Engineering");
-			            System.out.println("4. Information Engineering & Media");
-			            System.out.println("5. Computing");
-			            
-			            System.out.println("Enter your choice: ");
-			            String majorChoice = App.sc.nextLine().trim();
-			            switch (majorChoice) {
-			                case "1": 
-			                	selectedMajor = StudentMajor.CS; 
-			                	majorValidInput = true;
-			                	break;
-			                case "2": 
-			                	selectedMajor = StudentMajor.DSAI; 
-			                	majorValidInput = true;
-			                	break;
-			                case "3": 
-			                	selectedMajor = StudentMajor.CE; 
-			                	majorValidInput = true;
-			                	break;
-			                case "4": 
-			                	selectedMajor = StudentMajor.IEM; 
-			                	majorValidInput = true;
-			                	break;
-			                case "5": 
-			                	selectedMajor = StudentMajor.COMP; 
-			                	majorValidInput = true;
-			                	break;
-			                default:
-			                    System.out.println(ErrorMessage);
-			            }
-		        	}
-		            if (selectedMajor != null) {
-		            	final StudentMajor finalMajor = selectedMajor;
-		                filteredList = filteredList.stream()
-		                    .filter(i -> i.getPreferredMajor() != null
-		                              && i.getPreferredMajor() == finalMajor)
-		                    .toList();
-		            }
-		            break;
-	
-		        case "2":
-		        	validInput = true;
-		        	InternshipLevel selectedLevel = null;
-		        	
-		        	while(!levelValidInput)
-		        	{
-		        		System.out.println("Select internship level:");
-			            System.out.println("1. BASIC");
-			            System.out.println("2. INTERMEDIATE");
-			            System.out.println("3. ADVANCED");
-			            System.out.println("Enter your choice: ");
-			            
-			            String levelChoice = App.sc.nextLine().trim();
-			            switch (levelChoice) {
-			                case "1":
-			                	selectedLevel = InternshipLevel.BASIC;
-			                	levelValidInput = true;
-			                    break;
-			                case "2":
-			                	selectedLevel = InternshipLevel.INTERMEDIATE;
-			                	levelValidInput = true;
-			                    break;
-			                case "3":
-			                	selectedLevel = InternshipLevel.ADVANCED;
-			                	levelValidInput = true;
-			                    break;
-			                default:
-			                    System.out.println(ErrorMessage);
-			                    break;
-			            }
-		        	}
-		            if (selectedLevel != null) {
-		            	final InternshipLevel finalLevel = selectedLevel;
-		                filteredList = filteredList.stream()
-		                    .filter(i -> i.getInternshipLevel() != null
-		                              && i.getInternshipLevel() == finalLevel)
-		                    .toList();
-		            }
-		            break;
-	
-		        case "3":
-		        	validInput = true;
-		            System.out.println("Enter minimum open date (yyyy-MM-dd): ");
-		            String openStr = App.sc.nextLine().trim();
-		            try {
-		                LocalDate openDate = LocalDate.parse(openStr);
-		                filteredList = filteredList.stream()
-		                    .filter(i -> i.getApplicationOpenDate() != null 
-		                              && !i.getApplicationOpenDate().isBefore(openDate))
-		                    .toList();
-		            } 
-		            catch (Exception e) {
-		                System.out.println("Invalid date format. Showing all internships.");
-		            }
-		            break;
-	
-		        case "4":
-		        	validInput = true;
-		            System.out.println("Enter maximum close date (yyyy-MM-dd): ");
-		            String closeStr = App.sc.nextLine().trim();
-		            try {
-		                LocalDate closeDate = LocalDate.parse(closeStr);
-		                filteredList = filteredList.stream()
-		                    .filter(i -> i.getApplicationCloseDate() != null 
-		                              && !i.getApplicationCloseDate().isAfter(closeDate))
-		                    .toList();
-		            } 
-		            catch (Exception e) {
-		                System.out.println("Invalid date format. Showing all internships.");
-		            }
-		            break;
-		        case "5":
-		        	validInput = true;
-		        	break;
-		        default:
-		        	System.out.println(ErrorMessage);
-		    }
-	    }
-
-	    if (filteredList.isEmpty()) {
-	        System.out.println("No internships match your filter. Showing all internships.");
-	        return new ArrayList<>(internships);
-	    }
-
-	    return filteredList;
+	// Write to CSV
+	private static boolean appendInternshipApplicationToCsv(InternshipApplication internship) {
+		try (FileWriter writer = new FileWriter(App.envFilePathInternshipApplication, true)) {
+			writer.append(buildInternshipString(internship).toString());
+			writer.flush();
+			return true;
+		} 
+		catch (IOException e) {
+			System.out.println("Failed to save to file: " + e.getMessage());
+        	System.out.println("Stack trace:");
+        	e.printStackTrace();
+			return false;
+		}
 	}
 	
-	private String safeValue(Object value) {
-		if (value == null) {
-			return "N/A";
-		}
-		if (value instanceof String) {
-			String str = (String) value;
-			return str.isEmpty() ? "N/A" : str;
-		}
-		return value.toString();
-	}
-
-	private String valueOrNA(Enum<?> value) {
-		return value != null ? value.name() : "N/A";
+	private static StringBuilder buildInternshipString(InternshipApplication internshipApp) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(internshipApp.getApplicationId()).append(",")
+		  .append(internshipApp.getInternshipInfo().getInternshipId()).append(",")
+		  .append(internshipApp.getStudentInfo().getName()).append(",")
+		  .append(internshipApp.getAppliedDate().format(App.DATE_DB_FORMATTER)).append(",")
+		  .append(internshipApp.getStatus()).append("\n");
+		return sb;
 	}
 }

@@ -6,6 +6,9 @@ import team5.enums.InternshipLevel;
 import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
 
+/**
+ * Internship class
+ */
 public class Internship {
 	private String internshipId;
 	private String title;
@@ -15,12 +18,27 @@ public class Internship {
 	private LocalDate applicationOpenDate;
 	private LocalDate applicationCloseDate;
 	private InternshipStatus internshipStatus;
+	private String companyName;
 	private String companyRep;
 	private int numOfSlots;
 	
+	/** 
+	 * Internship constructor
+	 * @param internshipId
+	 * @param title
+	 * @param description
+	 * @param internshipLevel
+	 * @param preferredMajor
+	 * @param applicationOpenDate
+	 * @param applicationCloseDate
+	 * @param status
+	 * @param companyName
+	 * @param companyRep
+	 * @param numOfSlots
+	 */
 	public Internship(String internshipId, String title, String description, InternshipLevel internshipLevel, 
 			StudentMajor preferredMajor, LocalDate applicationOpenDate, LocalDate applicationCloseDate, InternshipStatus status,
-			String companyRep, int numOfSlots) {
+			String companyName, String companyRep, int numOfSlots) {
 		
 		this.internshipId = internshipId;
 		this.title = title;
@@ -30,6 +48,7 @@ public class Internship {
 		this.applicationOpenDate = applicationOpenDate;
 		this.applicationCloseDate = applicationCloseDate;
 		this.internshipStatus = status;
+		this.companyName = companyName;
 		this.companyRep = companyRep;
 		this.numOfSlots = numOfSlots;
 	}
@@ -94,6 +113,18 @@ public class Internship {
 		this.internshipStatus = internshipStatus;
 	}
 	
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+	
+	public String getCompanyName() {
+		return this.companyName;
+	}
+	
+	public void setCompanyRep(String companyRep) {
+		this.companyRep = companyRep;
+	}
+	
 	public String getCompanyRep() {
 		return this.companyRep;
 	}
@@ -111,6 +142,7 @@ public class Internship {
 	{
 		return this.internshipId + " " + this.title + " " + this.description + " " + this.internshipLevel 
 				+ " " + this.preferredMajor + " " + this.applicationOpenDate + " " + this.applicationCloseDate 
+				+ " " + this.companyName + " " + this.companyRep
 				+ " " + this.internshipStatus + " " + this.numOfSlots;
 	}
 }

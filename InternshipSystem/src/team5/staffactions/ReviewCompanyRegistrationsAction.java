@@ -8,15 +8,14 @@ import java.util.stream.Collectors;
 import team5.App;
 import team5.CareerCenterStaff;
 import team5.CompanyRep;
+import team5.boundaries.ConsoleBoundary;
 import team5.enums.UserAccountStatus;
 
 public class ReviewCompanyRegistrationsAction implements StaffAction {
 
-	private static final int PAGE_SIZE = 5;
-
 	@Override
 	public void run(CareerCenterStaff staff) {
-		App.printSectionTitle("Pending Company Registrations");
+		ConsoleBoundary.printSectionTitle("Pending Company Registrations");
 
 		List<CompanyRep> pending = App.compRepList.stream()
 				.filter(rep -> rep.getAccountStatus() == UserAccountStatus.PENDING)
@@ -32,8 +31,8 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 		int pageIndex = 0;
 
 		while (reviewing) {
-			int start = pageIndex * PAGE_SIZE;
-			int end = Math.min(start + PAGE_SIZE, pending.size());
+			int start = pageIndex * ConsoleBoundary.PAGE_SIZE;
+			int end = Math.min(start + ConsoleBoundary.PAGE_SIZE, pending.size());
 
 			if (start >= pending.size()) {
 				System.out.println("No more records to display.");
@@ -48,29 +47,33 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 				CompanyRep reg = pending.get(i);
 				System.out.printf("%d. Rep ID: %s | Name: %s | Company: %s | Status: %s%n",
 						i + 1,
-						reg.getUserID(),
-						reg.getName(),
-						reg.getCompanyName(),
-						reg.getAccountStatus());
+						ConsoleBoundary.safeValue(reg.getUserID()),
+						ConsoleBoundary.safeValue(reg.getName()),
+						ConsoleBoundary.safeValue(reg.getCompanyName()),
+						ConsoleBoundary.safeValue(reg.getAccountStatus()));
 			}
 
 			boolean hasNext = end < pending.size();
 			boolean hasPrev = pageIndex > 0;
 			printNavigationPrompt(hasPrev, hasNext);
 
-			String input = App.sc.nextLine().trim();
+			String input = ConsoleBoundary.promptUserInput();
 
 			if ("0".equals(input)) {
 				reviewing = false;
-			} else if (hasNext && "n".equalsIgnoreCase(input)) {
+				break;
+			} 
+			else if (hasNext && "n".equalsIgnoreCase(input)) {
 				pageIndex++;
-			} else if (hasPrev && "p".equalsIgnoreCase(input)) {
+			} 
+			else if (hasPrev && "p".equalsIgnoreCase(input)) {
 				pageIndex = Math.max(pageIndex - 1, 0);
-			} else {
+			} 
+			else {
 				try {
 					int selection = Integer.parseInt(input);
 					if (selection < 1 || selection > pending.size()) {
-						System.out.println("Invalid selection. Please try again.");
+						ConsoleBoundary.printInvalidSelection();
 						continue;
 					}
 
@@ -85,11 +88,13 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 					if (pending.isEmpty()) {
 						System.out.println("No pending registrations remaining.");
 						reviewing = false;
-					} else {
+					} 
+					else {
 						pageIndex = 0;
 					}
-				} catch (NumberFormatException ex) {
-					System.out.println("Please enter a valid number, 'n', 'p', or 0.");
+				} 
+				catch (NumberFormatException ex) {
+					ConsoleBoundary.printInvalidInput();
 				}
 			}
 		}
@@ -114,23 +119,23 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 	}
 
 	private void handleReview(CompanyRep registration) {
-		System.out.println("===== Review Registration =====");
-		System.out.println("Representative ID: " + registration.getUserID());
-		System.out.println("Name: " + registration.getName());
-		System.out.println("Company: " + registration.getCompanyName());
-		System.out.println("Department: " + registration.getDepartment());
-		System.out.println("Position: " + registration.getPosition());
-		System.out.println("Email: " + registration.getEmail());
-		System.out.println("Status: " + registration.getAccountStatus());
+		ConsoleBoundary.printSectionTitle("Review Registration");
+		System.out.println("Representative ID: " + ConsoleBoundary.safeValue(registration.getUserID()));
+		System.out.println("Name: " + ConsoleBoundary.safeValue(registration.getName()));
+		System.out.println("Company: " + ConsoleBoundary.safeValue(registration.getCompanyName()));
+		System.out.println("Department: " + ConsoleBoundary.safeValue(registration.getDepartment()));
+		System.out.println("Position: " + ConsoleBoundary.safeValue(registration.getPosition()));
+		System.out.println("Email: " + ConsoleBoundary.safeValue(registration.getEmail()));
+		System.out.println("Status: " + ConsoleBoundary.valueOrNA(registration.getAccountStatus()));
 
 		boolean deciding = true;
 		while (deciding) {
 			System.out.println("Choose an action:");
-			System.out.println("1. Approve");
-			System.out.println("2. Reject");
+			System.out.println("1. Approve registration");
+			System.out.println("2. Reject registration");
 			System.out.println("0. Back to list");
 
-			String decision = App.sc.nextLine().trim();
+			String decision = ConsoleBoundary.promptUserInput(true);
 			switch (decision) {
 				case "1":
 					registration.setAccountStatus(UserAccountStatus.APPROVED);
@@ -146,7 +151,7 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 					deciding = false;
 					break;
 				default:
-					System.out.println("Invalid option. Please choose 1, 2, or 0.");
+					ConsoleBoundary.printInvalidSelection();
 			}
 		}
 	}
@@ -172,7 +177,7 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 	private void waitForReturn() {
 		while (true) {
 			System.out.println("Enter 0 to return to the staff menu:");
-			if ("0".equals(App.sc.nextLine().trim())) {
+			if ("0".equals(ConsoleBoundary.promptUserInput())) {
 				return;
 			}
 			System.out.println("No pending registration. Please enter 0 to go back.");

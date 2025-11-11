@@ -1,81 +1,131 @@
 package team5.staffactions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import team5.App;
 import team5.CareerCenterStaff;
 import team5.Internship;
+import team5.boundaries.ConsoleBoundary;
+import team5.boundaries.InternshipBoundary;
+import team5.enums.InternshipFilterOption;
+import team5.filters.InternshipFilter;
+import team5.filters.InternshipFilterCriteria;
+import team5.filters.InternshipFilterPrompt;
 
 public class ViewInternshipsAction implements StaffAction {
 
+	private static final List<InternshipFilterOption> FILTER_OPTIONS = List.of(
+			InternshipFilterOption.PREFERRED_MAJOR,
+			InternshipFilterOption.INTERNSHIP_LEVEL,
+			InternshipFilterOption.INTERNSHIP_STATUS,
+			InternshipFilterOption.APPLICATION_CLOSE_TO);
+
 	@Override
 	public void run(CareerCenterStaff staff) {
+		ConsoleBoundary.printSectionTitle("All Internship Details");
+		if (App.internshipList.isEmpty()) {
+			System.out.println("No internships available at the moment.");
+			return;
+		}
+
+		List<Internship> baseList = new ArrayList<>(App.internshipList);
+		List<Internship> workingList = new ArrayList<>(baseList);
+		int pageIndex = 0;
 		boolean browsing = true;
+
 		while (browsing) {
-			App.printSectionTitle("All Internship Details");
-			if (App.internshipList.isEmpty()) {
-				System.out.println("No internships available at the moment.");
-				return;
-			} 
-			else {
-				for (int i = 0; i < App.internshipList.size(); i++) {
-					Internship internship = App.internshipList.get(i);
-					System.out.printf("%d. Internship ID: %s | Title: %s | Level: %s | Status: %s%n",
-							i + 1,
-							internship.getInternshipId(),
-							safeValue(internship.getTitle()),
-							valueOrNA(internship.getInternshipLevel()),
-							valueOrNA(internship.getInternshipStatus()));
+			if (workingList.isEmpty()) {
+				System.out.println("No internships match your current filter.");
+				System.out.println("Enter 'a' to show all internships or 0 to return.");
+				String emptyInput = ConsoleBoundary.promptUserInput();
+				if ("0".equals(emptyInput)) {
+					return;
 				}
-			}
-
-			System.out.println("Enter internship number to view details (or 0 to return):");
-			String input = App.sc.nextLine();
-			if ("0".equals(input)) {
-				browsing = false;
-				continue;
-			}
-
-			try {
-				int selection = Integer.parseInt(input);
-				if (selection < 1 || selection > App.internshipList.size()) {
-					System.out.println("Invalid selection. Please try again.");
+				if ("a".equalsIgnoreCase(emptyInput)) {
+					workingList = new ArrayList<>(baseList);
+					pageIndex = 0;
 					continue;
 				}
+				ConsoleBoundary.printInvalidInput();
+				continue;
+			}
+			int start = pageIndex * ConsoleBoundary.PAGE_SIZE;
+			int end = Math.min(start + ConsoleBoundary.PAGE_SIZE, workingList.size());
 
-				Internship chosen = App.internshipList.get(selection - 1);
-				displayInternshipDetails(chosen);
-			} catch (NumberFormatException ex) {
-				System.out.println("Please enter a valid number.");
+			for (int i = start; i < end; i++) {
+				Internship internship = workingList.get(i);
+				System.out.printf("%d. %s%n", i + 1, InternshipBoundary.buildSummaryLine(internship, true));
+			}
+
+			boolean hasNext = end < workingList.size();
+			boolean hasPrev = pageIndex > 0;
+			printNavigationPrompt(hasPrev, hasNext);
+
+			String input = ConsoleBoundary.promptUserInput();
+			if ("0".equals(input)) {
+				return;
+			} 
+			else if ("f".equalsIgnoreCase(input)) {
+				baseList = new ArrayList<>(App.internshipList);
+				InternshipFilterCriteria criteria = InternshipFilterPrompt.prompt(FILTER_OPTIONS);
+				if (criteria == null) {
+					return;
+				}
+				workingList = InternshipFilter.apply(baseList, criteria);
+				pageIndex = 0;
+			} 
+			else if ("a".equalsIgnoreCase(input)) {
+				baseList = new ArrayList<>(App.internshipList);
+				workingList = new ArrayList<>(baseList);
+				pageIndex = 0;
+			} 
+			else if (hasNext && "n".equalsIgnoreCase(input)) {
+				pageIndex++;
+			} 
+			else if (hasPrev && "p".equalsIgnoreCase(input)) {
+				pageIndex = Math.max(pageIndex - 1, 0);
+			} 
+			else {
+				try {
+					int selection = Integer.parseInt(input);
+					if (selection < 1 || selection > workingList.size()) {
+						ConsoleBoundary.printInvalidSelection();
+						continue;
+					}
+					Internship chosen = workingList.get(selection - 1);
+					displayInternshipDetails(chosen);
+				} 
+				catch (NumberFormatException ex) {
+					ConsoleBoundary.printInvalidInput();
+				}
 			}
 		}
 	}
 
 	private void displayInternshipDetails(Internship internship) {
-		App.printSectionTitle("Internship Details");
-		System.out.println("Internship ID: " + internship.getInternshipId());
-		System.out.println("Title: " + safeValue(internship.getTitle()));
-		System.out.println("Description: " + safeValue(internship.getDescription()));
-		System.out.println("Level: " + valueOrNA(internship.getInternshipLevel()));
-		System.out.println("Preferred Majors: " + safeValue(internship.getPreferredMajor()));
-		System.out.println("Application Open Date: " + safeValue(internship.getApplicationOpenDate()));
-		System.out.println("Application Close Date: " + safeValue(internship.getApplicationCloseDate()));
-		System.out.println("Status: " + valueOrNA(internship.getInternshipStatus()));
+		ConsoleBoundary.printSectionTitle("Internship Details");
+		System.out.println("Internship ID: " + ConsoleBoundary.safeValue(internship.getInternshipId()));
+		System.out.println("Title: " + ConsoleBoundary.safeValue(internship.getTitle()));
+		System.out.println("Description: " + ConsoleBoundary.safeValue(internship.getDescription()));
+		System.out.println("Level: " + ConsoleBoundary.valueOrNA(internship.getInternshipLevel()));
+		System.out.println("Preferred Major: " + ConsoleBoundary.safeValue(internship.getPreferredMajor()));
+		System.out.println("Application Open Date: " + ConsoleBoundary.safeValue(internship.getApplicationOpenDate()));
+		System.out.println("Application Close Date: " + ConsoleBoundary.safeValue(internship.getApplicationCloseDate()));
+		System.out.println("Status: " + ConsoleBoundary.valueOrNA(internship.getInternshipStatus()));
 		System.out.println("Number of Slots: " + internship.getNumOfSlots());
 		System.out.println("Press Enter to return to the internship list.");
-		App.sc.nextLine();
+		ConsoleBoundary.promptUserInput();
 	}
 
-	private String safeValue(Object value) {
-		if (value == null) {
-			return "N/A";
+	private void printNavigationPrompt(boolean hasPrev, boolean hasNext) {
+		System.out.print("Enter a number to view details");
+		if (hasPrev) {
+			System.out.print(", 'p' for previous page");
 		}
-		if (value instanceof String) {
-			String str = (String) value;
-			return str.isEmpty() ? "N/A" : str;
+		if (hasNext) {
+			System.out.print(", 'n' for next page");
 		}
-		return value.toString();
-	}
-
-	private String valueOrNA(Enum<?> value) {
-		return value != null ? value.name() : "N/A";
+		System.out.println(", 'f' to filter, 'a' to show all, or 0 to return:");
 	}
 }

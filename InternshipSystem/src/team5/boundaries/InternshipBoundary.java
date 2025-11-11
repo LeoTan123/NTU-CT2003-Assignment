@@ -1,5 +1,6 @@
 package team5.boundaries;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import team5.App;
@@ -20,19 +21,43 @@ public class InternshipBoundary extends ConsoleBoundary {
 	 * */
 	
 	public static void printInternshipList(ArrayList<Internship> internshipList) {
+		printInternshipList(internshipList, false);
+	}
+	
+	public static void printInternshipList(ArrayList<Internship> internshipList, boolean includeCompanyName) {
 		for (int i = 0; i < internshipList.size(); i++) {
 			Internship internship = internshipList.get(i);
-			System.out.printf("%d. Internship ID: %s | Title: %s | Level: %s | Status: %s%n",
-					i + 1,
-					internship.getInternshipId(),
-					safeValue(internship.getTitle()),
-					valueOrNA(internship.getInternshipLevel()),
-					valueOrNA(internship.getInternshipStatus()));
+			System.out.printf("%d. %s%n", i + 1, buildSummaryLine(internship, includeCompanyName));
 		}
 	}
 	
+	public static String buildSummaryLine(Internship internship, boolean includeCompanyName) {
+		String preferredMajor = internship.getPreferredMajor() != null
+				? internship.getPreferredMajor().getFullName()
+				: "N/A";
+		String openDate = formatDate(internship.getApplicationOpenDate());
+		String closeDate = formatDate(internship.getApplicationCloseDate());
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("Internship ID: ").append(internship.getInternshipId())
+		  .append(" | Title: ").append(safeValue(internship.getTitle()))
+		  .append(" | Level: ").append(valueOrNA(internship.getInternshipLevel()))
+		  .append(" | Preferred Major: ").append(preferredMajor)
+		  .append(" | Application Opening Date: ").append(openDate)
+		  .append(" | Application Closing Date: ").append(closeDate);
+		
+		if (includeCompanyName) {
+			sb.append(" | Company Name: ").append(safeValue(internship.getCompanyName()));
+		}
+		return sb.toString();
+	}
+	
+	private static String formatDate(LocalDate date) {
+		return date != null ? date.format(App.DATE_DISPLAY_FORMATTER) : "N/A";
+	}
+	
 	public static void printInternshipDetails(Internship internship) {
-		App.printSectionTitle("Internship Details", true);
+		ConsoleBoundary.printSectionTitle("Internship Details", true);
 		System.out.println("Internship ID: \t\t" + internship.getInternshipId());
 		System.out.println("Title: \t\t\t" + safeValue(internship.getTitle()));
 		System.out.println("Description: \t\t" + safeValue(internship.getDescription()));
@@ -49,19 +74,33 @@ public class InternshipBoundary extends ConsoleBoundary {
 		System.out.println("You have not created any internship yet.");
 	}
 	
+	public static void printMaxInternshipsReached() {
+		System.out.println("You can create maximum of 5 internship opportunities.");
+	}
+	
+	public static void printCreateInternshipSummary(Internship internship) {
+		ConsoleBoundary.printSectionTitle("Internship Summary");
+		System.out.println("Title: " + internship.getTitle());
+		System.out.println("Description: " + internship.getDescription());
+		System.out.println("Internship Level: " + internship.getInternshipLevel());
+		System.out.println("Preferred Major: " + internship.getPreferredMajor().getFullName());
+		System.out.println("Application Start Date: " + internship.getApplicationOpenDate().format(App.DATE_DISPLAY_FORMATTER));
+		System.out.println("Application End Date: " + internship.getApplicationCloseDate().format(App.DATE_DISPLAY_FORMATTER));
+		System.out.println("Number of slots: " + internship.getNumOfSlots());
+	}
+	
 	public static int displaySubMenu(boolean showUpdateOption) {
 		while (true) {
 			System.out.println();
 			System.out.println("Choose option: (or 0 to return)");
-			System.out.println("1. View student applications");
 			if (showUpdateOption == true) 
 			{
-				System.out.println("2. Update internship");
-				System.out.println("3. Delete internship");
+				System.out.println("1. Update internship");
+				System.out.println("2. Delete internship");
 			}
 			else
 			{
-				System.out.println("2. Delete internship");
+				System.out.println("1. Delete internship");
 			}
 			String input = App.sc.nextLine().trim();
 			try {
