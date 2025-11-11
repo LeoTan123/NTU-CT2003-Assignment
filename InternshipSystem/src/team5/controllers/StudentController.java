@@ -1,5 +1,7 @@
 package team5.controllers;
 
+import team5.App;
+import team5.enums.UserType;
 import team5.Student;
 import team5.boundaries.ConsoleBoundary;
 import team5.studentactions.CheckApplicationStatusAction;
@@ -35,9 +37,18 @@ public class StudentController {
                 case "3":
                     boolean updated = student.changePassword();
                     if (updated) {
-                        student.logout();
-                        System.out.println("Please log in again with your new password.");
-                        exit = true;
+                    	boolean ok = App.updatePasswordAndPersist(
+                    			UserType.STUDENT,
+                    			student.getUserID(),
+                    			student.getPassword());
+                    	if (ok) {
+                    		System.out.println("password saved to CSV.");
+                    		student.logout();
+                    		System.out.println("Please log in again with your new password.");
+                    		exit = true;
+                    	}else {
+                    		System.out.println("Failed to save new password to CSV.");
+                    	}
                     }
                     break;
                 case "4":

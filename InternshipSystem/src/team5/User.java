@@ -146,4 +146,9 @@ public class User {
 		System.out.println("Your password has been changed.");
 		return true;
 	}
+
+	public void setPassword(String newPassword) {
+		// TODO Auto-generated method stub
+		this.password = newPassword;
+		}
 }

@@ -3,6 +3,7 @@ package team5;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -260,7 +261,7 @@ public class App {
         	
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
-                if(type == CSVType.Student && values.length == 5)
+                if(type == CSVType.Student && values.length == 6)
                 {
                    String id = values[0].trim();
  		    	   String name = values[1].trim();
@@ -268,12 +269,14 @@ public class App {
  		    	   int year = Integer.parseInt(values[3].trim());
  		    	   String email = values[4].trim();
  		    	   
+ 		    	   String pwd = (values.length >= 6) ? values[5].trim(): "password";
+ 		    	   
  		    	   StudentMajor major = StudentMajor.fromFullName(prefferedMajor);
                   
- 		    	   Student student = new Student(id, name, email, "password", major, year);
+ 		    	   Student student = new Student(id, name, email, pwd, major, year);
 	               studentList.add(student);
                 }
-                else if(type == CSVType.CCStaff && values.length == 5)
+                else if(type == CSVType.CCStaff && values.length == 6)
                 {
                    String id = values[0].trim();
   		    	   String name = values[1].trim();
@@ -281,10 +284,13 @@ public class App {
   		    	   String department = values[3].trim();
   		    	   String email = values[4].trim();
   		    	   
-  		    	   CareerCenterStaff staff = new CareerCenterStaff(id, name, email, "password", role, department);
+  		    	   String pwd = (values.length >= 6) ? values[5].trim(): "password";
+  		    	   
+  		    	 
+  		    	   CareerCenterStaff staff = new CareerCenterStaff(id, name, email, pwd, role, department);
   		    	   staffList.add(staff);
                 }
-                else if(type == CSVType.CompanyRep && values.length == 7)
+                else if(type == CSVType.CompanyRep && values.length == 8)
                 {
                    String repId = values[0].trim();
                    String name = values[1].trim();
@@ -294,13 +300,15 @@ public class App {
                    String email = values[5].trim();
                    String statusValue = values[6].trim().toUpperCase();
                    
+                   String pwd = (values.length >=8) ? values[7].trim(): "password";
+                   
                    UserAccountStatus status = UserAccountStatus.fromString(statusValue);
                   
                    ArrayList<Internship> comrepInternships = App.internshipList.stream()
                 		   .filter(i -> i.getCompanyRep().toLowerCase().equals(repId.toLowerCase()))
                 		   .collect(Collectors.toCollection(ArrayList::new));
                    
-                   CompanyRep registration = new CompanyRep(repId, name, email, "password", companyName, department, position, status, comrepInternships);
+                   CompanyRep registration = new CompanyRep(repId, name, email, pwd, companyName, department, position, status, comrepInternships);
                    compRepList.add(registration);
                 }
                 else if(type == CSVType.Internship && values.length == 11)
@@ -383,6 +391,103 @@ public class App {
         	ConsoleBoundary.printErrorMessage();
             e.printStackTrace();
         }
+	}
+	
+	public static void WriteToCSV(String fileName, UserType userType) {
+        String csvFile = fileName;
+        
+        try (FileWriter writer = new FileWriter(csvFile)) {
+        	
+        	if(userType == UserType.STUDENT)
+        	{
+        		// Header
+                writer.append("StudentID,Name,Major,Year,Email,Password\n");
+                // Need to include old data
+                for (Student student : studentList) {
+                	writer.append(student.getUserID()).append(",")
+                    .append(student.getName()).append(",")
+                    .append(student.getMajor().getFullName()).append(",")
+                    .append(String.valueOf(student.getYear())).append(",")
+                    .append(student.getEmail()).append(",")
+                    .append(student.getPassword()).append("\n");
+                	
+                }
+        	}
+        	else if(userType == UserType.CCSTAFF)
+        	{
+        		// Header
+                writer.append("StaffID,Name,Role,Department,Email\n");
+                for (CareerCenterStaff staff : staffList) {
+                	writer.append(staff.getUserID()).append(",")
+					.append(staff.getName()).append(",")
+					.append(staff.getRole()).append(",")
+					.append(staff.getDepartment()).append(",")
+					.append(staff.getEmail()).append(",")
+					.append(staff.getPassword()).append("\n");
+					
+                }
+        	}
+        	else if(userType == UserType.COMREP)
+        		// Header
+        		writer.append("repID, Name, Company, Department, Position, Email, Status, Password\n");
+        		for (CompanyRep companyRep : compRepList) {
+        			writer.append(companyRep.getUserID()).append(",")
+					.append(companyRep.getName()).append(",")
+					.append(companyRep.getCompanyName()).append(",")
+					.append(companyRep.getDepartment()).append(",")
+					.append(companyRep.getPosition()).append(",")
+					.append(companyRep.getEmail()).append(",")
+					.append(companyRep.getAccountStatus().name()).append(",")
+					.append(companyRep.getPassword()).append("\n");
+        			
+        		}
+            writer.flush();
+            System.out.println("CSV file written successfully!");
+        } 
+        catch (FileNotFoundException fe) {
+        	System.out.println("CSV file not found!");
+        }
+        catch (IOException e) {
+        	System.out.println("Failed to save to file: " + e.getMessage());
+        	System.out.println("Stack trace:");
+        	e.printStackTrace();
+        }
+	}
+	public static boolean updatePasswordAndPersist(UserType type, String userId, String newPassword) {
+	    User target = null;
+
+	    switch (type) {
+	        case STUDENT:
+	            for (Student student : studentList)
+	                if (student.getUserID().equals(userId)) { target = student; break; }
+	            break;
+
+	        case CCSTAFF:
+	            for (CareerCenterStaff staff : staffList)
+	                if (staff.getUserID().equals(userId)) { target = staff; break; }
+	            break;
+
+	        case COMREP:
+	            for (CompanyRep companyRep : compRepList)
+	                if (companyRep.getUserID().equalsIgnoreCase(userId)) { target = companyRep; break; }
+	            break;
+	    }
+
+	    if (target == null) return false;
+
+	    // ✅ update in memory
+	    target.setPassword(newPassword);
+
+	    // ✅ save to correct CSV
+	    String path = (type == UserType.STUDENT) ? envFilePathStudent :
+	                  (type == UserType.CCSTAFF) ? envFilePathStaff :
+	                  (type == UserType.COMREP) ? envFilePathRep : null;
+
+	    if (path == null) return false;
+
+	    WriteToCSV(path, type);
+
+	    return true;
 	}
 	
 	/**

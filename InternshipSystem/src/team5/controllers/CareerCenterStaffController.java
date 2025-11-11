@@ -1,6 +1,8 @@
 package team5.controllers;
 
+import team5.App;
 import team5.CareerCenterStaff;
+import team5.enums.UserType;
 import team5.boundaries.ConsoleBoundary;
 import team5.staffactions.ReviewCompanyRegistrationsAction;
 import team5.staffactions.ReviewInternshipSubmissionsAction;
@@ -43,9 +45,18 @@ public class CareerCenterStaffController {
 			case "4":
 				boolean updated = staff.changePassword();
 				if (updated) {
-					staff.logout();
-					System.out.println("Please log in again with your new password.");
-					exit = true;
+					boolean ok = App.updatePasswordAndPersist(
+                			UserType.CCSTAFF,
+                			staff.getUserID(),
+                			staff.getPassword());
+                	if (ok) {
+                		System.out.println("password saved to CSV.");
+                		staff.logout();
+                		System.out.println("Please log in again with your new password.");
+                		exit = true;
+                	}else {
+                		System.out.println("Failed to save new password to CSV.");
+                	}
 				}
 				break;
 			case "5":
