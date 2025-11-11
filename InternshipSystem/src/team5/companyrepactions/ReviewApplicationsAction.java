@@ -151,24 +151,22 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 		for (Map.Entry<Internship, List<InternshipApplication>> entry : applicationMap.entrySet()) {
 			Internship internship = entry.getKey();
 			List<InternshipApplication> applications = entry.getValue();
+			// removed if (!applications.isEmpty()) { } as user input is incorrect otherwise
+			// Count pending applications
+			long pendingCount = applications.stream()
+				.filter(app -> app.getStatus() == InternshipApplicationStatus.PENDING)
+				.count();
 
-			if (!applications.isEmpty()) {
-				// Count pending applications
-				long pendingCount = applications.stream()
-					.filter(app -> app.getStatus() == InternshipApplicationStatus.PENDING)
-					.count();
-
-				System.out.printf("%d. Internship ID: %s | Title: %s%n",
-					index,
-					ConsoleBoundary.safeValue(internship.getInternshipId()),
-					ConsoleBoundary.safeValue(internship.getTitle()));
-				System.out.printf("   Total Applications: %d | Pending: %d | Reviewed: %d%n",
-					applications.size(),
-					pendingCount,
-					applications.size() - pendingCount);
-				System.out.println();
-				index++;
-			}
+			System.out.printf("%d. Internship ID: %s | Title: %s%n",
+				index,
+				ConsoleBoundary.safeValue(internship.getInternshipId()),
+				ConsoleBoundary.safeValue(internship.getTitle()));
+			System.out.printf("   Total Applications: %d | Pending: %d | Reviewed: %d%n",
+				applications.size(),
+				pendingCount,
+				applications.size() - pendingCount);
+			System.out.println();
+			index++;
 		}
 	}
 
