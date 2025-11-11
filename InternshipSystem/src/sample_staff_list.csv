@@ -2,4 +2,14 @@ StaffID,Name,Role,Department,Email
 sng001,Dr. Sng Hui Lin,Career Center Staff,CCDS,sng001@ntu.edu.sg,password
 tan002,Mr. Tan Boon Kiat,Career Center Staff,CCDS,tan002@ntu.edu.sg,password
 lee003,Ms. Lee Mei Ling,Career Center Staff,CCDS,lee003@ntu.edu.sg,password
-test,Kumo,Career Center Staff,SCSE,test@ntu.edu.sg,password
+test,Kumo,Career Center Staff,SCSE,test@ntu.edu.sg,P@ss
+noxI@nox.com,NoxTest,NoxInc,Game,Dev,noxI@nox.com,APPROVED,password
+test@nox.com,Test,Test,Test,Test,test@nox.com,APPROVED,password
+hr@ncs.com.sg,NCS HR,NCS Pte Ltd,HR,Recruiter,hr@ncs.com.sg,APPROVED,password
+hr@accenture.com,Accenture HR,Accenture,HR,Recruiter,hr@accenture.com,PENDING,password
+test2,test2,test2,test2,test2,test2,PENDING,password
+test3,test3,test3,test3,test3,test3,PENDING,password
+test4,test4,test4,test4,test4,test4,PENDING,password
+test5,test5,test5,test5,test5,test5,APPROVED,password
+test6,test6,test6,test6,test6,test6,APPROVED,password
+test7,test7,test7,test7,test7,test7,APPROVED,P@ss1
