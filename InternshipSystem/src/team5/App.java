@@ -428,6 +428,7 @@ public class App {
                 }
         	}
         	else if(userType == UserType.COMREP)
+			{
         		// Header
         		writer.append("repID, Name, Company, Department, Position, Email, Status, Password\n");
         		for (CompanyRep companyRep : compRepList) {
@@ -441,6 +442,7 @@ public class App {
 					.append(companyRep.getPassword()).append("\n");
         			
         		}
+			}
             writer.flush();
             System.out.println("CSV file written successfully!");
         } 
