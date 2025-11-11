@@ -254,7 +254,7 @@ public class App {
  		    	   Student student = new Student(id, name, email, pwd, major, year);
 	               studentList.add(student);
                 }
-                else if(userType == UserType.CCSTAFF && values.length == 5)
+                else if(userType == UserType.CCSTAFF && values.length == 5 || values.length == 6)
                 {
                    String id = values[0].trim();
   		    	   String name = values[1].trim();
@@ -262,10 +262,13 @@ public class App {
   		    	   String department = values[3].trim();
   		    	   String email = values[4].trim();
   		    	   
-  		    	   CareerCenterStaff staff = new CareerCenterStaff(id, name, email, "password", role, department);
+  		    	   String pwd = (values.length >= 6) ? values[5].trim(): "password";
+  		    	   
+  		    	 
+  		    	   CareerCenterStaff staff = new CareerCenterStaff(id, name, email, pwd, role, department);
   		    	   staffList.add(staff);
                 }
-                else if(userType == UserType.COMREP && values.length == 7)
+                else if(userType == UserType.COMREP && values.length == 7 || values.length == 8)
                 {
                    String repId = values[0].trim();
                    String name = values[1].trim();
@@ -275,13 +278,15 @@ public class App {
                    String email = values[5].trim();
                    String statusValue = values[6].trim().toUpperCase();
                    
+                   String pwd = (values.length >=8) ? values[7].trim(): "password";
+                   
                    UserAccountStatus status = UserAccountStatus.fromString(statusValue);
                   
                    ArrayList<Internship> comrepInternships = App.internshipList.stream()
                 		   .filter(i -> i.getCompanyRep().toLowerCase().equals(repId.toLowerCase()))
                 		   .collect(Collectors.toCollection(ArrayList::new));
                    
-                   CompanyRep registration = new CompanyRep(repId, name, email, "password", companyName, department, position, status, comrepInternships);
+                   CompanyRep registration = new CompanyRep(repId, name, email, pwd, companyName, department, position, status, comrepInternships);
                    compRepList.add(registration);
                 }
                 else
@@ -352,14 +357,29 @@ public class App {
         		// Header
                 writer.append("StaffID,Name,Role,Department,Email\n");
                 for (CareerCenterStaff staff : staffList) {
-                	String userID = staff.getUserID();
-                	String name = staff.getName();
-                	String role = staff.getRole();
-                	String department = staff.getDepartment();
-                	String email = staff.getEmail();
-                	writer.append(userID + "," + name + "," + role + "," + department + "," + email + "\n");
+                	writer.append(staff.getUserID()).append(",")
+					.append(staff.getName()).append(",")
+					.append(staff.getRole()).append(",")
+					.append(staff.getDepartment()).append(",")
+					.append(staff.getEmail()).append(",")
+					.append(staff.getPassword()).append("\n");
+					
                 }
         	}
+        	else if(userType == UserType.COMREP)
+        		// Header
+        		writer.append("repID, Name, Company, Department, Position, Email, Status, Password\n");
+        		for (CompanyRep companyRep : compRepList) {
+        			writer.append(companyRep.getUserID()).append(",")
+					.append(companyRep.getName()).append(",")
+					.append(companyRep.getCompanyName()).append(",")
+					.append(companyRep.getDepartment()).append(",")
+					.append(companyRep.getPosition()).append(",")
+					.append(companyRep.getEmail()).append(",")
+					.append(companyRep.getAccountStatus().name()).append(",")
+					.append(companyRep.getPassword()).append("\n");
+        			
+        		}
             writer.flush();
             System.out.println("CSV file written successfully!");
         } 
@@ -387,8 +407,8 @@ public class App {
 	            break;
 
 	        case COMREP:
-	            for (CompanyRep s : compRepList)
-	                if (s.getUserID().equalsIgnoreCase(userId)) { target = s; break; }
+	            for (CompanyRep companyRep : compRepList)
+	                if (companyRep.getUserID().equalsIgnoreCase(userId)) { target = companyRep; break; }
 	            break;
 	    }
 

@@ -45,7 +45,7 @@ public class StudentController {
                     	if (ok) {
                     		System.out.println("password saved to CSV.");
                     		student.logout();
-                    		System.out.println("You have been logged out. Please log in again with your new password.");
+                    		System.out.println("Please log in again with your new password.");
                     		exit = true;
                     	}else {
                     		System.out.println("Failed to save new password to CSV.");

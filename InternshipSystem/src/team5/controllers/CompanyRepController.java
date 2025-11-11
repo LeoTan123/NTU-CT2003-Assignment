@@ -5,6 +5,7 @@ import team5.CompanyRep;
 import team5.companyrepactions.CompanyRepAction;
 import team5.companyrepactions.CreateInternshipAction;
 import team5.companyrepactions.ListOwnInternshipsAction;
+import team5.enums.UserType;
 
 public class CompanyRepController {
 
@@ -37,9 +38,19 @@ public class CompanyRepController {
 				case "3":
 					boolean updated = companyRep.changePassword();
 					if (updated) {
-						companyRep.logout();
-						System.out.println("You have been logged out. Please log in again with your new password.");
-						exit = true;
+						boolean ok = App.updatePasswordAndPersist(
+								UserType.COMREP, 
+								companyRep.getUserID(),
+								companyRep.getPassword()
+								);
+						if (ok) {
+	                		System.out.println("password saved to CSV.");
+	                		companyRep.logout();
+	                		System.out.println("Please log in again with your new password.");
+	                		exit = true;
+	                	}else {
+	                		System.out.println("Failed to save new password to CSV.");
+	                	}
 					}
 					break;
 				case "4":
