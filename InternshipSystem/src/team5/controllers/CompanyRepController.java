@@ -9,7 +9,7 @@ import team5.companyrepactions.CreateInternshipAction;
 import team5.companyrepactions.ListOwnInternshipsAction;
 import team5.enums.UserType;
 import team5.companyrepactions.ReviewApplicationsAction;
-import team5.interfaces.FileBoundary;
+import team5.interfaces.CsvRepository;
 
 public class CompanyRepController extends UserController {
 
@@ -17,12 +17,12 @@ public class CompanyRepController extends UserController {
 	private final CompanyRepAction createInternshipAction;
 	private final CompanyRepAction listOwnInternshipsAction;
 	private final CompanyRepAction reviewApplicationsAction;
-	private final FileBoundary fileBoundary = new CsvFileBoundary();
+	private final CsvRepository fileBoundary = new CsvFileBoundary();
 
 	public CompanyRepController(CompanyRep companyRep) {
 		this.companyRep = companyRep;
 		this.createInternshipAction = new CreateInternshipAction(fileBoundary);
-		this.listOwnInternshipsAction = new ListOwnInternshipsAction();
+		this.listOwnInternshipsAction = new ListOwnInternshipsAction(fileBoundary);
 		this.reviewApplicationsAction = new ReviewApplicationsAction();
 	}
 

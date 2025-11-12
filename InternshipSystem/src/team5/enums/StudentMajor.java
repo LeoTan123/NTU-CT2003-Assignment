@@ -21,8 +21,14 @@ public enum StudentMajor {
     // System.out.println(major.getFullName()); // Computer Science
     
     public static StudentMajor fromFullName(String fullName) {
+    	if (fullName == null) {
+    		return StudentMajor.COMP;
+    	}
+
+    	String trimmed = fullName.trim();
+
         for (StudentMajor major : StudentMajor.values()) {
-            if (major.getFullName().equalsIgnoreCase(fullName.trim())) {
+        	if (major.name().equalsIgnoreCase(trimmed) || major.getFullName().equalsIgnoreCase(trimmed)) {
                 return major;
             }
         }
