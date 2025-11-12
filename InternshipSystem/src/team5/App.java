@@ -91,17 +91,17 @@ public class App {
 				System.out.println("0: Exit");
 				
 				int choice = Integer.parseInt(ConsoleBoundary.promptUserInput()); // consume the newline
-				if(choice == 0){
+				if(choice == 0) {
 					System.out.println("Exitting system...");
 					exitProgram = true;
 					break;
 				}
-				if(choice < 0 || choice > 4){
+				if(choice < 0 || choice > 4) {
 					ConsoleBoundary.printInvalidSelection();	
 					continue;
 				}
 
-				if(choice == 4){
+				if(choice == 4) {
 					CompanyRepRegistrationHandler registrationHandler = new CompanyRepRegistrationHandler();
 					registrationHandler.startRegistration();
 					continue;
@@ -112,8 +112,6 @@ public class App {
 				
 				System.out.println("Please enter your password:");	
 				String password = ConsoleBoundary.promptUserInput();
-				
-				boolean foundUser = false;
 				
 				UserType userType = UserType.NONE;
 				switch(choice)
@@ -131,7 +129,7 @@ public class App {
 						ConsoleBoundary.printInvalidSelection();
 				}
 
-				foundUser = verifyUserFromList(userType, userID, password);
+				boolean foundUser = verifyUserFromList(userType, userID, password);
 				if(!foundUser || currentUser == null){
 					continue;
 				}
@@ -199,13 +197,13 @@ public class App {
 	            }
 				break;
 			default:
-				System.out.println("Invalid User Type.");
+				System.out.println("Invalid User Type: " + userType);
 	            return false;	
 		}
 		
 		// User not found in either lists
 		if (foundUser == null) {
-			System.out.println("User ID not found in system.");
+			System.out.println("User ID not found in system: " + userID);
 	        return false;
 	    }
 		
@@ -214,7 +212,7 @@ public class App {
 	    	CompanyRep rep = (CompanyRep)foundUser;
 	    	UserAccountStatus status = rep.getAccountStatus();
 	    	if (status == UserAccountStatus.PENDING) {
-	    		System.out.println("Your account is pending approval. Please wait for the career center staff to review it.");
+	    		System.out.println("Your account is pending approval. Please wait for the career center staff to review.");
 	    		return false;
 	    	}
 	    	else if (status == UserAccountStatus.REJECTED) {
@@ -238,14 +236,13 @@ public class App {
 	                password = ConsoleBoundary.promptUserInput(); // update password for next attempt
 	            } 
 	            else {
-	                System.out.println("Wrong password 3 times. Login Failed.");
+	                System.out.println("You have entered wrong password for 3 times. Login failed.");
 	            }
 	        }
 	    }
 	    // Failed after 3 attempts
 	    return false;
 	}
-	
 	
 	/**
 	 * To read database from CSV file
@@ -268,7 +265,6 @@ public class App {
  		    	   String prefferedMajor = values[2].trim();
  		    	   int year = Integer.parseInt(values[3].trim());
  		    	   String email = values[4].trim();
- 		    	   
  		    	   String pwd = (values.length >= 6) ? values[5].trim(): "password";
  		    	   
  		    	   StudentMajor major = StudentMajor.fromFullName(prefferedMajor);
@@ -283,10 +279,8 @@ public class App {
   		    	   String role = values[2].trim();
   		    	   String department = values[3].trim();
   		    	   String email = values[4].trim();
-  		    	   
   		    	   String pwd = (values.length >= 6) ? values[5].trim(): "password";
   		    	   
-  		    	 
   		    	   CareerCenterStaff staff = new CareerCenterStaff(id, name, email, pwd, role, department);
   		    	   staffList.add(staff);
                 }
@@ -299,7 +293,6 @@ public class App {
                    String position = values[4].trim();
                    String email = values[5].trim();
                    String statusValue = values[6].trim().toUpperCase();
-                   
                    String pwd = (values.length >=8) ? values[7].trim(): "password";
                    
                    UserAccountStatus status = UserAccountStatus.fromString(statusValue);
@@ -393,16 +386,17 @@ public class App {
         }
 	}
 	
+	/**
+	 * Update CSV file database
+	 * @param fileName
+	 * @param userType
+	 */
 	public static void WriteToCSV(String fileName, UserType userType) {
-        String csvFile = fileName;
-        
-        try (FileWriter writer = new FileWriter(csvFile)) {
-        	
+        try (FileWriter writer = new FileWriter(fileName)) {
         	if(userType == UserType.STUDENT)
         	{
         		// Header
                 writer.append("StudentID,Name,Major,Year,Email,Password\n");
-                // Need to include old data
                 for (Student student : studentList) {
                 	writer.append(student.getUserID()).append(",")
                     .append(student.getName()).append(",")
@@ -410,7 +404,6 @@ public class App {
                     .append(String.valueOf(student.getYear())).append(",")
                     .append(student.getEmail()).append(",")
                     .append(student.getPassword()).append("\n");
-                	
                 }
         	}
         	else if(userType == UserType.CCSTAFF)
@@ -424,13 +417,12 @@ public class App {
 					.append(staff.getDepartment()).append(",")
 					.append(staff.getEmail()).append(",")
 					.append(staff.getPassword()).append("\n");
-					
                 }
         	}
         	else if(userType == UserType.COMREP)
 			{
         		// Header
-        		writer.append("repID, Name, Company, Department, Position, Email, Status, Password\n");
+        		writer.append("repID,Name,Company,Department,Position,Email,Status,Password\n");
         		for (CompanyRep companyRep : compRepList) {
         			writer.append(companyRep.getUserID()).append(",")
 					.append(companyRep.getName()).append(",")
@@ -440,55 +432,76 @@ public class App {
 					.append(companyRep.getEmail()).append(",")
 					.append(companyRep.getAccountStatus().name()).append(",")
 					.append(companyRep.getPassword()).append("\n");
-        			
         		}
 			}
             writer.flush();
-            System.out.println("CSV file written successfully!");
+            //System.out.println("CSV file written successfully!");
         } 
         catch (FileNotFoundException fe) {
-        	System.out.println("CSV file not found!");
+        	System.out.println("CSV file path not found!");
         }
         catch (IOException e) {
-        	System.out.println("Failed to save to file: " + e.getMessage());
-        	System.out.println("Stack trace:");
+        	ConsoleBoundary.printErrorMessage();
         	e.printStackTrace();
         }
 	}
+	
+	/**
+	 * Update password and write to CSV
+	 * @param type
+	 * @param userId
+	 * @param newPassword
+	 * @return
+	 */
 	public static boolean updatePasswordAndPersist(UserType type, String userId, String newPassword) {
-	    User target = null;
-
+	    User targetUser = null;
+	    String path = null;
+	    
 	    switch (type) {
 	        case STUDENT:
-	            for (Student student : studentList)
-	                if (student.getUserID().equals(userId)) { target = student; break; }
+	        	path = envFilePathStudent;
+	            for (Student student : studentList) {
+	                if (student.getUserID().equals(userId)) { 
+	                	targetUser = student; 
+	                	break; 
+	                }
+	            }
 	            break;
-
 	        case CCSTAFF:
-	            for (CareerCenterStaff staff : staffList)
-	                if (staff.getUserID().equals(userId)) { target = staff; break; }
+	        	path = envFilePathStaff;
+	            for (CareerCenterStaff staff : staffList) {
+	                if (staff.getUserID().equals(userId)) { 
+	                	targetUser = staff; 
+	                	break; 
+	                }
+	            }
 	            break;
-
 	        case COMREP:
-	            for (CompanyRep companyRep : compRepList)
-	                if (companyRep.getUserID().equalsIgnoreCase(userId)) { target = companyRep; break; }
+	        	path = envFilePathRep;
+	            for (CompanyRep companyRep : compRepList) {
+	                if (companyRep.getUserID().equalsIgnoreCase(userId)) { 
+	                	targetUser = companyRep; 
+	                	break; 
+	                }
+	            }
 	            break;
+	        default:
+	        	System.out.println("Invalid User Type: " + type);
+	        	return false;
 	    }
 
-	    if (target == null) return false;
-
-	    // ✅ update in memory
-	    target.setPassword(newPassword);
-
-	    // ✅ save to correct CSV
-	    String path = (type == UserType.STUDENT) ? envFilePathStudent :
-	                  (type == UserType.CCSTAFF) ? envFilePathStaff :
-	                  (type == UserType.COMREP) ? envFilePathRep : null;
-
-	    if (path == null) return false;
-
+	    if (targetUser == null) {
+	    	System.out.println("User ID not found in system: " + userId);
+	    	return false;
+	    }
+	    
+	    if (path == null) {
+	    	System.out.println("CSV file path not found.");
+	    	return false;
+	    }
+	    
+	    targetUser.setPassword(newPassword);
 	    WriteToCSV(path, type);
-
 	    return true;
 	}
 	

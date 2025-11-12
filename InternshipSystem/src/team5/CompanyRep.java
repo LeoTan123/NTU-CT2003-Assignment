@@ -1,9 +1,6 @@
 package team5;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import team5.enums.InternshipLevel;
 import team5.enums.UserAccountStatus;
 import team5.enums.UserType;
 

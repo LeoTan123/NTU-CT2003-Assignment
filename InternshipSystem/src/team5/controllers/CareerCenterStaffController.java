@@ -45,17 +45,14 @@ public class CareerCenterStaffController {
 			case "4":
 				boolean updated = staff.changePassword();
 				if (updated) {
-					boolean ok = App.updatePasswordAndPersist(
-                			UserType.CCSTAFF,
-                			staff.getUserID(),
-                			staff.getPassword());
+					boolean ok = App.updatePasswordAndPersist(UserType.CCSTAFF, staff.getUserID(), staff.getPassword());
                 	if (ok) {
-                		System.out.println("password saved to CSV.");
                 		staff.logout();
                 		System.out.println("Please log in again with your new password.");
                 		exit = true;
-                	}else {
-                		System.out.println("Failed to save new password to CSV.");
+                	}
+                	else {
+                		ConsoleBoundary.printErrorMessage();
                 	}
 				}
 				break;

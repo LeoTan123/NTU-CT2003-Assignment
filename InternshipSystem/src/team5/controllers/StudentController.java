@@ -37,17 +37,14 @@ public class StudentController {
                 case "3":
                     boolean updated = student.changePassword();
                     if (updated) {
-                    	boolean ok = App.updatePasswordAndPersist(
-                    			UserType.STUDENT,
-                    			student.getUserID(),
-                    			student.getPassword());
+                    	boolean ok = App.updatePasswordAndPersist(UserType.STUDENT, student.getUserID(), student.getPassword());
                     	if (ok) {
-                    		System.out.println("password saved to CSV.");
                     		student.logout();
                     		System.out.println("Please log in again with your new password.");
                     		exit = true;
-                    	}else {
-                    		System.out.println("Failed to save new password to CSV.");
+                    	}
+                    	else {
+                    		ConsoleBoundary.printErrorMessage();
                     	}
                     }
                     break;

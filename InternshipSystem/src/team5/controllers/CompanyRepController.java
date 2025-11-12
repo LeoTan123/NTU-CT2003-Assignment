@@ -48,18 +48,14 @@ public class CompanyRepController {
 				case "4":
 					boolean updated = companyRep.changePassword();
 					if (updated) {
-						boolean ok = App.updatePasswordAndPersist(
-								UserType.COMREP, 
-								companyRep.getUserID(),
-								companyRep.getPassword()
-								);
+						boolean ok = App.updatePasswordAndPersist(UserType.COMREP, companyRep.getUserID(), companyRep.getPassword());
 						if (ok) {
-	                		System.out.println("password saved to CSV.");
 	                		companyRep.logout();
 	                		System.out.println("Please log in again with your new password.");
 	                		exit = true;
-	                	}else {
-	                		System.out.println("Failed to save new password to CSV.");
+	                	}
+						else {
+							ConsoleBoundary.printErrorMessage();
 	                	}
 					}
 					break;
