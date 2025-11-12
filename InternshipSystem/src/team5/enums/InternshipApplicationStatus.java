@@ -4,7 +4,8 @@ package team5.enums;
 public enum InternshipApplicationStatus {
 	PENDING,
 	SUCCESSFUL,
-	UNSUCCESSFUL;
+	UNSUCCESSFUL,
+	ACCEPTED;
 	
 	public static InternshipApplicationStatus fromString(String value) {
 	    for (InternshipApplicationStatus s : InternshipApplicationStatus.values()) {

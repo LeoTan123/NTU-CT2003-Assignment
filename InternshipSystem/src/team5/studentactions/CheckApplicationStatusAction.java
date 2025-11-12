@@ -7,10 +7,22 @@ import team5.Internship;
 import team5.InternshipApplication;
 import team5.Student;
 import team5.boundaries.ConsoleBoundary;
+import team5.boundaries.CsvFileBoundary;
 import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipStatus;
+import team5.interfaces.ApplicationCsvRepository;
 
 public class CheckApplicationStatusAction implements StudentAction {
+	
+	private final ApplicationCsvRepository applicationRepository;
+	
+	public CheckApplicationStatusAction() {
+		this(new CsvFileBoundary());
+	}
+	
+	public CheckApplicationStatusAction(ApplicationCsvRepository applicationRepository) {
+		this.applicationRepository = applicationRepository;
+	}
 	@Override
 	public void run(Student student) {
 		ConsoleBoundary.printSectionTitle("Your Internship Applications");
@@ -81,9 +93,13 @@ public class CheckApplicationStatusAction implements StudentAction {
 	                    case 1:
 	                        displayApplicationDetails(chosen);
 	                        break;
-	                    case 2:
-	                        acceptOffer(student, chosen);
-	                        break;
+					case 2:
+	                    boolean accepted = acceptOffer(student, chosen);
+	                    if (accepted) {
+	                    	choosingAction = false;
+	                    	reviewing = false;
+	                    }
+	                    break;
 	                    default:
 	                    	ConsoleBoundary.printInvalidInput();
 	                }
@@ -116,32 +132,49 @@ public class CheckApplicationStatusAction implements StudentAction {
 	    }
 	}
 	
-	private void acceptOffer(Student student, InternshipApplication chosen)
+	private boolean acceptOffer(Student student, InternshipApplication chosen)
 	{
 		// If internship is fully booked
 		if(chosen.getInternshipInfo().getInternshipStatus() == InternshipStatus.FILLED 
 		|| chosen.getInternshipInfo().getNumOfSlots() == 0){
 			System.out.println("Internship is fully booked.");
-			return;
+			return false;
+		}
+		
+		// Prevent re-acceptance
+		if (chosen.getStatus() == InternshipApplicationStatus.ACCEPTED) {
+			System.out.println("You have already accepted this internship offer.");
+			return false;
 		}
 		
 		// If internship application is not successful
 		if(chosen.getStatus() != InternshipApplicationStatus.SUCCESSFUL){
 			System.out.println("Internship application status is " + chosen.getStatus().toString()+ ". Please wait for approval.");
-			return;
+			return false;
 		}
 
 		// If student is employed already
 		if(student.getEmployedStatus()){
 			System.out.println("You have already accepted another internship opportunity. You are not allowed to accept this internship.");
-			return;
+			return false;
 		}
 		
 		System.out.println("You have accepted offer for internship " + chosen.getInternshipInfo().getTitle() + ".");
 		System.out.println("Please email to " + chosen.getInternshipInfo().getCompanyRep() + " or visit " + chosen.getInternshipInfo().getCompanyName() + " for more details.");
 		
 		student.setEmployedStatus(true); // Set Student as employed
-		student.clearInternshipApplications(); // Clear application list after accepted offer
+		
+		// Keep only the accepted application for the student
+		student.getInternshipApplications().removeIf(app -> 
+			!app.getApplicationId().equals(chosen.getApplicationId()));
+		
+		// Update global list: keep only the accepted record for this student
+		App.internshipApplicationList.removeIf(app -> 
+			app.getStudentInfo().getUserID().equals(student.getUserID()) &&
+			!app.getApplicationId().equals(chosen.getApplicationId()));
+		
+		// Update application status
+		chosen.setStatus(InternshipApplicationStatus.ACCEPTED);
 		
 		// Update the NumOfSlots of the specific internship
 		Internship internshipInfo = chosen.getInternshipInfo();
@@ -151,6 +184,19 @@ public class CheckApplicationStatusAction implements StudentAction {
 		    if (internshipInfo.getNumOfSlots() == 0) {
 		    	internshipInfo.setInternshipStatus(InternshipStatus.FILLED);
 		    }
+		}
+		
+		persistApplications();
+		return true;
+	}
+	
+	private void persistApplications() {
+		if (applicationRepository == null) {
+			return;
+		}
+		boolean success = applicationRepository.writeInternshipApplications(App.internshipApplicationList);
+		if (!success) {
+			System.out.println("Warning: Failed to save application updates. Please try again later.");
 		}
 	}
 }

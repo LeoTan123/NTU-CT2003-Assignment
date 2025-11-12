@@ -220,8 +220,12 @@ public class ViewInternshipsAction implements StudentAction {
 	        return;
 	    }
 	    
-	    // Check student number of application
-	    if (student.getInternshipApplications().size() >= 3) {
+	    long existingApplications = App.internshipApplicationList.stream()
+	    		.filter(app -> app.getStudentInfo().getUserID().equalsIgnoreCase(student.getUserID()))
+	    		.filter(app -> app.getStatus() != InternshipApplicationStatus.UNSUCCESSFUL)
+	    		.count();
+	    
+	    if (existingApplications >= 3) {
 	        System.out.println("You have already applied for 3 internships. You are not allowed to apply this internship.");
 	        return;
 	    }
@@ -234,12 +238,15 @@ public class ViewInternshipsAction implements StudentAction {
 		}
 		
 		// Check student applied this offer before or not
-		for (InternshipApplication app : student.getInternshipApplications()) {
-		    if (app.getInternshipInfo().equals(chosen)) {
-		        System.out.println("You have already applied for this internship before.");
-		        return;
-		    }
-		}
+	    boolean alreadyApplied = App.internshipApplicationList.stream()
+	    		.filter(app -> app.getStatus() != InternshipApplicationStatus.UNSUCCESSFUL)
+	    		.anyMatch(app -> app.getStudentInfo().getUserID().equalsIgnoreCase(student.getUserID())
+	    				&& app.getInternshipInfo().getInternshipId().equals(chosen.getInternshipId()));
+	    
+	    if (alreadyApplied) {
+	        System.out.println("You have already applied for this internship before.");
+	        return;
+	    }
 		
 		// Check if the student is eligible by year
 	    if (student.getYear() <= 2 && chosen.getInternshipLevel() != InternshipLevel.BASIC) {

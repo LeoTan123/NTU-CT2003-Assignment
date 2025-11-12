@@ -158,7 +158,7 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 
 	private void writeCompanyRepsToCsv() {
 		try (FileWriter writer = new FileWriter(App.envFilePathRep)) {
-			writer.append("CompanyRepID,Name,CompanyName,Department,Position,Email,Status\n");
+			writer.append("CompanyRepID,Name,CompanyName,Department,Position,Email,Status,Password\n");
 			for (CompanyRep rep : App.compRepList) {
 				writer.append(rep.getUserID()).append(",")
 						.append(rep.getName()).append(",")
@@ -166,7 +166,8 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 						.append(rep.getDepartment()).append(",")
 						.append(rep.getPosition()).append(",")
 						.append(rep.getEmail()).append(",")
-						.append(rep.getAccountStatus().name()).append("\n");
+						.append(rep.getAccountStatus().name()).append(",")
+						.append(rep.getPassword()).append("\n");
 			}
 			writer.flush();
 		} catch (IOException e) {
