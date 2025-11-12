@@ -422,7 +422,7 @@ public class App {
         	else if(userType == UserType.COMREP)
 			{
         		// Header
-        		writer.append("repID,Name,Company,Department,Position,Email,Status,Password\n");
+        		writer.append("CompanyRepID,Name,CompanyName,Department,Position,Email,Status,Password\n");
         		for (CompanyRep companyRep : compRepList) {
         			writer.append(companyRep.getUserID()).append(",")
 					.append(companyRep.getName()).append(",")
