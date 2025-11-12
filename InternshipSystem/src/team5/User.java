@@ -118,10 +118,7 @@ public class User {
 			return;
 		}
 		this.loginState = false;
-		if(App.currentUser != null) {
-			App.currentUser = null;
-		}
-		System.out.println("You have already logged out successfully.");
+		System.out.println("You have logged out successfully.");
 	}
 	
 	/**

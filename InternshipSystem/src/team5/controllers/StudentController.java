@@ -3,22 +3,26 @@ package team5.controllers;
 import team5.App;
 import team5.enums.UserType;
 import team5.Student;
+import team5.User;
 import team5.boundaries.ConsoleBoundary;
 import team5.studentactions.CheckApplicationStatusAction;
 import team5.studentactions.StudentAction;
 import team5.studentactions.ViewInternshipsAction;
 
-public class StudentController {
+public class StudentController extends UserController {
 
+	private final Student student;
 	private final StudentAction viewInternshipsAction;
 	private final StudentAction checkApplicationStatusAction;
 
-	public StudentController() {
+	public StudentController(Student student) {
+		this.student = student;
 		this.viewInternshipsAction = new ViewInternshipsAction();
 		this.checkApplicationStatusAction = new CheckApplicationStatusAction();
 	}
 
-    public void showMenu(Student student) {
+	@Override
+    public void showMenu() {
         boolean exit = false;
         while (!exit) {
         	ConsoleBoundary.printSectionTitle("Student Menu", true);

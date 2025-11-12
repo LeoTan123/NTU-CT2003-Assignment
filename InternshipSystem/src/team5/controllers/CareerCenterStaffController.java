@@ -9,19 +9,21 @@ import team5.staffactions.ReviewInternshipSubmissionsAction;
 import team5.staffactions.StaffAction;
 import team5.staffactions.ViewInternshipsAction;
 
-public class CareerCenterStaffController {
+public class CareerCenterStaffController extends UserController {
 
+	private final CareerCenterStaff staff;
 	private final StaffAction reviewCompanyAction;
 	private final StaffAction reviewInternshipAction;
 	private final StaffAction viewInternshipsAction;
 
-	public CareerCenterStaffController() {
+	public CareerCenterStaffController(CareerCenterStaff staff) {
+		this.staff = staff;
 		this.reviewCompanyAction = new ReviewCompanyRegistrationsAction();
 		this.reviewInternshipAction = new ReviewInternshipSubmissionsAction();
 		this.viewInternshipsAction = new ViewInternshipsAction();
 	}
 
-	public void showMenu(CareerCenterStaff staff) {
+	public void showMenu() {
 		boolean exit = false;
 		while (!exit) {
 			ConsoleBoundary.printSectionTitle("Career Center Staff Menu", true);

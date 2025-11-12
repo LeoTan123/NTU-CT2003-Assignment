@@ -11,20 +11,23 @@ import team5.enums.UserType;
 import team5.companyrepactions.ReviewApplicationsAction;
 import team5.interfaces.FileBoundary;
 
-public class CompanyRepController {
+public class CompanyRepController extends UserController {
 
+	private final CompanyRep companyRep;
 	private final CompanyRepAction createInternshipAction;
 	private final CompanyRepAction listOwnInternshipsAction;
 	private final CompanyRepAction reviewApplicationsAction;
 	private final FileBoundary fileBoundary = new CsvFileBoundary();
 
-	public CompanyRepController() {
+	public CompanyRepController(CompanyRep companyRep) {
+		this.companyRep = companyRep;
 		this.createInternshipAction = new CreateInternshipAction(fileBoundary);
 		this.listOwnInternshipsAction = new ListOwnInternshipsAction();
 		this.reviewApplicationsAction = new ReviewApplicationsAction();
 	}
 
-	public void showMenu(CompanyRep companyRep) {
+	@Override
+	public void showMenu() {
 		boolean exit = false;
 		while (!exit) {
 			ConsoleBoundary.printSectionTitle("Company Representative Menu", true);
