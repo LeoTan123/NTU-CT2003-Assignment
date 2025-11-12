@@ -23,7 +23,7 @@ public class CompanyRepController extends UserController {
 		this.companyRep = companyRep;
 		this.createInternshipAction = new CreateInternshipAction(fileBoundary);
 		this.listOwnInternshipsAction = new ListOwnInternshipsAction(fileBoundary);
-		this.reviewApplicationsAction = new ReviewApplicationsAction();
+		this.reviewApplicationsAction = new ReviewApplicationsAction(fileBoundary);
 	}
 
 	@Override
