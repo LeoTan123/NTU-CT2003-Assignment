@@ -3,7 +3,6 @@ package team5.controllers;
 import team5.App;
 import team5.enums.UserType;
 import team5.Student;
-import team5.User;
 import team5.boundaries.ConsoleBoundary;
 import team5.studentactions.CheckApplicationStatusAction;
 import team5.studentactions.StudentAction;

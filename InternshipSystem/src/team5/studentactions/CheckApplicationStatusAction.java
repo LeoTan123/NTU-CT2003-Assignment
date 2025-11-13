@@ -1,5 +1,11 @@
 package team5.studentactions;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import team5.App;
@@ -165,12 +171,10 @@ public class CheckApplicationStatusAction implements StudentAction {
 		student.setEmployedStatus(true); // Set Student as employed
 		
 		// Keep only the accepted application for the student
-		student.getInternshipApplications().removeIf(app -> 
-			!app.getApplicationId().equals(chosen.getApplicationId()));
+		student.getInternshipApplications().removeIf(app -> !app.getApplicationId().equals(chosen.getApplicationId()));
 		
 		// Update global list: keep only the accepted record for this student
-		App.internshipApplicationList.removeIf(app -> 
-			app.getStudentInfo().getUserID().equals(student.getUserID()) &&
+		App.internshipApplicationList.removeIf(app -> app.getStudentInfo().getUserID().equals(student.getUserID()) &&
 			!app.getApplicationId().equals(chosen.getApplicationId()));
 		
 		// Update application status
@@ -184,10 +188,53 @@ public class CheckApplicationStatusAction implements StudentAction {
 		    if (internshipInfo.getNumOfSlots() == 0) {
 		    	internshipInfo.setInternshipStatus(InternshipStatus.FILLED);
 		    }
+		    // Update internship record in CSV
+	        updateInternshipCsv(internshipInfo);
 		}
-		
+		// Save updated internship application list to CSV
 		persistApplications();
 		return true;
+	}
+	
+	private void updateInternshipCsv(Internship updatedInternship) {
+	    String filePath = App.envFilePathInternship;
+	    List<String> lines = new ArrayList<>(); // Placeholder for all lines in CSV
+
+	    try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+	        String header = br.readLine();
+	        if (header != null) 
+	        	lines.add(header); // Add CSV header
+
+	        String line;
+	        while ((line = br.readLine()) != null) { // Read every line in CSV
+	            String[] values = line.split(",");
+	            // Find the internshipId
+	            if (values[0].equals(updatedInternship.getInternshipId())) {
+	            	// Replace it with updated InternshipStatus (for FILLED)
+	            	values[7] = ConsoleBoundary.valueOrNA(updatedInternship.getInternshipStatus()); 
+	            	// Replace it with updated numOfSlots
+	            	values[10] = ConsoleBoundary.safeValue(String.valueOf(updatedInternship.getNumOfSlots())); 
+	                line = String.join(",", values); // Rebuild the line
+	            }
+	            lines.add(line); // Add the line to placeholder
+	        }
+	    } 
+	    catch (IOException e) {
+	    	ConsoleBoundary.printErrorMessage();
+	        e.printStackTrace();
+	    }
+
+	    // Rewrite the CSV
+	    try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
+	        for (String l : lines) {
+	            bw.write(l);
+	            bw.newLine(); // Line separator \n
+	        }
+	    } 
+	    catch (IOException e) {
+	    	ConsoleBoundary.printErrorMessage();
+	        e.printStackTrace();
+	    }
 	}
 	
 	private void persistApplications() {
