@@ -7,7 +7,22 @@ U2310005E,Wong Shu Hui,Computer Science,3,wong005@e.ntu.edu.sg,password
 test,nox,Computer Science,4,test@e.ntu.edu.sg,PW
 U2520910J,Lwin Moe Oo,Computing,1,C250007@e.ntu.edu.sg,password
 CS,CS,Computer Science,1,CS,pw
-C,C,Computing,4,C,pw
+C,C,Computing,1,C,pw
 IEM,IEM,Information Engineering & Media,1,IEM,pw
 CE,CE,Computer Engineering,1,CE,pw
-DSAI,DSAI,Data Science & AI,4,DSAI,pw
+DSAI,DSAI,Data Science & AI,1,DSAI,pw
+CS2,CS2,Computer Science,2,CS,pw
+C2,C2,Computing,2,C,pw
+IEM2,IEM2,Information Engineering & Media,2,IEM,pw
+CE2,CE2,Computer Engineering,2,CE,pw
+DSAI2,DSAI2,Data Science & AI,2,DSAI,pw
+CS3,CS3,Computer Science,3,CS,pw
+C3,C3,Computing,3,C,pw
+IEM3,IEM3,Information Engineering & Media,3,IEM,pw
+CE3,CE3,Computer Engineering,3,CE,pw
+DSAI3,DSAI3,Data Science & AI,3,DSAI,pw
+CS4,CS4,Computer Science,4,CS,pw
+C4,C4,Computing,4,C,pw
+IEM4,IEM4,Information Engineering & Media,4,IEM,pw
+CE4,CE4,Computer Engineering,4,CE,pw
+DSAI4,DSAI4,Data Science & AI,4,DSAI,pw

@@ -303,6 +303,10 @@ public class App {
                     internshipApplicationList.add(internshipApp);
                     // Add to specific student's internship application
                     selectedStudent.addInternshipApplications(internshipApp);
+
+                    if (appStatus == InternshipApplicationStatus.ACCEPTED) {
+                    	selectedStudent.setEmployedStatus(true);
+                    }
                 }
             }
         }

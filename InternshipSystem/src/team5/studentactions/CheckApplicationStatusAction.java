@@ -144,6 +144,10 @@ public class CheckApplicationStatusAction implements StudentAction {
 		if(chosen.getInternshipInfo().getInternshipStatus() == InternshipStatus.FILLED 
 		|| chosen.getInternshipInfo().getNumOfSlots() == 0){
 			System.out.println("Internship is fully booked.");
+			if (chosen.getStatus() != InternshipApplicationStatus.UNSUCCESSFUL) {
+				chosen.setStatus(InternshipApplicationStatus.UNSUCCESSFUL);
+				persistApplications();
+			}
 			return false;
 		}
 		
