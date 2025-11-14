@@ -130,11 +130,9 @@ public class ReviewCompanyRegistrationsAction implements StaffAction {
 
 		boolean deciding = true;
 		while (deciding) {
-			System.out.println("Choose an action:");
+			System.out.println("\nChoose an action:");
 			System.out.println("1. Approve registration");
 			System.out.println("2. Reject registration");
-			System.out.println("0. Back to list");
-
 			String decision = ConsoleBoundary.promptUserInput(true);
 			switch (decision) {
 				case "1":

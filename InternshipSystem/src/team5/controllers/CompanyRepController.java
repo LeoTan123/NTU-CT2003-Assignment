@@ -36,7 +36,7 @@ public class CompanyRepController extends UserController {
 			System.out.println("3. Review Internship Applications");
 			System.out.println("4. Update Password");
 			System.out.println("5. Logout");
-			String input = ConsoleBoundary.promptUserInput(true);
+			String input = ConsoleBoundary.promptUserInput();
 			
 			switch (input) {
 				case "1":

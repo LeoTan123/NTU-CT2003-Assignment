@@ -292,7 +292,6 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 			System.out.println("What would you like to do?");
 			System.out.println("1. Approve Application");
 			System.out.println("2. Reject Application");
-			System.out.println("0. Return to application list");
 			String choice = ConsoleBoundary.promptUserInput(true);
 
 			switch (choice) {

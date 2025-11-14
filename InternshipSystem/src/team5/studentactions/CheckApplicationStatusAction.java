@@ -29,6 +29,7 @@ public class CheckApplicationStatusAction implements StudentAction {
 	public CheckApplicationStatusAction(ApplicationCsvRepository applicationRepository) {
 		this.applicationRepository = applicationRepository;
 	}
+	
 	@Override
 	public void run(Student student) {
 		ConsoleBoundary.printSectionTitle("Your Internship Applications");
@@ -143,7 +144,7 @@ public class CheckApplicationStatusAction implements StudentAction {
 		// If internship is fully booked
 		if(chosen.getInternshipInfo().getInternshipStatus() == InternshipStatus.FILLED 
 		|| chosen.getInternshipInfo().getNumOfSlots() == 0){
-			System.out.println("Internship is fully booked.");
+			System.out.println("This internship is fully booked.");
 			if (chosen.getStatus() != InternshipApplicationStatus.UNSUCCESSFUL) {
 				chosen.setStatus(InternshipApplicationStatus.UNSUCCESSFUL);
 				persistApplications();

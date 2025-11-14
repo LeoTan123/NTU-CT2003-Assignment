@@ -84,7 +84,6 @@ public class CreateInternshipAction implements CompanyRepAction {
 				System.out.println("1. Confirm and submit");
 				System.out.println("2. Start over");
 				System.out.println("0. Cancel");
-
 				String choice = ConsoleBoundary.promptUserInput(true);
 				switch (choice) {
 					case "1":

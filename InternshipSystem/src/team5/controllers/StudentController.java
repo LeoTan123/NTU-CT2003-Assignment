@@ -29,7 +29,7 @@ public class StudentController extends UserController {
             System.out.println("2. Check Internship Application Status");
             System.out.println("3. Update Password");
             System.out.println("4. Logout");
-            String input = ConsoleBoundary.promptUserInput(true);
+            String input = ConsoleBoundary.promptUserInput();
             switch (input) {
                 case "1":
                     viewInternshipsAction.run(student);

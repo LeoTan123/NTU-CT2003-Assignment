@@ -159,13 +159,12 @@ public class ViewInternshipsAction implements StudentAction {
 					+ " Title: " + ConsoleBoundary.safeValue(chosen.getTitle()));
 			System.out.println("1. View Internship Details");
 			System.out.println("2. Apply for this Internship");
-			System.out.println("0. Return to internship list");
-
-			String actionStr = App.sc.nextLine();
+			String actionStr = ConsoleBoundary.promptUserInput(true);
 			int action;
 			try {
-				action = Integer.parseInt(actionStr.trim());
-			} catch (NumberFormatException ex) {
+				action = Integer.parseInt(actionStr);
+			} 
+			catch (NumberFormatException ex) {
 				ConsoleBoundary.printInvalidInput();
 				continue;
 			}
@@ -250,7 +249,7 @@ public class ViewInternshipsAction implements StudentAction {
 		
 		// Check if the student is eligible by year
 	    if (student.getYear() <= 2 && chosen.getInternshipLevel() != InternshipLevel.BASIC) {
-	        System.out.println("You are not eligible for this internship.");
+	        System.out.println("You are not eligible to apply for this internship.");
 	        return;
 	    }
 
@@ -289,8 +288,7 @@ public class ViewInternshipsAction implements StudentAction {
 			return true;
 		} 
 		catch (IOException e) {
-			System.out.println("Failed to save to file: " + e.getMessage());
-        	System.out.println("Stack trace:");
+			ConsoleBoundary.printErrorMessage();
         	e.printStackTrace();
 			return false;
 		}
