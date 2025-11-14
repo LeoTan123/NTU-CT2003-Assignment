@@ -511,9 +511,6 @@ NTU-CT2003-Assignment/
 - Logout returns to main menu
 - Password change forces re-login
 
-### Contact & Support
-For questions or issues related to this project, please refer to the detailed report or contact the development team.
-
 ---
 
 **Developed for CT2003: Object-Oriented Design & Programming**
