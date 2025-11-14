@@ -8,17 +8,20 @@ import team5.studentactions.CheckApplicationStatusAction;
 import team5.studentactions.StudentAction;
 import team5.studentactions.ViewInternshipsAction;
 
-public class StudentController {
+public class StudentController extends UserController {
 
+	private final Student student;
 	private final StudentAction viewInternshipsAction;
 	private final StudentAction checkApplicationStatusAction;
 
-	public StudentController() {
+	public StudentController(Student student) {
+		this.student = student;
 		this.viewInternshipsAction = new ViewInternshipsAction();
 		this.checkApplicationStatusAction = new CheckApplicationStatusAction();
 	}
 
-    public void showMenu(Student student) {
+	@Override
+    public void showMenu() {
         boolean exit = false;
         while (!exit) {
         	ConsoleBoundary.printSectionTitle("Student Menu", true);
@@ -26,7 +29,7 @@ public class StudentController {
             System.out.println("2. Check Internship Application Status");
             System.out.println("3. Update Password");
             System.out.println("4. Logout");
-            String input = ConsoleBoundary.promptUserInput(true);
+            String input = ConsoleBoundary.promptUserInput();
             switch (input) {
                 case "1":
                     viewInternshipsAction.run(student);

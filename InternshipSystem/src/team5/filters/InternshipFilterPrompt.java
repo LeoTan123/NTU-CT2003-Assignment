@@ -25,7 +25,6 @@ public final class InternshipFilterPrompt {
 				System.out.println((i + 1) + ". " + labelFor(options.get(i)));
 			}
 			System.out.println((options.size() + 1) + ". Show all internships");
-			System.out.println("0. Return to menu");
 			String input = ConsoleBoundary.promptUserInput(true);
 			if ("0".equals(input)) {
 				return null;
@@ -117,7 +116,6 @@ public final class InternshipFilterPrompt {
 			for (int i = 0; i < majors.length; i++) {
 				System.out.println((i + 1) + ". " + majors[i].getFullName());
 			}
-			System.out.println("0. Cancel");
 			String input = ConsoleBoundary.promptUserInput(true);
 			if ("0".equals(input)) {
 				return null;
@@ -141,7 +139,6 @@ public final class InternshipFilterPrompt {
 			System.out.println("1. BASIC");
 			System.out.println("2. INTERMEDIATE");
 			System.out.println("3. ADVANCED");
-			System.out.println("0. Cancel");
 			String input = ConsoleBoundary.promptUserInput(true);
 			switch (input) {
 				case "0":
@@ -164,7 +161,6 @@ public final class InternshipFilterPrompt {
 			System.out.println("1. PENDING");
 			System.out.println("2. APPROVED");
 			System.out.println("3. REJECTED");
-			System.out.println("0. Cancel");
 			String input = ConsoleBoundary.promptUserInput(true);
 			switch (input) {
 				case "0":

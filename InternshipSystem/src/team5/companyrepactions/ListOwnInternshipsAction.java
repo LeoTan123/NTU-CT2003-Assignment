@@ -11,7 +11,6 @@ import team5.CompanyRep;
 import team5.Internship;
 import team5.InternshipApplication;
 import team5.boundaries.ConsoleBoundary;
-import team5.boundaries.CsvFileBoundary;
 import team5.boundaries.InternshipBoundary;
 import team5.enums.InternshipFilterOption;
 import team5.enums.InternshipLevel;
@@ -20,7 +19,8 @@ import team5.enums.StudentMajor;
 import team5.filters.InternshipFilter;
 import team5.filters.InternshipFilterCriteria;
 import team5.filters.InternshipFilterPrompt;
-import team5.interfaces.FileBoundary;
+import team5.interfaces.CsvRepository;
+import team5.boundaries.CsvFileBoundary;
 
 public class ListOwnInternshipsAction implements CompanyRepAction {
 	private static final List<InternshipFilterOption> FILTER_OPTIONS = List.of(
@@ -29,7 +29,15 @@ public class ListOwnInternshipsAction implements CompanyRepAction {
 			InternshipFilterOption.INTERNSHIP_STATUS,
 			InternshipFilterOption.APPLICATION_CLOSE_TO);
 	
-    private final FileBoundary fileBoundary = new CsvFileBoundary();
+    private final CsvRepository fileBoundary;
+    
+    public ListOwnInternshipsAction() {
+    	this(new CsvFileBoundary());
+    }
+    
+    public ListOwnInternshipsAction(CsvRepository fileBoundary) {
+    	this.fileBoundary = fileBoundary;
+    }
 
 	@Override
 	public void run(CompanyRep rep) {

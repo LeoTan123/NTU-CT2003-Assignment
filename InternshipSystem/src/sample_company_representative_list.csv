@@ -1,4 +1,4 @@
-repID, Name, Company, Department, Position, Email, Status, Password
+CompanyRepID,Name,CompanyName,Department,Position,Email,Status,Password
 noxI@nox.com,NoxTest,NoxInc,Game,Dev,noxI@nox.com,APPROVED,password
 test@nox.com,Test,Test,Test,Test,test@nox.com,APPROVED,password
 hr@ncs.com.sg,NCS HR,NCS Pte Ltd,HR,Recruiter,hr@ncs.com.sg,APPROVED,password
@@ -8,4 +8,7 @@ test3,test3,test3,test3,test3,test3,PENDING,password
 test4,test4,test4,test4,test4,test4,PENDING,password
 test5,test5,test5,test5,test5,test5,APPROVED,password
 test6,test6,test6,test6,test6,test6,APPROVED,password
-test7,test7,test7,test7,test7,test7,APPROVED,PW
+test7,test7,test7,test7,test7,test7,APPROVED,password
+regression,regression,regression,regression,regression,regression,APPROVED,pw
+re2,re2,re2,re2,re,re2,APPROVED,password
+re3,re3,re3,re3,re3,re3,APPROVED,password

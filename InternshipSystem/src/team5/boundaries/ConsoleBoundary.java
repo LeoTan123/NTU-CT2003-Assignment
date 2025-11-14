@@ -53,7 +53,7 @@ public abstract class ConsoleBoundary {
 	
 	public static String promptUserInput(boolean withHeader) {
 		if(withHeader) {
-			System.out.println("Enter your choice:");
+			System.out.println("Enter your choice or 0 to return:");
 		}
 		return App.sc.nextLine().trim();
 	}

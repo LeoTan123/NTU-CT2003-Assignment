@@ -13,6 +13,8 @@ import team5.Student;
 import team5.boundaries.ConsoleBoundary;
 import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipStatus;
+import team5.boundaries.CsvFileBoundary;
+import team5.interfaces.ApplicationCsvRepository;
 
 /**
  * Action class for company representatives to review and approve/reject student applications
@@ -25,6 +27,16 @@ import team5.enums.InternshipStatus;
  * 4. Reject applications (status -> UNSUCCESSFUL)
  */
 public class ReviewApplicationsAction implements CompanyRepAction {
+
+	private final ApplicationCsvRepository applicationRepository;
+
+	public ReviewApplicationsAction() {
+		this(new CsvFileBoundary());
+	}
+
+	public ReviewApplicationsAction(ApplicationCsvRepository applicationRepository) {
+		this.applicationRepository = applicationRepository;
+	}
 
 	@Override
 	public void run(CompanyRep rep) {
@@ -280,7 +292,6 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 			System.out.println("What would you like to do?");
 			System.out.println("1. Approve Application");
 			System.out.println("2. Reject Application");
-			System.out.println("0. Return to application list");
 			String choice = ConsoleBoundary.promptUserInput(true);
 
 			switch (choice) {
@@ -326,6 +337,7 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 		
 		// Update application status
 		application.setStatus(InternshipApplicationStatus.SUCCESSFUL);
+		persistApplications();
 
 		//System.out.println("\n" + "=".repeat(80));
 		//System.out.println("APPLICATION APPROVED!");
@@ -361,6 +373,7 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 
 		// Update application status
 		application.setStatus(InternshipApplicationStatus.UNSUCCESSFUL);
+		persistApplications();
 
 		//System.out.println("\n" + "=".repeat(80));
 		//System.out.println("APPLICATION REJECTED");
@@ -375,5 +388,15 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 		// Pause to show message
 		System.out.println("Press Enter to return to application list.");
 		ConsoleBoundary.promptUserInput();
+	}
+
+	private void persistApplications() {
+		if (applicationRepository == null) {
+			return;
+		}
+		boolean success = applicationRepository.writeInternshipApplications(App.internshipApplicationList);
+		if (!success) {
+			System.out.println("Warning: Failed to save application updates to CSV.");
+		}
 	}
 }

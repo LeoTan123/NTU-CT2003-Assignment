@@ -159,13 +159,12 @@ public class ViewInternshipsAction implements StudentAction {
 					+ " Title: " + ConsoleBoundary.safeValue(chosen.getTitle()));
 			System.out.println("1. View Internship Details");
 			System.out.println("2. Apply for this Internship");
-			System.out.println("0. Return to internship list");
-
-			String actionStr = App.sc.nextLine();
+			String actionStr = ConsoleBoundary.promptUserInput(true);
 			int action;
 			try {
-				action = Integer.parseInt(actionStr.trim());
-			} catch (NumberFormatException ex) {
+				action = Integer.parseInt(actionStr);
+			} 
+			catch (NumberFormatException ex) {
 				ConsoleBoundary.printInvalidInput();
 				continue;
 			}
@@ -220,8 +219,12 @@ public class ViewInternshipsAction implements StudentAction {
 	        return;
 	    }
 	    
-	    // Check student number of application
-	    if (student.getInternshipApplications().size() >= 3) {
+	    long existingApplications = App.internshipApplicationList.stream()
+	    		.filter(app -> app.getStudentInfo().getUserID().equalsIgnoreCase(student.getUserID()))
+	    		.filter(app -> app.getStatus() != InternshipApplicationStatus.UNSUCCESSFUL)
+	    		.count();
+	    
+	    if (existingApplications >= 3) {
 	        System.out.println("You have already applied for 3 internships. You are not allowed to apply this internship.");
 	        return;
 	    }
@@ -234,16 +237,19 @@ public class ViewInternshipsAction implements StudentAction {
 		}
 		
 		// Check student applied this offer before or not
-		for (InternshipApplication app : student.getInternshipApplications()) {
-		    if (app.getInternshipInfo().equals(chosen)) {
-		        System.out.println("You have already applied for this internship before.");
-		        return;
-		    }
-		}
+	    boolean alreadyApplied = App.internshipApplicationList.stream()
+	    		.filter(app -> app.getStatus() != InternshipApplicationStatus.UNSUCCESSFUL)
+	    		.anyMatch(app -> app.getStudentInfo().getUserID().equalsIgnoreCase(student.getUserID())
+	    				&& app.getInternshipInfo().getInternshipId().equals(chosen.getInternshipId()));
+	    
+	    if (alreadyApplied) {
+	        System.out.println("You have already applied for this internship before.");
+	        return;
+	    }
 		
 		// Check if the student is eligible by year
 	    if (student.getYear() <= 2 && chosen.getInternshipLevel() != InternshipLevel.BASIC) {
-	        System.out.println("You are not eligible for this internship.");
+	        System.out.println("You are not eligible to apply for this internship.");
 	        return;
 	    }
 
@@ -282,8 +288,7 @@ public class ViewInternshipsAction implements StudentAction {
 			return true;
 		} 
 		catch (IOException e) {
-			System.out.println("Failed to save to file: " + e.getMessage());
-        	System.out.println("Stack trace:");
+			ConsoleBoundary.printErrorMessage();
         	e.printStackTrace();
 			return false;
 		}

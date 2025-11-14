@@ -115,7 +115,15 @@ public class ViewInternshipsAction implements StaffAction {
 		System.out.println("Status: " + ConsoleBoundary.valueOrNA(internship.getInternshipStatus()));
 		System.out.println("Number of Slots: " + internship.getNumOfSlots());
 		System.out.println("Press Enter to return to the internship list.");
-		ConsoleBoundary.promptUserInput();
+		while (true) {
+	        System.out.println("Enter 0 to return to the internship action list:");
+	        String input = ConsoleBoundary.promptUserInput();
+	        if (input.equals("0")) {
+	            return;
+	        } else {
+	            System.out.println("Invalid input. Please enter 0 to return.");
+	        }
+	    }
 	}
 
 	private void printNavigationPrompt(boolean hasPrev, boolean hasNext) {

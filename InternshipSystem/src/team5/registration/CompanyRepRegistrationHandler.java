@@ -192,7 +192,7 @@ public class CompanyRepRegistrationHandler {
 						.append(rep.getDepartment()).append(",")
 						.append(rep.getPosition()).append(",")
 						.append(rep.getEmail()).append(",")
-						.append(rep.getAccountStatus().name()).append("\n")
+						.append(rep.getAccountStatus().name()).append(",")
 						.append(rep.getPassword()).append("\n");
 			}
 			writer.flush();
@@ -210,7 +210,7 @@ public class CompanyRepRegistrationHandler {
 			  .append(registration.getDepartment()).append(",")
 			  .append(registration.getPosition()).append(",")
 			  .append(registration.getEmail()).append(",")
-			  .append(registration.getAccountStatus().name()).append("\n")
+			  .append(registration.getAccountStatus().name()).append(",")
 			  .append(registration.getPassword()).append("\n");
 			writer.append(sb.toString());
 			writer.flush();

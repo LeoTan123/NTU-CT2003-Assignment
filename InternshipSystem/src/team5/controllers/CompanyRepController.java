@@ -9,22 +9,25 @@ import team5.companyrepactions.CreateInternshipAction;
 import team5.companyrepactions.ListOwnInternshipsAction;
 import team5.enums.UserType;
 import team5.companyrepactions.ReviewApplicationsAction;
-import team5.interfaces.FileBoundary;
+import team5.interfaces.CsvRepository;
 
-public class CompanyRepController {
+public class CompanyRepController extends UserController {
 
+	private final CompanyRep companyRep;
 	private final CompanyRepAction createInternshipAction;
 	private final CompanyRepAction listOwnInternshipsAction;
 	private final CompanyRepAction reviewApplicationsAction;
-	private final FileBoundary fileBoundary = new CsvFileBoundary();
+	private final CsvRepository fileBoundary = new CsvFileBoundary();
 
-	public CompanyRepController() {
+	public CompanyRepController(CompanyRep companyRep) {
+		this.companyRep = companyRep;
 		this.createInternshipAction = new CreateInternshipAction(fileBoundary);
-		this.listOwnInternshipsAction = new ListOwnInternshipsAction();
-		this.reviewApplicationsAction = new ReviewApplicationsAction();
+		this.listOwnInternshipsAction = new ListOwnInternshipsAction(fileBoundary);
+		this.reviewApplicationsAction = new ReviewApplicationsAction(fileBoundary);
 	}
 
-	public void showMenu(CompanyRep companyRep) {
+	@Override
+	public void showMenu() {
 		boolean exit = false;
 		while (!exit) {
 			ConsoleBoundary.printSectionTitle("Company Representative Menu", true);
@@ -33,7 +36,7 @@ public class CompanyRepController {
 			System.out.println("3. Review Internship Applications");
 			System.out.println("4. Update Password");
 			System.out.println("5. Logout");
-			String input = ConsoleBoundary.promptUserInput(true);
+			String input = ConsoleBoundary.promptUserInput();
 			
 			switch (input) {
 				case "1":

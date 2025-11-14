@@ -18,6 +18,7 @@ import team5.boundaries.ConsoleBoundary;
 import team5.controllers.CareerCenterStaffController;
 import team5.controllers.CompanyRepController;
 import team5.controllers.StudentController;
+import team5.controllers.UserController;
 import team5.enums.CSVType;
 import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipLevel;
@@ -41,8 +42,6 @@ public class App {
 	public static ArrayList<Internship> internshipList = new ArrayList<>();
 	// Internship application List
 	public static ArrayList<InternshipApplication> internshipApplicationList = new ArrayList<>();
-	// Current user
-	public static User currentUser = null;
 	
 	// System variables
 	public static String envFilePathStudent;
@@ -65,15 +64,15 @@ public class App {
         
         boolean exitProgram = false;
         while (!exitProgram) {
-        	// Read from CSV files
+        	
     		studentList.clear();
     		staffList.clear();
     		compRepList.clear();
     		internshipList.clear();
     		internshipApplicationList.clear();
     		
-    		// Load internship before CompanyRep so that CompanyRep can use the data
-    		ReadFromCSV(envFilePathInternship, CSVType.Internship); 
+    		// Read from CSV files
+    		ReadFromCSV(envFilePathInternship, CSVType.Internship);  // Load internship before CompanyRep so that CompanyRep can use the data
     		ReadFromCSV(envFilePathStudent, CSVType.Student);
     		ReadFromCSV(envFilePathStaff, CSVType.CCStaff);
     		ReadFromCSV(envFilePathRep, CSVType.CompanyRep);
@@ -127,28 +126,20 @@ public class App {
 						break;
 					default:
 						ConsoleBoundary.printInvalidSelection();
+						continue;
 				}
 
-				boolean foundUser = verifyUserFromList(userType, userID, password);
-				if(!foundUser || currentUser == null){
+				User foundUser = UserController.verifyUserFromList(userType, userID, password);
+				if(foundUser == null) {
 					continue;
 				}
+				foundUser.login();
 
-				System.out.println("Login successful. Welcome " + currentUser.getName() + ".");
+				System.out.println("Login successful. Welcome " + foundUser.getName() + ".");
 				
-				// Display menu based on UserType
-				if (userType == UserType.STUDENT && currentUser instanceof Student) {
-					StudentController studentController = new StudentController();
-					studentController.showMenu((Student)currentUser);
-				} 
-				else if (userType == UserType.CCSTAFF && currentUser instanceof CareerCenterStaff) {
-					CareerCenterStaffController staffController = new CareerCenterStaffController();
-					staffController.showMenu((CareerCenterStaff)currentUser);
-				} 
-				else if (userType == UserType.COMREP && currentUser instanceof CompanyRep) {
-					CompanyRepController companyRepController = new CompanyRepController();
-					companyRepController.showMenu((CompanyRep)currentUser);
-				}
+				UserController userController = getUserController(userType, foundUser);
+				userController.showMenu(); // Polymorphism
+				
 	        } 
 	        catch (NumberFormatException e) {
 	            ConsoleBoundary.printInvalidInput();
@@ -161,88 +152,26 @@ public class App {
 	}
 	
 	/**
-	 * To verify user type using userID and password
-	 * @param userType: User type from user input
-	 * @param userID: User ID
-	 * @param password: User password
-	 * @return true for found user and login successfully, else false
+	 * To get the user controller based on userType
+	 * @param userType: The type of user based on user's selection
+	 * @param currentUser: The user object after verification
 	 */
-	public static boolean verifyUserFromList(UserType userType, String userID, String password)
-	{ 
-		User foundUser = null;
-		switch(userType)
-		{
-			case STUDENT:
-				for (Student student : studentList) {
-	                if (student.getUserID().equals(userID)) {
-	                    foundUser = student;
-	                    break;
-	                }
-	            }
-				break;
-			case CCSTAFF:
-				for (CareerCenterStaff staff : staffList) {
-	                if (staff.getUserID().equals(userID)) {
-	                    foundUser = staff;
-	                    break;
-	                }
-	            }
-				break;
-			case COMREP:
-				for (CompanyRep rep : compRepList) {
-	                if (rep.getUserID().equalsIgnoreCase(userID)){
-	                    foundUser = rep;
-	                    break;
-	                }
-	            }
-				break;
-			default:
-				System.out.println("Invalid User Type: " + userType);
-	            return false;	
+	private static UserController getUserController(UserType userType, User currentUser) throws RuntimeException {
+		// Return controller based on UserType
+		if (userType == UserType.STUDENT && currentUser instanceof Student) {
+			return new StudentController((Student)currentUser);
+		} 
+		else if (userType == UserType.CCSTAFF && currentUser instanceof CareerCenterStaff) {
+			return new CareerCenterStaffController((CareerCenterStaff)currentUser);
+		} 
+		else if (userType == UserType.COMREP && currentUser instanceof CompanyRep) {
+			return new CompanyRepController((CompanyRep)currentUser);
 		}
-		
-		// User not found in either lists
-		if (foundUser == null) {
-			System.out.println("User ID not found in system: " + userID);
-	        return false;
-	    }
-		
-		// Special check for COMREP account status
-	    if (userType == UserType.COMREP) {
-	    	CompanyRep rep = (CompanyRep)foundUser;
-	    	UserAccountStatus status = rep.getAccountStatus();
-	    	if (status == UserAccountStatus.PENDING) {
-	    		System.out.println("Your account is pending approval. Please wait for the career center staff to review.");
-	    		return false;
-	    	}
-	    	else if (status == UserAccountStatus.REJECTED) {
-	    		System.out.println("Your registration was rejected. Please submit a new registration request for review.");
-	    		return false;
-	    	}
-	    }
-	    
-	    // Check password
-	    int maxAttempts = 3;
-	    for (int attempt = 1; attempt <= maxAttempts; attempt++) {
-	        if (foundUser.getPassword().equals(password)) {
-	            currentUser = foundUser;
-	            currentUser.setUserType(userType);
-	            foundUser.login();
-	            return true;
-	        } 
-	        else {
-	            if (attempt < maxAttempts) {
-	                System.out.println("Password wrong, please enter again:");
-	                password = ConsoleBoundary.promptUserInput(); // update password for next attempt
-	            } 
-	            else {
-	                System.out.println("You have entered wrong password for 3 times. Login failed.");
-	            }
-	        }
-	    }
-	    // Failed after 3 attempts
-	    return false;
+		else {
+			throw new RuntimeException("User type not found.");
+		}
 	}
+	
 	
 	/**
 	 * To read database from CSV file
@@ -374,6 +303,10 @@ public class App {
                     internshipApplicationList.add(internshipApp);
                     // Add to specific student's internship application
                     selectedStudent.addInternshipApplications(internshipApp);
+
+                    if (appStatus == InternshipApplicationStatus.ACCEPTED) {
+                    	selectedStudent.setEmployedStatus(true);
+                    }
                 }
             }
         }
@@ -422,7 +355,7 @@ public class App {
         	else if(userType == UserType.COMREP)
 			{
         		// Header
-        		writer.append("repID,Name,Company,Department,Position,Email,Status,Password\n");
+        		writer.append("CompanyRepID,Name,CompanyName,Department,Position,Email,Status,Password\n");
         		for (CompanyRep companyRep : compRepList) {
         			writer.append(companyRep.getUserID()).append(",")
 					.append(companyRep.getName()).append(",")

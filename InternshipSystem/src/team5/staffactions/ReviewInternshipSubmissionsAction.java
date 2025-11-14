@@ -117,11 +117,9 @@ public class ReviewInternshipSubmissionsAction implements StaffAction {
 
 		boolean deciding = true;
 		while (deciding) {
-			System.out.println("Choose an action:");
+			System.out.println("\nChoose an action:");
 			System.out.println("1. Approve internship");
 			System.out.println("2. Reject internship");
-			System.out.println("0. Back to list");
-
 			String input = ConsoleBoundary.promptUserInput(true);
 			switch (input) {
 				case "1":

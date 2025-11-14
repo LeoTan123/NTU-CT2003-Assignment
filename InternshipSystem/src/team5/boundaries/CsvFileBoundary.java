@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import team5.App;
 import team5.Internship;
 import team5.InternshipApplication;
-import team5.interfaces.FileBoundary;
+import team5.interfaces.CsvRepository;
 
-public class CsvFileBoundary implements FileBoundary {
+public class CsvFileBoundary implements CsvRepository {
 	
 	public CsvFileBoundary() { }
 	

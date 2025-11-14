@@ -1,5 +1,11 @@
 package team5.studentactions;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import team5.App;
@@ -7,10 +13,23 @@ import team5.Internship;
 import team5.InternshipApplication;
 import team5.Student;
 import team5.boundaries.ConsoleBoundary;
+import team5.boundaries.CsvFileBoundary;
 import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipStatus;
+import team5.interfaces.ApplicationCsvRepository;
 
 public class CheckApplicationStatusAction implements StudentAction {
+	
+	private final ApplicationCsvRepository applicationRepository;
+	
+	public CheckApplicationStatusAction() {
+		this(new CsvFileBoundary());
+	}
+	
+	public CheckApplicationStatusAction(ApplicationCsvRepository applicationRepository) {
+		this.applicationRepository = applicationRepository;
+	}
+	
 	@Override
 	public void run(Student student) {
 		ConsoleBoundary.printSectionTitle("Your Internship Applications");
@@ -81,9 +100,13 @@ public class CheckApplicationStatusAction implements StudentAction {
 	                    case 1:
 	                        displayApplicationDetails(chosen);
 	                        break;
-	                    case 2:
-	                        acceptOffer(student, chosen);
-	                        break;
+					case 2:
+	                    boolean accepted = acceptOffer(student, chosen);
+	                    if (accepted) {
+	                    	choosingAction = false;
+	                    	reviewing = false;
+	                    }
+	                    break;
 	                    default:
 	                    	ConsoleBoundary.printInvalidInput();
 	                }
@@ -116,32 +139,51 @@ public class CheckApplicationStatusAction implements StudentAction {
 	    }
 	}
 	
-	private void acceptOffer(Student student, InternshipApplication chosen)
+	private boolean acceptOffer(Student student, InternshipApplication chosen)
 	{
 		// If internship is fully booked
 		if(chosen.getInternshipInfo().getInternshipStatus() == InternshipStatus.FILLED 
 		|| chosen.getInternshipInfo().getNumOfSlots() == 0){
-			System.out.println("Internship is fully booked.");
-			return;
+			System.out.println("This internship is fully booked.");
+			if (chosen.getStatus() != InternshipApplicationStatus.UNSUCCESSFUL) {
+				chosen.setStatus(InternshipApplicationStatus.UNSUCCESSFUL);
+				persistApplications();
+			}
+			return false;
+		}
+		
+		// Prevent re-acceptance
+		if (chosen.getStatus() == InternshipApplicationStatus.ACCEPTED) {
+			System.out.println("You have already accepted this internship offer.");
+			return false;
 		}
 		
 		// If internship application is not successful
 		if(chosen.getStatus() != InternshipApplicationStatus.SUCCESSFUL){
 			System.out.println("Internship application status is " + chosen.getStatus().toString()+ ". Please wait for approval.");
-			return;
+			return false;
 		}
 
 		// If student is employed already
 		if(student.getEmployedStatus()){
 			System.out.println("You have already accepted another internship opportunity. You are not allowed to accept this internship.");
-			return;
+			return false;
 		}
 		
 		System.out.println("You have accepted offer for internship " + chosen.getInternshipInfo().getTitle() + ".");
 		System.out.println("Please email to " + chosen.getInternshipInfo().getCompanyRep() + " or visit " + chosen.getInternshipInfo().getCompanyName() + " for more details.");
 		
 		student.setEmployedStatus(true); // Set Student as employed
-		student.clearInternshipApplications(); // Clear application list after accepted offer
+		
+		// Keep only the accepted application for the student
+		student.getInternshipApplications().removeIf(app -> !app.getApplicationId().equals(chosen.getApplicationId()));
+		
+		// Update global list: keep only the accepted record for this student
+		App.internshipApplicationList.removeIf(app -> app.getStudentInfo().getUserID().equals(student.getUserID()) &&
+			!app.getApplicationId().equals(chosen.getApplicationId()));
+		
+		// Update application status
+		chosen.setStatus(InternshipApplicationStatus.ACCEPTED);
 		
 		// Update the NumOfSlots of the specific internship
 		Internship internshipInfo = chosen.getInternshipInfo();
@@ -151,6 +193,62 @@ public class CheckApplicationStatusAction implements StudentAction {
 		    if (internshipInfo.getNumOfSlots() == 0) {
 		    	internshipInfo.setInternshipStatus(InternshipStatus.FILLED);
 		    }
+		    // Update internship record in CSV
+	        updateInternshipCsv(internshipInfo);
+		}
+		// Save updated internship application list to CSV
+		persistApplications();
+		return true;
+	}
+	
+	private void updateInternshipCsv(Internship updatedInternship) {
+	    String filePath = App.envFilePathInternship;
+	    List<String> lines = new ArrayList<>(); // Placeholder for all lines in CSV
+
+	    try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+	        String header = br.readLine();
+	        if (header != null) 
+	        	lines.add(header); // Add CSV header
+
+	        String line;
+	        while ((line = br.readLine()) != null) { // Read every line in CSV
+	            String[] values = line.split(",");
+	            // Find the internshipId
+	            if (values[0].equals(updatedInternship.getInternshipId())) {
+	            	// Replace it with updated InternshipStatus (for FILLED)
+	            	values[7] = ConsoleBoundary.valueOrNA(updatedInternship.getInternshipStatus()); 
+	            	// Replace it with updated numOfSlots
+	            	values[10] = ConsoleBoundary.safeValue(String.valueOf(updatedInternship.getNumOfSlots())); 
+	                line = String.join(",", values); // Rebuild the line
+	            }
+	            lines.add(line); // Add the line to placeholder
+	        }
+	    } 
+	    catch (IOException e) {
+	    	ConsoleBoundary.printErrorMessage();
+	        e.printStackTrace();
+	    }
+
+	    // Rewrite the CSV
+	    try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
+	        for (String l : lines) {
+	            bw.write(l);
+	            bw.newLine(); // Line separator \n
+	        }
+	    } 
+	    catch (IOException e) {
+	    	ConsoleBoundary.printErrorMessage();
+	        e.printStackTrace();
+	    }
+	}
+	
+	private void persistApplications() {
+		if (applicationRepository == null) {
+			return;
+		}
+		boolean success = applicationRepository.writeInternshipApplications(App.internshipApplicationList);
+		if (!success) {
+			System.out.println("Warning: Failed to save application updates. Please try again later.");
 		}
 	}
 }

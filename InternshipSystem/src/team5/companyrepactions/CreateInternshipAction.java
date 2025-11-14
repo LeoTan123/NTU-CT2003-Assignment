@@ -9,15 +9,15 @@ import team5.boundaries.InternshipBoundary;
 import team5.enums.InternshipLevel;
 import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
-import team5.interfaces.FileBoundary;
+import team5.interfaces.InternshipCsvRepository;
 
 public class CreateInternshipAction implements CompanyRepAction {
 	
     public static final int MAX_SLOTS_NUM = 10;
     
-    private final FileBoundary fileBoundary;
+    private final InternshipCsvRepository fileBoundary;
     
-    public CreateInternshipAction(FileBoundary fileBoundary) {
+    public CreateInternshipAction(InternshipCsvRepository fileBoundary) {
     	this.fileBoundary = fileBoundary;
     }
     
@@ -84,7 +84,6 @@ public class CreateInternshipAction implements CompanyRepAction {
 				System.out.println("1. Confirm and submit");
 				System.out.println("2. Start over");
 				System.out.println("0. Cancel");
-
 				String choice = ConsoleBoundary.promptUserInput(true);
 				switch (choice) {
 					case "1":
