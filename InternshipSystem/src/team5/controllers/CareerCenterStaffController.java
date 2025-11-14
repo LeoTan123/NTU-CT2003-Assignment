@@ -9,6 +9,12 @@ import team5.staffactions.ReviewInternshipSubmissionsAction;
 import team5.staffactions.StaffAction;
 import team5.staffactions.ViewInternshipsAction;
 
+/**
+ * Controller class for managing career center staff user interactions.
+ * This class handles the staff menu and delegates actions to appropriate StaffAction
+ * implementations. Staff can review company registrations, approve internship submissions,
+ * view all internships, update password, and logout.
+ */
 public class CareerCenterStaffController extends UserController {
 
 	private final CareerCenterStaff staff;
@@ -16,6 +22,13 @@ public class CareerCenterStaffController extends UserController {
 	private final StaffAction reviewInternshipAction;
 	private final StaffAction viewInternshipsAction;
 
+	/**
+	 * Constructs a new CareerCenterStaffController for the specified staff member.
+	 * Initializes action handlers for reviewing company registrations, reviewing
+	 * internship submissions, and viewing all internships in the system.
+	 *
+	 * @param staff the career center staff member who will be using this controller
+	 */
 	public CareerCenterStaffController(CareerCenterStaff staff) {
 		this.staff = staff;
 		this.reviewCompanyAction = new ReviewCompanyRegistrationsAction();
@@ -23,6 +36,12 @@ public class CareerCenterStaffController extends UserController {
 		this.viewInternshipsAction = new ViewInternshipsAction();
 	}
 
+	/**
+	 * Displays the career center staff menu and handles user input.
+	 * Provides options to review company registrations, review internship submissions,
+	 * view all internships, update password, and logout. The menu continues to display
+	 * until the staff member chooses to logout or exits after changing their password.
+	 */
 	public void showMenu() {
 		boolean exit = false;
 		while (!exit) {

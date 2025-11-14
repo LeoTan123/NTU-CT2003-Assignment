@@ -9,28 +9,56 @@ import team5.companyrepactions.CreateInternshipAction;
 import team5.enums.InternshipLevel;
 import team5.enums.StudentMajor;
 
+/**
+ * Boundary class providing specialized console operations for internship-related functionality.
+ * This class extends ConsoleBoundary and provides methods for displaying internship information,
+ * formatting internship details, prompting for internship-specific inputs, and handling
+ * internship-related menus. All public methods follow naming conventions: print (display only),
+ * display (show menu and ask input), and prompt (request form field input).
+ */
 public class InternshipBoundary extends ConsoleBoundary {
-	
+
 	public InternshipBoundary() { }
-	
+
 	/*
 	 * Convention:
 	 * - print: To only display info
 	 * - display: To display menu and ask for input
 	 * - prompt: To prompt user input for form fields
 	 * */
-	
+
+	/**
+	 * Prints a numbered list of internships to the console.
+	 * This is a convenience method that calls printInternshipList with includeCompanyName set to false.
+	 *
+	 * @param internshipList the list of internships to display
+	 */
 	public static void printInternshipList(ArrayList<Internship> internshipList) {
 		printInternshipList(internshipList, false);
 	}
-	
+
+	/**
+	 * Prints a numbered list of internships with optional company name display.
+	 * Each internship is displayed on a separate line with a number prefix.
+	 *
+	 * @param internshipList the list of internships to display
+	 * @param includeCompanyName if true, includes the company name in each entry
+	 */
 	public static void printInternshipList(ArrayList<Internship> internshipList, boolean includeCompanyName) {
 		for (int i = 0; i < internshipList.size(); i++) {
 			Internship internship = internshipList.get(i);
 			System.out.printf("%d. %s%n", i + 1, buildSummaryLine(internship, includeCompanyName));
 		}
 	}
-	
+
+	/**
+	 * Builds a formatted summary line for an internship with key details.
+	 * The summary includes title, level, preferred major, dates, status, slots, and optionally company name.
+	 *
+	 * @param internship the internship to format
+	 * @param includeCompanyName if true, includes the company name at the start of the summary
+	 * @return a formatted string containing the internship summary
+	 */
 	public static String buildSummaryLine(Internship internship, boolean includeCompanyName) {
 		String preferredMajor = internship.getPreferredMajor() != null
 				? internship.getPreferredMajor().getFullName()

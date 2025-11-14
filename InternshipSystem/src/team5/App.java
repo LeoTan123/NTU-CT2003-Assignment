@@ -342,7 +342,7 @@ public class App {
         	else if(userType == UserType.CCSTAFF)
         	{
         		// Header
-                writer.append("StaffID,Name,Role,Department,Email\n");
+                writer.append("StaffID,Name,Role,Department,Email,Password\n");
                 for (CareerCenterStaff staff : staffList) {
                 	writer.append(staff.getUserID()).append(",")
 					.append(staff.getName()).append(",")
