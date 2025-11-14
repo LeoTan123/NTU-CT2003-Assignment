@@ -9,17 +9,31 @@ import team5.boundaries.ConsoleBoundary;
 import team5.enums.UserAccountStatus;
 import team5.enums.UserType;
 
+/**
+ * Abstract base controller for all user types in the system.
+ * This class provides common functionality for user authentication and verification,
+ * while allowing subclasses to define their own role-specific menu behaviors.
+ * Subclasses include StudentController, CompanyRepController, and CareerCenterStaffController.
+ */
 public abstract class UserController {
 
-    // Each subclass will define its own menu behavior
+    /**
+     * Displays the role-specific menu for the user.
+     * Each subclass must implement this method to show appropriate menu options
+     * and handle user interactions for their specific role.
+     */
     public abstract void showMenu();
     
     /**
-	 * To verify user type using userID and password
-	 * @param userType: User type from user input
-	 * @param userID: User ID
-	 * @param password: User password
-	 * @return true for found user and login successfully, else false
+	 * Verifies user credentials against the stored user lists and performs login.
+	 * This method searches through the appropriate user list based on the user type,
+	 * matches the userID and password, and performs necessary validation checks
+	 * (such as account approval status for company representatives).
+	 *
+	 * @param userType the type of user attempting to log in (STUDENT, CCSTAFF, or COMREP)
+	 * @param userID the unique identifier for the user
+	 * @param password the password provided by the user
+	 * @return the User object if authentication is successful, null otherwise
 	 */
 	public static User verifyUserFromList(UserType userType, String userID, String password)
 	{ 

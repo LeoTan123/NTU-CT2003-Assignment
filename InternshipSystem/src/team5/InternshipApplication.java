@@ -5,7 +5,11 @@ import java.time.LocalDate;
 import team5.enums.InternshipApplicationStatus;
 
 /**
- * InternshipApplication class
+ * Represents a student's application to an internship opportunity.
+ * This class tracks the relationship between a student and an internship,
+ * including the application date and current status. Application statuses
+ * progress from PENDING to SUCCESSFUL/UNSUCCESSFUL, and finally to ACCEPTED
+ * when a student confirms their placement.
  */
 public class InternshipApplication {
 	private String applicationID;
@@ -15,14 +19,15 @@ public class InternshipApplication {
 	private InternshipApplicationStatus status;
 	
 	/**
-	 * InternshipApplication constructor
-	 * @param applicationID
-	 * @param internship
-	 * @param student
-	 * @param appliedDate
-	 * @param status
+	 * Constructs a new InternshipApplication linking a student to an internship.
+	 *
+	 * @param applicationID the unique identifier for this application
+	 * @param internship the internship being applied to
+	 * @param student the student submitting the application
+	 * @param appliedDate the date when the application was submitted
+	 * @param status the current status of the application (PENDING, SUCCESSFUL, UNSUCCESSFUL, or ACCEPTED)
 	 */
-	public InternshipApplication(String applicationID, Internship internship, 
+	public InternshipApplication(String applicationID, Internship internship,
 			Student student, LocalDate appliedDate, InternshipApplicationStatus status) {
 		this.applicationID = applicationID;
 		this.internship = internship;
@@ -31,7 +36,11 @@ public class InternshipApplication {
 		this.status = status;
 	}
 	
-	// Setter and getter
+	/**
+	 * Gets the unique application ID.
+	 *
+	 * @return the application ID
+	 */
 	public String getApplicationId() {
 		return this.applicationID;
 	}
@@ -40,6 +49,11 @@ public class InternshipApplication {
 		this.applicationID = applicationID;
 	}
 	
+	/**
+	 * Gets the internship associated with this application.
+	 *
+	 * @return the internship object
+	 */
 	public Internship getInternshipInfo() {
 		return this.internship;
 	}
@@ -48,6 +62,11 @@ public class InternshipApplication {
 		this.internship = internship;
 	}
 	
+	/**
+	 * Gets the student who submitted this application.
+	 *
+	 * @return the student object
+	 */
 	public Student getStudentInfo()
 	{
 		return this.student;
@@ -66,10 +85,20 @@ public class InternshipApplication {
 		this.appliedDate = appliedDate;
 	}
 	
+	/**
+	 * Gets the current status of this application.
+	 *
+	 * @return the application status
+	 */
 	public InternshipApplicationStatus getStatus() {
 		return this.status;
 	}
 	
+	/**
+	 * Sets the status of this application.
+	 *
+	 * @param status the new application status
+	 */
 	public void setStatus(InternshipApplicationStatus status) {
 		this.status = status;
 	}

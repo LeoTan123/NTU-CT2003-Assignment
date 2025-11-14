@@ -106,22 +106,22 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 
 		Map<Internship, List<InternshipApplication>> applicationMap = new HashMap<>();
 
-		// Initialize map with empty lists for each internship
+		// Initializes map with empty lists for each approved internship
 		for (Internship internship : internships) {
-			// Only add those approved internship 
+			// Only includes internships that have been approved by Career Center Staff 
 			if(internship.getInternshipStatus() == InternshipStatus.APPROVED) {
 				applicationMap.put(internship, new ArrayList<>());
 			}
 		}
 
-		// Loop through all students to find applications
+		// Loops through all students to find matching applications for the representative's internships
 		for (Student student : App.studentList) {
 			ArrayList<InternshipApplication> studentApplications = student.getInternshipApplications();
 
 			for (InternshipApplication application : studentApplications) {
 				Internship appliedInternship = application.getInternshipInfo();
 
-				// Check if this application is for one of the company rep's internships
+				// Checks if this application matches one of the company representative's internships
 				for (Internship ownedInternship : internships) {
 					if (appliedInternship.getInternshipId().equals(ownedInternship.getInternshipId())) {
 						applicationMap.get(ownedInternship).add(application);
@@ -155,16 +155,11 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 	 * @param applicationMap Map of internships to applications
 	 */
 	private void displayInternshipsWithApplications(Map<Internship, List<InternshipApplication>> applicationMap) {
-
-		//System.out.println("\nYour Internships with Applications:");
-		//System.out.println("=" .repeat(80));
-
 		int index = 1;
 		for (Map.Entry<Internship, List<InternshipApplication>> entry : applicationMap.entrySet()) {
 			Internship internship = entry.getKey();
 			List<InternshipApplication> applications = entry.getValue();
-			// removed if (!applications.isEmpty()) { } as user input is incorrect otherwise
-			// Count pending applications
+			// Counts the number of pending applications for display purposes
 			long pendingCount = applications.stream()
 				.filter(app -> app.getStatus() == InternshipApplicationStatus.PENDING)
 				.count();
@@ -237,9 +232,6 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 	 * @param applications List of applications to display
 	 */
 	private void displayApplicationList(List<InternshipApplication> applications) {
-		//System.out.println("\nApplications:");
-		//System.out.println("-".repeat(80));
-
 		for (int i = 0; i < applications.size(); i++) {
 			InternshipApplication app = applications.get(i);
 			Student student = app.getStudentInfo();
@@ -263,7 +255,7 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 	 * @param application The application to process
 	 */
 	private void processApplication(InternshipApplication application) {
-		// If already reviewed, don't allow changes
+		// Prevents changes to applications that have already been reviewed
 		if (application.getStatus() != InternshipApplicationStatus.PENDING) {
 			System.out.println("This application has already been reviewed.");
 			System.out.println("Press Enter to return to application list.");
@@ -273,7 +265,7 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 				
 		Student student = application.getStudentInfo();
 
-		// Display detailed application information
+		// Displays detailed information about the application for review
 		ConsoleBoundary.printSectionTitle("Application Details");
 		System.out.println("Application ID: " + ConsoleBoundary.safeValue(application.getApplicationId()));
 		System.out.println("Student Name: " + ConsoleBoundary.safeValue(student.getName()));
@@ -288,7 +280,7 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 		boolean browsing = true;
 		while(browsing)
 		{
-			// Show action options
+			// Displays available actions for the selected application
 			System.out.println("What would you like to do?");
 			System.out.println("1. Approve Application");
 			System.out.println("2. Reject Application");
@@ -323,33 +315,29 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 		System.out.println("Enter 'yes' to confirm (or 0 to cancel): ");
 		String confirmation = ConsoleBoundary.promptUserInput();
 
-		// Cancel process
+		// Cancels the approval process if user chooses not to proceed
 		if(confirmation.equals("0") || !confirmation.equalsIgnoreCase("yes")) {
 			System.out.println("Application approval cancelled. Back to application list.");
 			return;
 		}
 
-		// Check if student is already employed
+		// Checks whether the student has already accepted another internship offer
 		if(student.getEmployedStatus()) {
 			System.out.println("This student is already employed.");
 			return;
 		}
-		
-		// Update application status
+
+		// Updates the application status to SUCCESSFUL and persists changes to CSV
 		application.setStatus(InternshipApplicationStatus.SUCCESSFUL);
 		persistApplications();
 
-		//System.out.println("\n" + "=".repeat(80));
-		//System.out.println("APPLICATION APPROVED!");
 		ConsoleBoundary.printSectionTitle("Application Approved!", true);
-		//System.out.println("=".repeat(80));
 		System.out.println("Application ID: " + application.getApplicationId());
 		System.out.println("Student Name: " + student.getName());
 		System.out.println("Status: SUCCESSFUL");
 		System.out.println("The student will be able to accept this offer.");
-		//System.out.println("=".repeat(80));
 
-		// Pause to show success message
+		// Pauses execution to allow the company representative to read the success message
 		System.out.println("Press Enter to return to application list.");
 		ConsoleBoundary.promptUserInput();
 	}
@@ -365,27 +353,23 @@ public class ReviewApplicationsAction implements CompanyRepAction {
 		System.out.println("Enter 'yes' to confirm (or 0 to cancel): ");
 		String confirmation = ConsoleBoundary.promptUserInput();
 
-		// Cancel process
+		// Cancels the rejection process if user chooses not to proceed
 		if(confirmation.equals("0") || !confirmation.equalsIgnoreCase("yes")) {
 			System.out.println("Application rejection cancelled. Back to application list.");
 			return;
 		}
 
-		// Update application status
+		// Updates the application status to UNSUCCESSFUL and persists changes to CSV
 		application.setStatus(InternshipApplicationStatus.UNSUCCESSFUL);
 		persistApplications();
 
-		//System.out.println("\n" + "=".repeat(80));
-		//System.out.println("APPLICATION REJECTED");
 		ConsoleBoundary.printSectionTitle("Application Rejected!", true);
-		//System.out.println("=".repeat(80));
 		System.out.println("Application ID: " + ConsoleBoundary.safeValue(application.getApplicationId()));
 		System.out.println("Student Name: " + ConsoleBoundary.safeValue(student.getName()));
 		System.out.println("Status: " + ConsoleBoundary.valueOrNA(application.getStatus()));
 		System.out.println("The student will be notified of the rejection.");
-		//System.out.println("=".repeat(80));
 
-		// Pause to show message
+		// Pauses execution to allow the company representative to read the rejection message
 		System.out.println("Press Enter to return to application list.");
 		ConsoleBoundary.promptUserInput();
 	}

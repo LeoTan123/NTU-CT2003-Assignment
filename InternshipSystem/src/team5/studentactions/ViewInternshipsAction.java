@@ -223,9 +223,9 @@ public class ViewInternshipsAction implements StudentAction {
 	    		.filter(app -> app.getStudentInfo().getUserID().equalsIgnoreCase(student.getUserID()))
 	    		.filter(app -> app.getStatus() != InternshipApplicationStatus.UNSUCCESSFUL)
 	    		.count();
-	    
-	    if (existingApplications >= 3) {
-	        System.out.println("You have already applied for 3 internships. You are not allowed to apply this internship.");
+
+	    if (existingApplications >= Student.MAX_APPLICATIONS) {
+	        System.out.println("You have already applied for " + Student.MAX_APPLICATIONS + " internships. You are not allowed to apply this internship.");
 	        return;
 	    }
 		

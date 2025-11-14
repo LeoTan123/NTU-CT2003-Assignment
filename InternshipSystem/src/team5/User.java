@@ -4,9 +4,15 @@ import team5.boundaries.ConsoleBoundary;
 import team5.enums.UserType;
 
 /**
- * User class
+ * Represents a base user in the internship placement management system.
+ * This class serves as the parent class for all user types including Student,
+ * CompanyRep, and CareerCenterStaff. It provides common user attributes and
+ * functionalities such as login, logout, and password management.
  */
 public class User {
+	/** Maximum number of password change attempts allowed per stage */
+	public static final int MAX_PASSWORD_ATTEMPTS = 2;
+
 	private String userID;
 	private String name;
 	private String email;
@@ -15,11 +21,13 @@ public class User {
 	private boolean loginState;
 	
 	/**
-	 * User constructor
-	 * @param userID
-	 * @param name
-	 * @param email
-	 * @param password
+	 * Constructs a new User with the specified details.
+	 * Initializes the user with default values for userType (NONE) and loginState (false).
+	 *
+	 * @param userID the unique identifier for the user
+	 * @param name the full name of the user
+	 * @param email the email address of the user
+	 * @param password the password for the user account
 	 */
 	public User(String userID, String name, String email, String password) {
 		this.userID = userID;
@@ -97,7 +105,8 @@ public class User {
 	}
 	
 	/**
-	 * Login method
+	 * Logs the user into the system by setting the login state to true.
+	 * If the user is already logged in, displays an appropriate message.
 	 */
 	public void login() {
 		if(this.loginState)
@@ -109,7 +118,8 @@ public class User {
 	}
 	
 	/**
-	 * Logout method
+	 * Logs the user out of the system by setting the login state to false.
+	 * If the user is already logged out, displays an appropriate message.
 	 */
 	public void logout() {
 		if(!this.loginState)
@@ -122,14 +132,18 @@ public class User {
 	}
 	
 	/**
-	 * Change password method
-	 * Allow 1 retry for each stage
-	 * @return true for change successfully, else false
+	 * Allows the user to change their password through a three-stage verification process.
+	 * The process includes verifying the old password, entering a new password (which must
+	 * differ from the old one), and confirming the new password. Each stage allows up to
+	 * two attempts before returning to the main menu.
+	 *
+	 * @return true if the password change is successful, false if the user exits or
+	 *         exceeds the maximum number of attempts at any stage
 	 */
 	public boolean changePassword() {
 		ConsoleBoundary.printSectionTitle("Change Password");
 		// Old password
-	    for (int attempt = 1; attempt <= 2; attempt++) {
+	    for (int attempt = 1; attempt <= MAX_PASSWORD_ATTEMPTS; attempt++) {
 	        System.out.println("Please enter your old password (or 0 to exit):");
 	        String oldPassword = ConsoleBoundary.promptUserInput();
 
@@ -157,7 +171,7 @@ public class User {
 
 	    // New password
 	    String newPassword = null;
-	    for (int attempt = 1; attempt <= 2; attempt++) {
+	    for (int attempt = 1; attempt <= MAX_PASSWORD_ATTEMPTS; attempt++) {
 	        System.out.println("Please enter your new password:");
 	        newPassword = ConsoleBoundary.promptUserInput();
 
@@ -181,7 +195,7 @@ public class User {
 	    }
 
 	    // Confirm new password
-	    for (int attempt = 1; attempt <= 2; attempt++) {
+	    for (int attempt = 1; attempt <= MAX_PASSWORD_ATTEMPTS; attempt++) {
 	        System.out.println("Please confirm your new password:");
 	        String confirmPassword = ConsoleBoundary.promptUserInput();
 
