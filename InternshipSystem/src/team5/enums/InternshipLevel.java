@@ -1,6 +1,8 @@
 package team5.enums;
 
-// Internship difficulty
+/**
+ * Internship level
+ */
 public enum InternshipLevel {
 	NONE,
 	BASIC,

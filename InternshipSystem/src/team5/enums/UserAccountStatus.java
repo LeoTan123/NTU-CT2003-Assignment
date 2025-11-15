@@ -1,6 +1,9 @@
 package team5.enums;
 
-//Decide by career center staff to approve this company rep or not
+
+/**
+ * Decide by career center staff to approve this company rep or not
+ */
 public enum UserAccountStatus {
 	PENDING,
 	APPROVED,

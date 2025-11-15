@@ -1,5 +1,8 @@
 package team5.enums;
 
+/**
+ * Student majors
+ */
 public enum StudentMajor {
 	CS("Computer Science"),
 	DSAI("Data Science & AI"),

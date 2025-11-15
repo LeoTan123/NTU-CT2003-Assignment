@@ -10,6 +10,9 @@ import team5.Internship;
 import team5.boundaries.ConsoleBoundary;
 import team5.enums.UserAccountStatus;
 
+/**
+ * Controller class to handle company representative registration
+ */
 public class CompanyRepRegistrationHandler {
 
 	private CompanyRep resubmittingRep;

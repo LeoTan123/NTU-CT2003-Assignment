@@ -6,8 +6,9 @@ import team5.enums.InternshipLevel;
 import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
 
-// for internship filtering
-
+/**
+ * Internship filter criterias
+ */
 public class InternshipFilterCriteria {
 
 	private StudentMajor preferredMajor;

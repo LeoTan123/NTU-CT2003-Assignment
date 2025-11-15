@@ -22,6 +22,9 @@ import team5.filters.InternshipFilter;
 import team5.filters.InternshipFilterCriteria;
 import team5.filters.InternshipFilterPrompt;
 
+/**
+ * Sub-controller for students to view internships
+ */
 public class ViewInternshipsAction implements StudentAction {
 	private static final List<InternshipFilterOption> FILTER_OPTIONS = List.of(
 			InternshipFilterOption.PREFERRED_MAJOR,

@@ -22,6 +22,9 @@ import team5.filters.InternshipFilterPrompt;
 import team5.interfaces.CsvRepository;
 import team5.boundaries.CsvFileBoundary;
 
+/**
+ * Sub-controller class to list company rep's created internships
+ */
 public class ListOwnInternshipsAction implements CompanyRepAction {
 	private static final List<InternshipFilterOption> FILTER_OPTIONS = List.of(
 			InternshipFilterOption.PREFERRED_MAJOR,

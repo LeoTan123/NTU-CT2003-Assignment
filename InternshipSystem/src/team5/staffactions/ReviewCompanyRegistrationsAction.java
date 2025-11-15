@@ -11,6 +11,9 @@ import team5.CompanyRep;
 import team5.boundaries.ConsoleBoundary;
 import team5.enums.UserAccountStatus;
 
+/**
+ * Sub-controller for staff to review company rep registration
+ */
 public class ReviewCompanyRegistrationsAction implements StaffAction {
 
 	@Override

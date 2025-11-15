@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import team5.Internship;
 
+/**
+ * Interface to persist internships
+ */
 public interface InternshipCsvRepository {
 	boolean writeInternship(ArrayList<Internship> internships);
 	

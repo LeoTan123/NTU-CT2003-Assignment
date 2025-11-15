@@ -28,6 +28,10 @@ import team5.enums.UserAccountStatus;
 import team5.enums.UserType;
 import team5.registration.CompanyRepRegistrationHandler;
 
+
+/**
+ * Entry point of the application
+ */
 public class App {
 	
 	// Global Scanner for the whole program

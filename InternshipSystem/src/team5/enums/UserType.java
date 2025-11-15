@@ -1,5 +1,9 @@
 package team5.enums;
 
+
+/**
+ * User account type
+ */
 public enum UserType {
 	NONE,
 	STUDENT,
