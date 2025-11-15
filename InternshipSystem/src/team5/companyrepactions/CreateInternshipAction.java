@@ -11,6 +11,9 @@ import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
 import team5.interfaces.InternshipCsvRepository;
 
+/**
+ * Sub-controller class for company representative to create internship
+ */
 public class CreateInternshipAction implements CompanyRepAction {
 	
     public static final int MAX_SLOTS_NUM = 10;

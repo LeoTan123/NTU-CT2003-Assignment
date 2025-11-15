@@ -12,6 +12,10 @@ import team5.Internship;
 import team5.boundaries.ConsoleBoundary;
 import team5.enums.InternshipStatus;
 
+/**
+ * Sub-controller class for career center staff 
+ * to review internships submitted by company representatives.
+ */
 public class ReviewInternshipSubmissionsAction implements StaffAction {
 
 	@Override

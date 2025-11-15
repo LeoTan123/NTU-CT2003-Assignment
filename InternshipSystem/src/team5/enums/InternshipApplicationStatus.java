@@ -1,6 +1,8 @@
 package team5.enums;
 
-// Decide by company representative to approve this application or not
+/**
+ * Decide by company representative to approve this application or not
+ */
 public enum InternshipApplicationStatus {
 	PENDING,
 	SUCCESSFUL,

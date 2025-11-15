@@ -1,6 +1,8 @@
 package team5.enums;
 
-// Decide by Career Center Staff to approve this internship or not
+/**
+ * Decide by Career Center Staff to approve this internship or not
+ */
 public enum InternshipStatus {
 	PENDING,
 	APPROVED,

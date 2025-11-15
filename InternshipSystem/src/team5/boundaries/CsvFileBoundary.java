@@ -8,6 +8,9 @@ import team5.Internship;
 import team5.InternshipApplication;
 import team5.interfaces.CsvRepository;
 
+/**
+ * Concrete class to handle csv files
+ */
 public class CsvFileBoundary implements CsvRepository {
 	
 	public CsvFileBoundary() { }

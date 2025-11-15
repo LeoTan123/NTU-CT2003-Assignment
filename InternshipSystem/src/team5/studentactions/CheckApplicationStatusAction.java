@@ -18,6 +18,9 @@ import team5.enums.InternshipApplicationStatus;
 import team5.enums.InternshipStatus;
 import team5.interfaces.ApplicationCsvRepository;
 
+/**
+ * Sub-controller class for student to check internship application status
+ */
 public class CheckApplicationStatusAction implements StudentAction {
 	
 	private final ApplicationCsvRepository applicationRepository;

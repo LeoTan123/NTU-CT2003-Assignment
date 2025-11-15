@@ -9,6 +9,9 @@ import team5.enums.InternshipLevel;
 import team5.enums.InternshipStatus;
 import team5.enums.StudentMajor;
 
+/**
+ * Prompts user if they want to filter the internships
+ */
 public final class InternshipFilterPrompt {
 
 	private InternshipFilterPrompt() {

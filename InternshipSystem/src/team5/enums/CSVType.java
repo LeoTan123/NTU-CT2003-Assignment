@@ -1,5 +1,8 @@
 package team5.enums;
 
+/**
+ * Enum for the type of data the files represent
+ */
 public enum CSVType {
 	Student,
 	CCStaff,
